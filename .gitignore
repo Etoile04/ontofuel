@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OpenClaw workspace files (not part of the package)
+.memory/
+memory/
+.openclaw/
+.learnings/
+MEMORY.md
+HEARTBEAT.md
+SELF_IMPROVEMENT_REMINDER.md
+SOUL.md
+USER.md
+IDENTITY.md
+AGENTS.md
+TOOLS.md
+BOOTSTRAP.md
+
+# Data files (too large for repo)
+data/*.pdf
+test_pdfs/
+backups/
+
+# Generated files
+*.backup_*.json
+reports/
+visualizations/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+
+# Docker
+docker/supabase/.temp/
+
+# Build artifacts
+*.whl
+tools/WebVOWL

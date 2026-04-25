@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ontofuel"
+version = "0.1.0-alpha"
+description = "Ontology-driven knowledge extraction for nuclear materials science"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "OntoFuel Contributors"}
+]
+keywords = ["ontology", "materials-science", "nuclear-fuel", "knowledge-extraction"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Zero runtime dependencies - all stdlib
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-cov"]
+database = ["supabase>=2.0"]
+viz = ["Pillow>=9.0", "numpy>=1.24"]
+all = ["ontofuel[dev,database,viz]"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ontofuel = ["visualization/templates/*.html"]
+
+[project.scripts]
+ontofuel = "ontofuel.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
