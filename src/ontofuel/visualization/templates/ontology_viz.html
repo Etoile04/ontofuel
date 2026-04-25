@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OntoFuel 本体可视化</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { overflow: hidden; background: #0d1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #e6edf3; }
+
+        /* Toolbar */
+        #toolbar {
+            position: absolute; top: 0; left: 0; right: 0; height: 52px;
+            background: #161b22; border-bottom: 1px solid #30363d;
+            display: flex; align-items: center; padding: 0 16px; gap: 12px; z-index: 100;
+        }
+        #toolbar h1 { font-size: 16px; font-weight: 600; white-space: nowrap; }
+        #toolbar h1 span { color: #58a6ff; }
+        #search-box {
+            flex: 1; max-width: 400px; padding: 6px 12px; border-radius: 6px;
+            border: 1px solid #30363d; background: #0d1117; color: #e6edf3;
+            font-size: 13px; outline: none;
+        }
+        #search-box:focus { border-color: #58a6ff; }
+        #search-box::placeholder { color: #484f58; }
+
+        .filter-btn {
+            padding: 4px 10px; border-radius: 12px; border: 1px solid #30363d;
+            background: transparent; color: #8b949e; font-size: 12px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+        .filter-btn.active { background: #1f6feb33; border-color: #58a6ff; color: #58a6ff; }
+        .stat-chip { font-size: 11px; color: #8b949e; white-space: nowrap; }
+        .stat-chip b { color: #58a6ff; }
+
+        /* Graph */
+        #graph { width: 100vw; height: calc(100vh - 52px); margin-top: 52px; }
+        svg { display: block; }
+
+        /* Tooltip */
+        #tooltip {
+            position: absolute; display: none; background: #1c2128; border: 1px solid #30363d;
+            border-radius: 8px; padding: 10px 14px; font-size: 12px; z-index: 200;
+            pointer-events: none; max-width: 320px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        #tooltip .tt-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        #tooltip .tt-type { font-size: 11px; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 6px; }
+        #tooltip .tt-detail { color: #8b949e; font-size: 11px; }
+        #tooltip .tt-rels { margin-top: 6px; border-top: 1px solid #21262d; padding-top: 6px; }
+        #tooltip .tt-rel { color: #8b949e; font-size: 11px; }
+
+        /* Info panel */
+        #side-panel {
+            position: absolute; top: 52px; right: 0; width: 320px; height: calc(100vh - 52px);
+            background: #161b22; border-left: 1px solid #30363d; z-index: 90;
+            transform: translateX(100%); transition: transform 0.3s ease;
+            overflow-y: auto; padding: 16px;
+        }
+        #side-panel.open { transform: translateX(0); }
+        #side-panel h3 { font-size: 16px; margin-bottom: 4px; }
+        #side-panel .panel-type { font-size: 12px; padding: 2px 10px; border-radius: 10px; display: inline-block; margin-bottom: 12px; }
+        #side-panel .panel-section { margin-bottom: 12px; }
+        #side-panel .panel-section h4 { font-size: 12px; color: #8b949e; text-transform: uppercase; margin-bottom: 6px; }
+        #side-panel .panel-prop { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
+        #side-panel .panel-prop .pk { color: #8b949e; }
+        #side-panel .panel-prop .pv { color: #e6edf3; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #side-panel .close-btn {
+            position: absolute; top: 12px; right: 12px; background: none; border: none;
+            color: #8b949e; font-size: 18px; cursor: pointer;
+        }
+        #side-panel .close-btn:hover { color: #e6edf3; }
+
+        /* Legend */
+        #legend {
+            position: absolute; bottom: 16px; left: 16px;
+            background: #161b2299; border: 1px solid #30363d; border-radius: 8px;
+            padding: 10px 14px; font-size: 11px; z-index: 80;
+        }
+        #legend .leg-item { display: flex; align-items: center; gap: 6px; margin: 3px 0; }
+        #legend .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* Loading */
+        #loading {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; z-index: 300;
+        }
+        #loading .spinner { width: 40px; height: 40px; border: 3px solid #30363d; border-top-color: #58a6ff; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loading p { color: #8b949e; font-size: 13px; }
+
+        /* Error */
+        #error-banner {
+            position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+            background: #da3633; color: white; padding: 8px 20px; border-radius: 6px;
+            font-size: 13px; z-index: 300; display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Toolbar -->
+    <div id="toolbar">
+        <h1>📊 <span>OntoFuel</span> 本体可视化</h1>
+        <input id="search-box" type="text" placeholder="搜索节点名称... (Enter 确认)">
+        <button class="filter-btn active" data-type="all">全部</button>
+        <button class="filter-btn" data-type="class">类</button>
+        <button class="filter-btn" data-type="individual">个体</button>
+        <button class="filter-btn" data-type="property">属性</button>
+        <span class="stat-chip">节点 <b id="node-count">-</b> | 关系 <b id="rel-count">-</b></span>
+    </div>
+
+    <!-- Graph container -->
+    <div id="graph"></div>
+
+    <!-- Tooltip -->
+    <div id="tooltip">
+        <div class="tt-name"></div>
+        <div class="tt-type"></div>
+        <div class="tt-detail"></div>
+        <div class="tt-rels"></div>
+    </div>
+
+    <!-- Side panel -->
+    <div id="side-panel">
+        <button class="close-btn" onclick="closePanel()">✕</button>
+        <h3 id="panel-name"></h3>
+        <div class="panel-type" id="panel-type"></div>
+        <div class="panel-section" id="panel-props"></div>
+        <div class="panel-section" id="panel-relations"></div>
+    </div>
+
+    <!-- Legend -->
+    <div id="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#58a6ff"></div> 类 (Class)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#3fb950"></div> 个体 (Individual)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#f0883e"></div> 属性 (Property)</div>
+        <div style="margin-top:6px;color:#484f58">滚轮缩放 | 拖拽平移 | 点击查看详情</div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>加载本体数据...</p>
+    </div>
+
+    <!-- Error banner -->
+    <div id="error-banner"></div>
+
+    <script>
+    // ============ State ============
+    let allNodes = [], allRels = [];
+    let simulation, svgG, linkSel, nodeSel, labelSel;
+    let activeFilter = 'all', searchTerm = '';
+
+    // ============ Color mapping ============
+    const typeColors = {
+        class: '#58a6ff',
+        individual: '#3fb950',
+        property: '#f0883e',
+        data_property: '#f0883e',
+        object_property: '#d2a8ff',
+        unknown: '#8b949e'
+    };
+    function nodeColor(type) { return typeColors[type] || typeColors.unknown; }
+
+    // ============ Load data ============
+    async function init() {
+        try {
+            // Try relative path first (works with any server)
+            const data = await loadData();
+            allNodes = data.nodes || [];
+            allRels = data.relationships || data.rels || [];
+
+            // Build adjacency for tooltips
+            buildAdjacency();
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('node-count').textContent = allNodes.length;
+            document.getElementById('rel-count').textContent = allRels.length;
+
+            renderGraph();
+        } catch (err) {
+            document.getElementById('loading').style.display = 'none';
+            showError('数据加载失败: ' + err.message);
+        }
+    }
+
+    async function loadData() {
+        // Try multiple paths
+        const paths = [
+            'data/nvl_ontology_data.json',
+            'nvl_ontology_data.json'
+        ];
+        for (const p of paths) {
+            try {
+                const r = await fetch(p);
+                if (r.ok) return await r.json();
+            } catch(e) { /* try next */ }
+        }
+        throw new Error('无法找到 nvl_ontology_data.json，请确保文件存在且通过 HTTP 服务访问');
+    }
+
+    // ============ Adjacency ============
+    const nodeMap = new Map();
+    const outEdges = new Map();  // nodeId -> [{rel, target}]
+    const inEdges = new Map();
+
+    function buildAdjacency() {
+        allNodes.forEach(n => {
+            n._index = nodeMap.size;
+            nodeMap.set(n.id, n);
+        });
+        allRels.forEach(r => {
+            if (!outEdges.has(r.from)) outEdges.set(r.from, []);
+            outEdges.get(r.from).push(r);
+            if (!inEdges.has(r.to)) inEdges.set(r.to, []);
+            inEdges.get(r.to).push(r);
+        });
+    }
+
+    // ============ Filter ============
+    function getFiltered() {
+        let nodes = allNodes;
+        if (activeFilter !== 'all') {
+            nodes = nodes.filter(n => n.type === activeFilter);
+        }
+        if (searchTerm) {
+            const q = searchTerm.toLowerCase();
+            nodes = nodes.filter(n => (n.name || '').toLowerCase().includes(q));
+        }
+        const nodeIds = new Set(nodes.map(n => n.id));
+        // Deep copy rels to prevent D3 from mutating original data
+        const rels = allRels
+            .filter(r => nodeIds.has(r.from) && nodeIds.has(r.to))
+            .map(r => ({ ...r, source: r.from, target: r.to }));
+        return { nodes, rels };
+    }
+
+    // ============ Render graph ============
+    function renderGraph() {
+        // Clear previous
+        d3.select('#graph').selectAll('*').remove();
+
+        const container = document.getElementById('graph');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        const svg = d3.select('#graph').append('svg')
+            .attr('width', width).attr('height', height);
+
+        svgG = svg.append('g');
+
+        // Zoom
+        const zoom = d3.zoom()
+            .scaleExtent([0.05, 5])
+            .on('zoom', e => svgG.attr('transform', e.transform));
+        svg.call(zoom);
+
+        const { nodes, rels } = getFiltered();
+
+        // Build index map for filtered nodes
+        const filteredIds = new Set(nodes.map(n => n.id));
+
+        // Links
+        linkSel = svgG.append('g')
+            .selectAll('line')
+            .data(rels)
+            .join('line')
+            .attr('stroke', '#30363d')
+            .attr('stroke-opacity', 0.4)
+            .attr('stroke-width', 0.5);
+
+        // Nodes
+        const radiusScale = d => {
+            if (d.type === 'class') return 7;
+            if (d.type === 'individual') return 5;
+            return 4;
+        };
+
+        nodeSel = svgG.append('g')
+            .selectAll('circle')
+            .data(nodes)
+            .join('circle')
+            .attr('r', radiusScale)
+            .attr('fill', d => nodeColor(d.type))
+            .attr('stroke', '#0d1117')
+            .attr('stroke-width', 1)
+            .style('cursor', 'pointer')
+            .on('mouseover', showTooltip)
+            .on('mousemove', moveTooltip)
+            .on('mouseout', hideTooltip)
+            .on('click', showPanel)
+            .call(dragBehavior());
+
+        // Labels - show for classes and hovered nodes
+        labelSel = svgG.append('g')
+            .selectAll('text')
+            .data(nodes.filter(n => n.type === 'class'))
+            .join('text')
+            .text(d => truncateName(d.name || d.id, 20))
+            .attr('font-size', 9)
+            .attr('fill', '#8b949e')
+            .attr('dx', 10)
+            .attr('dy', 3)
+            .style('pointer-events', 'none');
+
+        // Force simulation
+        simulation = d3.forceSimulation(nodes)
+            .force('link', d3.forceLink(rels).id(d => d.id).distance(40).strength(0.5))
+            .force('charge', d3.forceManyBody().strength(-200))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collide', d3.forceCollide().radius(d => radiusScale(d) + 2))
+            .force('x', d3.forceX(width / 2).strength(0.03))
+            .force('y', d3.forceY(height / 2).strength(0.03))
+            .alphaDecay(0.02);
+
+        simulation.on('tick', () => {
+            linkSel
+                .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+                .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+            nodeSel.attr('cx', d => d.x).attr('cy', d => d.y);
+            labelSel.attr('x', d => d.x).attr('y', d => d.y);
+        });
+
+        // Auto-center after initial layout
+        simulation.on('end', () => {
+            const bounds = svgG.node().getBBox();
+            if (bounds.width > 0) {
+                const scale = Math.min(width / (bounds.width + 80), height / (bounds.height + 80), 1.5);
+                const tx = width / 2 - (bounds.x + bounds.width / 2) * scale;
+                const ty = height / 2 - (bounds.y + bounds.height / 2) * scale;
+                svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+            }
+        });
+    }
+
+    // ============ Drag ============
+    function dragBehavior() {
+        return d3.drag()
+            .on('start', (e, d) => {
+                if (!e.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x; d.fy = d.y;
+            })
+            .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+            .on('end', (e, d) => {
+                if (!e.active) simulation.alphaTarget(0);
+                d.fx = null; d.fy = null;
+            });
+    }
+
+    // ============ Tooltip ============
+    function showTooltip(event, d) {
+        const tt = document.getElementById('tooltip');
+        const name = d.name || d.id;
+        const conns = (outEdges.get(d.id) || []).length + (inEdges.get(d.id) || []).length;
+
+        tt.querySelector('.tt-name').textContent = truncateName(name, 40);
+        const typeEl = tt.querySelector('.tt-type');
+        typeEl.textContent = d.type || 'unknown';
+        typeEl.style.background = nodeColor(d.type) + '33';
+        typeEl.style.color = nodeColor(d.type);
+        tt.querySelector('.tt-detail').textContent = `连接数: ${conns}`;
+
+        // Show sample relations
+        const relsHtml = [];
+        const outR = outEdges.get(d.id) || [];
+        outR.slice(0, 5).forEach(r => {
+            const target = nodeMap.get(r.to);
+            relsHtml.push(`<div class="tt-rel">→ ${r.type || 'related'} → ${truncateName(target?.name || r.to, 25)}</div>`);
+        });
+        const inR = inEdges.get(d.id) || [];
+        inR.slice(0, 3).forEach(r => {
+            const src = nodeMap.get(r.from);
+            relsHtml.push(`<div class="tt-rel">← ${r.type || 'related'} ← ${truncateName(src?.name || r.from, 25)}</div>`);
+        });
+        if (conns > 8) relsHtml.push(`<div class="tt-rel" style="color:#484f58">...还有 ${conns - 8} 个连接</div>`);
+        tt.querySelector('.tt-rels').innerHTML = relsHtml.join('');
+
+        tt.style.display = 'block';
+
+        // Highlight node
+        d3.select(event.target).attr('stroke', '#e6edf3').attr('stroke-width', 2);
+    }
+
+    function moveTooltip(event) {
+        const tt = document.getElementById('tooltip');
+        let x = event.pageX + 12, y = event.pageY + 12;
+        if (x + 320 > window.innerWidth) x = event.pageX - 330;
+        if (y + 200 > window.innerHeight) y = event.pageY - 210;
+        tt.style.left = x + 'px';
+        tt.style.top = y + 'px';
+    }
+
+    function hideTooltip(event, d) {
+        document.getElementById('tooltip').style.display = 'none';
+        d3.select(event.target).attr('stroke', '#0d1117').attr('stroke-width', 1);
+    }
+
+    // ============ Side panel ============
+    function showPanel(event, d) {
+        const panel = document.getElementById('side-panel');
+        const name = d.name || d.id;
+
+        document.getElementById('panel-name').textContent = name;
+        const typeEl = document.getElementById('panel-type');
+        typeEl.textContent = d.type || 'unknown';
+        typeEl.style.background = nodeColor(d.type) + '33';
+        typeEl.style.color = nodeColor(d.type);
+
+        // Properties
+        const propsDiv = document.getElementById('panel-props');
+        const props = Object.entries(d).filter(([k]) => !k.startsWith('_'));
+        propsDiv.innerHTML = '<h4>属性</h4>' + props.map(([k, v]) =>
+            `<div class="panel-prop"><span class="pk">${k}</span><span class="pv" title="${v}">${truncateName(String(v), 30)}</span></div>`
+        ).join('');
+
+        // Relations
+        const relsDiv = document.getElementById('panel-relations');
+        const outR = outEdges.get(d.id) || [];
+        const inR = inEdges.get(d.id) || [];
+        let html = '<h4>出边 (' + outR.length + ')</h4>';
+        outR.slice(0, 20).forEach(r => {
+            const target = nodeMap.get(r.to);
+            html += `<div class="panel-prop"><span class="pk">${r.type || '→'}</span><span class="pv">${truncateName(target?.name || r.to, 25)}</span></div>`;
+        });
+        html += '<h4 style="margin-top:8px">入边 (' + inR.length + ')</h4>';
+        inR.slice(0, 20).forEach(r => {
+            const src = nodeMap.get(r.from);
+            html += `<div class="panel-prop"><span class="pk">${r.type || '←'}</span><span class="pv">${truncateName(src?.name || r.from, 25)}</span></div>`;
+        });
+        relsDiv.innerHTML = html;
+
+        panel.classList.add('open');
+    }
+
+    function closePanel() {
+        document.getElementById('side-panel').classList.remove('open');
+    }
+
+    // ============ Search & Filter ============
+    document.getElementById('search-box').addEventListener('input', e => {
+        searchTerm = e.target.value.trim();
+        renderGraph();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeFilter = btn.dataset.type;
+            renderGraph();
+        });
+    });
+
+    // ============ Helpers ============
+    function truncateName(name, max) {
+        if (!name) return '(unnamed)';
+        return name.length > max ? name.slice(0, max) + '…' : name;
+    }
+
+    function showError(msg) {
+        const el = document.getElementById('error-banner');
+        el.textContent = '❌ ' + msg;
+        el.style.display = 'block';
+    }
+
+    // ============ Resize ============
+    window.addEventListener('resize', () => {
+        const container = document.getElementById('graph');
+        d3.select('#graph svg').attr('width', container.clientWidth).attr('height', container.clientHeight);
+    });
+
+    // ============ Start ============
+    init();
+    </script>
+</body>
+</html>
