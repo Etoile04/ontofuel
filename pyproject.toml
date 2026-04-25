@@ -32,11 +32,11 @@ database = ["supabase>=2.0"]
 viz = ["Pillow>=9.0", "numpy>=1.24"]
 all = ["ontofuel[dev,database,viz]"]
 
-[project.scripts]
-ontofuel = "ontofuel.cli:main"
-
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+ontofuel = ["visualization/templates/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
