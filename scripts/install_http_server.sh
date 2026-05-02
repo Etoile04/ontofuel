@@ -34,7 +34,7 @@ do_install() {
 
     # 修复 WorkingDirectory 为当前工作区路径
     WORKSPACE="$(cd "$(dirname "$0")/.." && pwd)"
-    sed -i '' "s|/Users/lwj04/.openclaw/workspace-extractor|${WORKSPACE}|g" "$PLIST_DST"
+    /usr/libexec/PlistBuddy -c "Set :WorkingDirectory ${WORKSPACE}" "$PLIST_DST"
 
     # 加载
     launchctl load "$PLIST_DST"
@@ -48,7 +48,7 @@ do_install() {
     fi
 
     # 健康检查
-    do_healthcheck
+    do_healthcheck || warn "安装完成但健康检查失败，请检查日志: /tmp/ontofuel-http-server.err"
 }
 
 do_uninstall_silent() {
@@ -76,7 +76,9 @@ do_status() {
         info "服务状态: 未加载"
     fi
 
-    if curl -s -o /dev/null -w "%{http_code}" "http://localhost:${PORT}" 2>/dev/null | grep -q "200"; then
+    local http_code
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 3 "http://localhost:${PORT}") || true
+    if [[ "$http_code" == "200" ]]; then
         ok "HTTP 服务可访问: http://localhost:${PORT}"
     else
         warn "HTTP 服务不可访问: http://localhost:${PORT}"
@@ -87,7 +89,9 @@ do_healthcheck() {
     local retries=5
     local i
     for ((i = 1; i <= retries; i++)); do
-        if curl -s -o /dev/null -w "%{http_code}" "http://localhost:${PORT}" 2>/dev/null | grep -q "200"; then
+        local http_code
+        http_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 3 "http://localhost:${PORT}") || true
+        if [[ "$http_code" == "200" ]]; then
             ok "健康检查通过: http://localhost:${PORT} (尝试 ${i}/${retries})"
             return 0
         fi
