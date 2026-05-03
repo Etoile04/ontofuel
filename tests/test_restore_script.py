@@ -4,7 +4,7 @@ import pathlib
 import stat
 
 SCRIPT_PATH = pathlib.Path(
-    "/Users/lwj04/.openclaw/workspace-extractor/.worktrees/o3-docker/docker/scripts/restore.sh"
+    "/Users/lwj04/.openclaw/workspace-extractor/.worktrees/o4-docs/docker/scripts/restore.sh"
 )
 
 

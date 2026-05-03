@@ -1,7 +1,7 @@
 """Tests for Task 3: Web CRUD Management Interface."""
 import pathlib
 
-BASE = pathlib.Path("/Users/lwj04/.openclaw/workspace-extractor/.worktrees/o3-docker")
+BASE = pathlib.Path("/Users/lwj04/.openclaw/workspace-extractor/.worktrees/o4-docs")
 
 
 def test_web_index_html_exists():
