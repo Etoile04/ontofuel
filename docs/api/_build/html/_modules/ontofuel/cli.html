@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ontofuel.cli &#8212; OntoFuel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for ontofuel.cli</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;OntoFuel CLI — command-line interface for ontology operations.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+
+<div class="viewcode-block" id="cmd_stats">
+<a class="viewcode-back" href="../../api_reference.html#ontofuel.cli.cmd_stats">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cmd_stats</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Show ontology statistics.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.core.ontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ontology</span><span class="p">,</span> <span class="n">get_stats</span>
+
+    <span class="n">ont</span> <span class="o">=</span> <span class="n">load_ontology</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ontology</span><span class="p">)</span>
+    <span class="n">stats</span> <span class="o">=</span> <span class="n">get_stats</span><span class="p">(</span><span class="n">ont</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;═══ OntoFuel Ontology Stats ═══&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Classes:            </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;classes&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Object Properties:  </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;object_properties&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Datatype Properties:</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;datatype_properties&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Individuals:        </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;individuals&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.core.query</span><span class="w"> </span><span class="kn">import</span> <span class="n">OntologyQuery</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">OntologyQuery</span><span class="p">(</span><span class="n">ont</span><span class="p">)</span>
+
+        <span class="c1"># Class distribution</span>
+        <span class="n">class_counts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">q</span><span class="o">.</span><span class="n">individuals</span><span class="p">:</span>
+            <span class="bp">cls</span> <span class="o">=</span> <span class="n">ind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="bp">cls</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="bp">cls</span> <span class="k">else</span> <span class="s2">&quot;Unknown&quot;</span>
+            <span class="n">class_counts</span><span class="p">[</span><span class="bp">cls</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  Top classes by individuals:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">class_counts</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])[:</span><span class="mi">10</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cmd_query">
+<a class="viewcode-back" href="../../api_reference.html#ontofuel.cli.cmd_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cmd_query</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Search ontology entities.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.core.ontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ontology</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.core.query</span><span class="w"> </span><span class="kn">import</span> <span class="n">OntologyQuery</span>
+
+    <span class="n">ont</span> <span class="o">=</span> <span class="n">load_ontology</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ontology</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">OntologyQuery</span><span class="p">(</span><span class="n">ont</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">class_name</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">by_class</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">class_name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Individuals of class &#39;</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">property</span><span class="p">:</span>
+        <span class="n">prop</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">property</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">by_property</span><span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">value</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Results for property &#39;</span><span class="si">{</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">get_class_hierarchy</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Class: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Class &#39;</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">hierarchy</span><span class="si">}</span><span class="s2">&#39; not found&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;children&quot;</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  └─ </span><span class="si">{</span><span class="n">child</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">query</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">category</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Search &#39;</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">query</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="si">}</span><span class="s2"> results&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Display results</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">limit</span> <span class="ow">or</span> <span class="mi">20</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[:</span><span class="n">limit</span><span class="p">]:</span>
+        <span class="n">match_type</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_match_type&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">)</span>
+        <span class="n">comment</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comment&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">match_type</span> <span class="o">==</span> <span class="s2">&quot;class&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [CLASS] </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot; — </span><span class="si">{</span><span class="n">comment</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">comment</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">cls</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [IND]   </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="bp">cls</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [ITEM]  </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ... and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">limit</span><span class="si">}</span><span class="s2"> more&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Export if requested</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Exported to </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cmd_export">
+<a class="viewcode-back" href="../../api_reference.html#ontofuel.cli.cmd_export">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cmd_export</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Export ontology to various formats.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.core.ontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ontology</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.core.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">OntologyExporter</span>
+
+    <span class="n">ont</span> <span class="o">=</span> <span class="n">load_ontology</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ontology</span><span class="p">)</span>
+    <span class="n">exp</span> <span class="o">=</span> <span class="n">OntologyExporter</span><span class="p">(</span><span class="n">ont</span><span class="p">)</span>
+
+    <span class="n">format_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;json&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">export_json</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+        <span class="s2">&quot;csv-classes&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">export_csv_classes</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+        <span class="s2">&quot;csv-individuals&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">export_csv_individuals</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+        <span class="s2">&quot;csv-properties&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">export_csv_properties</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+        <span class="s2">&quot;graphml&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">export_graphml</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+        <span class="s2">&quot;markdown&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">exp</span><span class="o">.</span><span class="n">export_markdown_report</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">format_map</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown format: </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Available: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">format_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">format_map</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">](</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Exported </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> bytes)&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cmd_validate">
+<a class="viewcode-back" href="../../api_reference.html#ontofuel.cli.cmd_validate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cmd_validate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate and score ontology quality.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.core.ontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ontology</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.core.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">OntologyValidator</span>
+
+    <span class="n">ont</span> <span class="o">=</span> <span class="n">load_ontology</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ontology</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">OntologyValidator</span><span class="p">(</span><span class="n">ont</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">quick</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">quick_check</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;═══ Quick Health Check ═══&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">icon</span> <span class="o">=</span> <span class="s2">&quot;✅&quot;</span> <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="s2">&quot;❌&quot;</span> <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">icon</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;═══ Ontology Quality Report ═══&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Total Score: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;total_score&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/100 (</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;grade&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Dimensions:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;dimension_scores&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">bar</span> <span class="o">=</span> <span class="s2">&quot;█&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">score</span> <span class="o">//</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;░&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20</span> <span class="o">-</span> <span class="n">score</span> <span class="o">//</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dim</span><span class="si">:</span><span class="s2">15s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">bar</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">score</span><span class="si">}</span><span class="s2">/100&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Issues:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">issue</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;issues&quot;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">issue</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Stats: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;stats&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Report saved to </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cmd_viz">
+<a class="viewcode-back" href="../../api_reference.html#ontofuel.cli.cmd_viz">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cmd_viz</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start the visualization web server.&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">start_viewer</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting OntoFuel visualization on port </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">start_viewer</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">ontology_dir</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">open_browser</span><span class="o">=</span><span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">no_browser</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../api_reference.html#ontofuel.cli.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CLI entry point.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;ontofuel&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;OntoFuel — Ontology-driven knowledge extraction for nuclear materials&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ontology&quot;</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to ontology JSON file (default: auto-detect)&quot;</span><span class="p">)</span>
+
+    <span class="n">sub</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s2">&quot;command&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Available commands&quot;</span><span class="p">)</span>
+
+    <span class="c1"># stats</span>
+    <span class="n">p_stats</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;stats&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show ontology statistics&quot;</span><span class="p">)</span>
+    <span class="n">p_stats</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show detailed stats&quot;</span><span class="p">)</span>
+    <span class="n">p_stats</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_stats</span><span class="p">)</span>
+
+    <span class="c1"># query</span>
+    <span class="n">p_query</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Search ontology entities&quot;</span><span class="p">)</span>
+    <span class="n">p_query</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;query&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Search query&quot;</span><span class="p">)</span>
+    <span class="n">p_query</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--class&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;class_name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter by class name&quot;</span><span class="p">)</span>
+    <span class="n">p_query</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--property&quot;</span><span class="p">,</span> <span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter by property (name or name=value)&quot;</span><span class="p">)</span>
+    <span class="n">p_query</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--hierarchy&quot;</span><span class="p">,</span> <span class="s2">&quot;-H&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show class hierarchy for given class&quot;</span><span class="p">)</span>
+    <span class="n">p_query</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--category&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;classes&quot;</span><span class="p">,</span> <span class="s2">&quot;individuals&quot;</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+    <span class="n">p_query</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--limit&quot;</span><span class="p">,</span> <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Max results&quot;</span><span class="p">)</span>
+    <span class="n">p_query</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--output&quot;</span><span class="p">,</span> <span class="s2">&quot;-O&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Export results to JSON file&quot;</span><span class="p">)</span>
+    <span class="n">p_query</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_query</span><span class="p">)</span>
+
+    <span class="c1"># export</span>
+    <span class="n">p_export</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;export&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Export ontology to various formats&quot;</span><span class="p">)</span>
+    <span class="n">p_export</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;csv-classes&quot;</span><span class="p">,</span> <span class="s2">&quot;csv-individuals&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;csv-properties&quot;</span><span class="p">,</span> <span class="s2">&quot;graphml&quot;</span><span class="p">,</span> <span class="s2">&quot;markdown&quot;</span><span class="p">],</span>
+                          <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Export format&quot;</span><span class="p">)</span>
+    <span class="n">p_export</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output file path&quot;</span><span class="p">)</span>
+    <span class="n">p_export</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_export</span><span class="p">)</span>
+
+    <span class="c1"># validate</span>
+    <span class="n">p_validate</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;validate&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Validate ontology quality&quot;</span><span class="p">)</span>
+    <span class="n">p_validate</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--quick&quot;</span><span class="p">,</span> <span class="s2">&quot;-q&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Quick health check&quot;</span><span class="p">)</span>
+    <span class="n">p_validate</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--output&quot;</span><span class="p">,</span> <span class="s2">&quot;-O&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Save report to JSON file&quot;</span><span class="p">)</span>
+    <span class="n">p_validate</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_validate</span><span class="p">)</span>
+
+    <span class="c1"># viz</span>
+    <span class="n">p_viz</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s2">&quot;viz&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Start visualization server&quot;</span><span class="p">)</span>
+    <span class="n">p_viz</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--port&quot;</span><span class="p">,</span> <span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Port (default: 9999)&quot;</span><span class="p">)</span>
+    <span class="n">p_viz</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--data-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Ontology data directory&quot;</span><span class="p">)</span>
+    <span class="n">p_viz</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--no-browser&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Don&#39;t open browser&quot;</span><span class="p">)</span>
+    <span class="n">p_viz</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">cmd_viz</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">args</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">OntoFuel</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, OntoFuel Contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

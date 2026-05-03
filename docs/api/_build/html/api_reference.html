@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>API Reference &#8212; OntoFuel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="OntoFuel API Documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
+<p>This section contains auto-generated API documentation for all public modules
+of the OntoFuel package.</p>
+<section id="module-ontofuel.cli">
+<span id="command-line-interface"></span><h2>Command-Line Interface<a class="headerlink" href="#module-ontofuel.cli" title="Link to this heading">¶</a></h2>
+<p>OntoFuel CLI — command-line interface for ontology operations.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.cli.cmd_export">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_export</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/cli.html#cmd_export"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.cli.cmd_export" title="Link to this definition">¶</a></dt>
+<dd><p>Export ontology to various formats.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.cli.cmd_query">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/cli.html#cmd_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.cli.cmd_query" title="Link to this definition">¶</a></dt>
+<dd><p>Search ontology entities.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.cli.cmd_stats">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/cli.html#cmd_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.cli.cmd_stats" title="Link to this definition">¶</a></dt>
+<dd><p>Show ontology statistics.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.cli.cmd_validate">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/cli.html#cmd_validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.cli.cmd_validate" title="Link to this definition">¶</a></dt>
+<dd><p>Validate and score ontology quality.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.cli.cmd_viz">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.cli.</span></span><span class="sig-name descname"><span class="pre">cmd_viz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/cli.html#cmd_viz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.cli.cmd_viz" title="Link to this definition">¶</a></dt>
+<dd><p>Start the visualization web server.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.cli.main">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/cli.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.cli.main" title="Link to this definition">¶</a></dt>
+<dd><p>CLI entry point.</p>
+</dd></dl>
+
+</section>
+<section id="core-modules">
+<h2>Core Modules<a class="headerlink" href="#core-modules" title="Link to this heading">¶</a></h2>
+<section id="module-ontofuel.core.ontology">
+<span id="ontology"></span><h3>ontology<a class="headerlink" href="#module-ontofuel.core.ontology" title="Link to this heading">¶</a></h3>
+<p>Ontology loader — load and access ontology data from JSON files.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.get_classes">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">get_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#get_classes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.get_classes" title="Link to this definition">¶</a></dt>
+<dd><p>Get all classes as list of dicts with ‘name’ field.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.get_datatype_properties">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">get_datatype_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#get_datatype_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.get_datatype_properties" title="Link to this definition">¶</a></dt>
+<dd><p>Get all datatype properties.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.get_default_nvl_path">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">get_default_nvl_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#get_default_nvl_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.get_default_nvl_path" title="Link to this definition">¶</a></dt>
+<dd><p>Get the default NVL visualization data path.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.get_default_ontology_path">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">get_default_ontology_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#get_default_ontology_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.get_default_ontology_path" title="Link to this definition">¶</a></dt>
+<dd><p>Get the default ontology JSON file path.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.get_individuals">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">get_individuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#get_individuals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.get_individuals" title="Link to this definition">¶</a></dt>
+<dd><p>Get all individuals.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.get_object_properties">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">get_object_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#get_object_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.get_object_properties" title="Link to this definition">¶</a></dt>
+<dd><p>Get all object properties.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.get_stats">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">get_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#get_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.get_stats" title="Link to this definition">¶</a></dt>
+<dd><p>Get ontology statistics.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.load_nvl_data">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">load_nvl_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#load_nvl_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.load_nvl_data" title="Link to this definition">¶</a></dt>
+<dd><p>Load NVL visualization data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ontofuel.core.ontology.load_ontology">
+<span class="sig-prename descclassname"><span class="pre">ontofuel.core.ontology.</span></span><span class="sig-name descname"><span class="pre">load_ontology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/ontology.html#load_ontology"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.ontology.load_ontology" title="Link to this definition">¶</a></dt>
+<dd><p>Load ontology from JSON file.</p>
+<p>The ontology JSON has this structure:
+{</p>
+<blockquote>
+<div><p>“classes”: {“ClassName”: {…}, …},  # dict keyed by name
+“objectProperties”: {…},
+“datatypeProperties”: {…},
+“individuals”: {…},
+“metadata”: {…}</p>
+</div></blockquote>
+<p>}</p>
+<p>This function normalizes all sections to lists of dicts with a “name” field.</p>
+</dd></dl>
+
+</section>
+<section id="module-ontofuel.core.query">
+<span id="query"></span><h3>query<a class="headerlink" href="#module-ontofuel.core.query" title="Link to this heading">¶</a></h3>
+<p>Ontology query engine — search and filter ontology data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.core.query.</span></span><span class="sig-name descname"><span class="pre">OntologyQuery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/core/query.html#OntologyQuery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.query.OntologyQuery" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Query engine for ontology data.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">OntologyQuery</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;U-10Mo&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">by_class</span><span class="p">(</span><span class="s2">&quot;NuclearFuel&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery.by_class">
+<span class="sig-name descname"><span class="pre">by_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/query.html#OntologyQuery.by_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.query.OntologyQuery.by_class" title="Link to this definition">¶</a></dt>
+<dd><p>Get all individuals of a given class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>class_name</strong> – Class name (exact or case-insensitive).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of individuals belonging to the class.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery.by_property">
+<span class="sig-name descname"><span class="pre">by_property</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prop_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/query.html#OntologyQuery.by_property"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.query.OntologyQuery.by_property" title="Link to this definition">¶</a></dt>
+<dd><p>Search individuals by property name and optional value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prop_name</strong> – Property name prefix (e.g., “density” matches “prop_density”)</p></li>
+<li><p><strong>prop_value</strong> – Optional value to match (substring).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of individuals with matching properties.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery.classes">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">classes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ontofuel.core.query.OntologyQuery.classes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery.get_class_hierarchy">
+<span class="sig-name descname"><span class="pre">get_class_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/query.html#OntologyQuery.get_class_hierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.query.OntologyQuery.get_class_hierarchy" title="Link to this definition">¶</a></dt>
+<dd><p>Get a class and its direct children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>class_name</strong> – Parent class name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict with “class” and “children” keys.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery.individuals">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">individuals</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ontofuel.core.query.OntologyQuery.individuals" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery.ontology">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ontology</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></span><a class="headerlink" href="#ontofuel.core.query.OntologyQuery.ontology" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'all'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/query.html#OntologyQuery.search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.query.OntologyQuery.search" title="Link to this definition">¶</a></dt>
+<dd><p>Search ontology by name (case-insensitive substring match).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> – Search string.</p></li>
+<li><p><strong>category</strong> – “classes”, “individuals”, or “all”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of matching items with a “_match_type” field added.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.query.OntologyQuery.stats">
+<span class="sig-name descname"><span class="pre">stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/query.html#OntologyQuery.stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.query.OntologyQuery.stats" title="Link to this definition">¶</a></dt>
+<dd><p>Return ontology statistics.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ontofuel.core.exporter">
+<span id="exporter"></span><h3>exporter<a class="headerlink" href="#module-ontofuel.core.exporter" title="Link to this heading">¶</a></h3>
+<p>Ontology exporter — export to multiple formats.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.core.exporter.OntologyExporter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.core.exporter.</span></span><span class="sig-name descname"><span class="pre">OntologyExporter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/core/exporter.html#OntologyExporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.exporter.OntologyExporter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Export ontology data to various formats.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span> <span class="o">=</span> <span class="n">OntologyExporter</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="o">.</span><span class="n">export_json</span><span class="p">(</span><span class="s2">&quot;output.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exp</span><span class="o">.</span><span class="n">export_csv_classes</span><span class="p">(</span><span class="s2">&quot;classes.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.exporter.OntologyExporter.export_csv_classes">
+<span class="sig-name descname"><span class="pre">export_csv_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/core/exporter.html#OntologyExporter.export_csv_classes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.exporter.OntologyExporter.export_csv_classes" title="Link to this definition">¶</a></dt>
+<dd><p>Export classes to CSV.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.exporter.OntologyExporter.export_csv_individuals">
+<span class="sig-name descname"><span class="pre">export_csv_individuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/core/exporter.html#OntologyExporter.export_csv_individuals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.exporter.OntologyExporter.export_csv_individuals" title="Link to this definition">¶</a></dt>
+<dd><p>Export individuals to CSV.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.exporter.OntologyExporter.export_csv_properties">
+<span class="sig-name descname"><span class="pre">export_csv_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/core/exporter.html#OntologyExporter.export_csv_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.exporter.OntologyExporter.export_csv_properties" title="Link to this definition">¶</a></dt>
+<dd><p>Export object properties to CSV.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.exporter.OntologyExporter.export_graphml">
+<span class="sig-name descname"><span class="pre">export_graphml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/core/exporter.html#OntologyExporter.export_graphml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.exporter.OntologyExporter.export_graphml" title="Link to this definition">¶</a></dt>
+<dd><p>Export as GraphML for Gephi/Cytoscape.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.exporter.OntologyExporter.export_json">
+<span class="sig-name descname"><span class="pre">export_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/core/exporter.html#OntologyExporter.export_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.exporter.OntologyExporter.export_json" title="Link to this definition">¶</a></dt>
+<dd><p>Export full ontology as JSON.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.exporter.OntologyExporter.export_markdown_report">
+<span class="sig-name descname"><span class="pre">export_markdown_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/core/exporter.html#OntologyExporter.export_markdown_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.exporter.OntologyExporter.export_markdown_report" title="Link to this definition">¶</a></dt>
+<dd><p>Export a markdown summary report.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.core.exporter.OntologyExporter.ontology">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ontology</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></span><a class="headerlink" href="#ontofuel.core.exporter.OntologyExporter.ontology" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ontofuel.core.validator">
+<span id="validator"></span><h3>validator<a class="headerlink" href="#module-ontofuel.core.validator" title="Link to this heading">¶</a></h3>
+<p>Ontology validator — quality assessment of ontology data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.core.validator.OntologyValidator">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.core.validator.</span></span><span class="sig-name descname"><span class="pre">OntologyValidator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/core/validator.html#OntologyValidator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.validator.OntologyValidator" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validate and score ontology quality.</p>
+<p>Scores across 5 dimensions (0-100 each):
+1. Naming conventions (PascalCase/camelCase)
+2. Hierarchy structure (class relationships)
+3. Semantic consistency (domain/range definitions)
+4. Completeness (annotations, metadata)
+5. Domain coverage (concept coverage)</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">OntologyValidator</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;total_score&quot;</span><span class="p">])</span>
+<span class="go">100</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.core.validator.OntologyValidator.ontology">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ontology</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></span><a class="headerlink" href="#ontofuel.core.validator.OntologyValidator.ontology" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.validator.OntologyValidator.quick_check">
+<span class="sig-name descname"><span class="pre">quick_check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/validator.html#OntologyValidator.quick_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.validator.OntologyValidator.quick_check" title="Link to this definition">¶</a></dt>
+<dd><p>Fast structural check without deep analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict with basic health indicators.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.core.validator.OntologyValidator.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/core/validator.html#OntologyValidator.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.core.validator.OntologyValidator.validate" title="Link to this definition">¶</a></dt>
+<dd><p>Run full validation and return scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict with dimension scores, total score, grade, and issues list.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="database-modules">
+<h2>Database Modules<a class="headerlink" href="#database-modules" title="Link to this heading">¶</a></h2>
+<section id="module-ontofuel.database.client">
+<span id="client"></span><h3>client<a class="headerlink" href="#module-ontofuel.database.client" title="Link to this heading">¶</a></h3>
+<p>Database module — Supabase client and data restoration.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.database.client.DataRestorer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.database.client.</span></span><span class="sig-name descname"><span class="pre">DataRestorer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ontofuel.database.client.SupabaseClient" title="ontofuel.database.client.SupabaseClient"><span class="pre">SupabaseClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/database/client.html#DataRestorer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.DataRestorer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Restore ontology data into Supabase from JSON sources.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">DataRestorer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">restore_from_ontology</span><span class="p">(</span><span class="s2">&quot;ontology/material_ontology_enhanced.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.client.DataRestorer.restore_from_json">
+<span class="sig-name descname"><span class="pre">restore_from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/ontofuel/database/client.html#DataRestorer.restore_from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.DataRestorer.restore_from_json" title="Link to this definition">¶</a></dt>
+<dd><p>Restore data from a generic JSON file to a table.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.client.DataRestorer.restore_from_ontology">
+<span class="sig-name descname"><span class="pre">restore_from_ontology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/ontofuel/database/client.html#DataRestorer.restore_from_ontology"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.DataRestorer.restore_from_ontology" title="Link to this definition">¶</a></dt>
+<dd><p>Restore individuals from ontology JSON to Supabase materials table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Stats dict with counts.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.database.client.SupabaseClient">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.database.client.</span></span><span class="sig-name descname"><span class="pre">SupabaseClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/database/client.html#SupabaseClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.SupabaseClient" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Lightweight Supabase REST client (stdlib only, uses urllib).</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">SupabaseClient</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">health_check</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.client.SupabaseClient.count">
+<span class="sig-name descname"><span class="pre">count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/ontofuel/database/client.html#SupabaseClient.count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.SupabaseClient.count" title="Link to this definition">¶</a></dt>
+<dd><p>Count rows in a table.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.client.SupabaseClient.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/ontofuel/database/client.html#SupabaseClient.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.SupabaseClient.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Delete rows matching query.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.client.SupabaseClient.health_check">
+<span class="sig-name descname"><span class="pre">health_check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/ontofuel/database/client.html#SupabaseClient.health_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.SupabaseClient.health_check" title="Link to this definition">¶</a></dt>
+<dd><p>Check if Supabase is reachable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.client.SupabaseClient.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/ontofuel/database/client.html#SupabaseClient.insert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.SupabaseClient.insert" title="Link to this definition">¶</a></dt>
+<dd><p>Insert rows into a table. Returns count inserted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.client.SupabaseClient.select">
+<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/database/client.html#SupabaseClient.select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.client.SupabaseClient.select" title="Link to this definition">¶</a></dt>
+<dd><p>Select rows from a table.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ontofuel.database.restore">
+<span id="restore"></span><h3>restore<a class="headerlink" href="#module-ontofuel.database.restore" title="Link to this heading">¶</a></h3>
+<p>Data restoration — load ontology data into Supabase.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.database.restore.DataRestorer">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.database.restore.</span></span><span class="sig-name descname"><span class="pre">DataRestorer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ontofuel.database.client.SupabaseClient" title="ontofuel.database.client.SupabaseClient"><span class="pre">SupabaseClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/database/restore.html#DataRestorer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.restore.DataRestorer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Restore ontology data into Supabase tables.</p>
+<p>Supports:
+- Restoring individuals as materials
+- Restoring properties as material_properties
+- Batch restoration with progress tracking
+- Dry-run mode for preview</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">DataRestorer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">restore_from_ontology</span><span class="p">(</span><span class="s2">&quot;ontology.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.restore.DataRestorer.reset_stats">
+<span class="sig-name descname"><span class="pre">reset_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/ontofuel/database/restore.html#DataRestorer.reset_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.restore.DataRestorer.reset_stats" title="Link to this definition">¶</a></dt>
+<dd><p>Reset stats for a new run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.restore.DataRestorer.restore_from_json">
+<span class="sig-name descname"><span class="pre">restore_from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/database/restore.html#DataRestorer.restore_from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.restore.DataRestorer.restore_from_json" title="Link to this definition">¶</a></dt>
+<dd><p>Restore data from a generic JSON file to a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_path</strong> – Path to JSON data file.</p></li>
+<li><p><strong>table</strong> – Target table name.</p></li>
+<li><p><strong>dry_run</strong> – If True, don’t actually write.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stats dict.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.restore.DataRestorer.restore_from_ontology">
+<span class="sig-name descname"><span class="pre">restore_from_ontology</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/database/restore.html#DataRestorer.restore_from_ontology"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.restore.DataRestorer.restore_from_ontology" title="Link to this definition">¶</a></dt>
+<dd><p>Restore individuals from ontology JSON to Supabase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ontology_path</strong> – Path to ontology JSON file.</p></li>
+<li><p><strong>dry_run</strong> – If True, don’t actually write to DB.</p></li>
+<li><p><strong>batch_size</strong> – Number of records to insert per batch.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stats dict with counts and errors.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.database.restore.DataRestorer.verify_data">
+<span class="sig-name descname"><span class="pre">verify_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/database/restore.html#DataRestorer.verify_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.database.restore.DataRestorer.verify_data" title="Link to this definition">¶</a></dt>
+<dd><p>Verify data in a table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict with count and sample data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="extraction-modules">
+<h2>Extraction Modules<a class="headerlink" href="#extraction-modules" title="Link to this heading">¶</a></h2>
+<section id="module-ontofuel.extraction.extractor">
+<span id="extractor"></span><h3>extractor<a class="headerlink" href="#module-ontofuel.extraction.extractor" title="Link to this heading">¶</a></h3>
+<p>Extractor — extract structured knowledge from text chunks.</p>
+<dl class="simple">
+<dt>Supports two extraction strategies:</dt><dd><ol class="arabic simple">
+<li><p>Rule-based: Pattern matching for common material science data</p></li>
+<li><p>Template-based: Structured extraction using property templates</p></li>
+</ol>
+</dd>
+</dl>
+<p>For LLM-enhanced extraction, use the full OntoFuel pipeline with
+an LLM backend (see docs/extraction_guide.md).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.ExtractionResult">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.extractor.</span></span><span class="sig-name descname"><span class="pre">ExtractionResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">individuals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relationships</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/extraction/extractor.html#ExtractionResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.extractor.ExtractionResult" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Result of extracting knowledge from a chunk.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.ExtractionResult.source">
+<span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#ontofuel.extraction.extractor.ExtractionResult.source" title="Link to this definition">¶</a></dt>
+<dd><p>Source chunk title or identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.ExtractionResult.individuals">
+<span class="sig-name descname"><span class="pre">individuals</span></span><a class="headerlink" href="#ontofuel.extraction.extractor.ExtractionResult.individuals" title="Link to this definition">¶</a></dt>
+<dd><p>List of extracted individuals (material instances).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.ExtractionResult.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#ontofuel.extraction.extractor.ExtractionResult.properties" title="Link to this definition">¶</a></dt>
+<dd><p>List of extracted property values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.ExtractionResult.relationships">
+<span class="sig-name descname"><span class="pre">relationships</span></span><a class="headerlink" href="#ontofuel.extraction.extractor.ExtractionResult.relationships" title="Link to this definition">¶</a></dt>
+<dd><p>List of extracted relationships.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.ExtractionResult.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#ontofuel.extraction.extractor.ExtractionResult.metadata" title="Link to this definition">¶</a></dt>
+<dd><p>Extraction metadata (method, confidence, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">individuals</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">properties</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">relationships</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">source</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.ExtractionResult.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/extractor.html#ExtractionResult.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.extractor.ExtractionResult.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.ExtractionResult.total_items">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">total_items</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#ontofuel.extraction.extractor.ExtractionResult.total_items" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.Extractor">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.extractor.</span></span><span class="sig-name descname"><span class="pre">Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/extraction/extractor.html#Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.extractor.Extractor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Extract structured knowledge from text.</p>
+<p>Uses rule-based pattern matching for common material science data.
+Can be extended with LLM backends for more complex extraction.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ext</span> <span class="o">=</span> <span class="n">Extractor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="s2">&quot;U-10Mo alloy has density 15.8 g/cm³&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">individuals</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.Extractor.class_names">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">class_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#ontofuel.extraction.extractor.Extractor.class_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.Extractor.extract">
+<span class="sig-name descname"><span class="pre">extract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'unknown'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ontofuel.extraction.extractor.ExtractionResult" title="ontofuel.extraction.extractor.ExtractionResult"><span class="pre">ExtractionResult</span></a></span></span><a class="reference internal" href="_modules/ontofuel/extraction/extractor.html#Extractor.extract"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.extractor.Extractor.extract" title="Link to this definition">¶</a></dt>
+<dd><p>Extract knowledge from a text chunk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Input text to extract from.</p></li>
+<li><p><strong>source</strong> – Source identifier (chunk title, file name, etc.).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ExtractionResult with extracted individuals, properties, relationships.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.Extractor.extract_with_template">
+<span class="sig-name descname"><span class="pre">extract_with_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'unknown'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ontofuel.extraction.extractor.ExtractionResult" title="ontofuel.extraction.extractor.ExtractionResult"><span class="pre">ExtractionResult</span></a></span></span><a class="reference internal" href="_modules/ontofuel/extraction/extractor.html#Extractor.extract_with_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.extractor.Extractor.extract_with_template" title="Link to this definition">¶</a></dt>
+<dd><p>Extract using a property template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Input text.</p></li>
+<li><p><strong>template</strong> – Dict with property names and extraction rules.</p></li>
+<li><p><strong>source</strong> – Source identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ExtractionResult with template-matched properties.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.extraction.extractor.Extractor.ontology">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ontology</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></span><a class="headerlink" href="#ontofuel.extraction.extractor.Extractor.ontology" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ontofuel.extraction.segmenter">
+<span id="segmenter"></span><h3>segmenter<a class="headerlink" href="#module-ontofuel.extraction.segmenter" title="Link to this heading">¶</a></h3>
+<p>Segmenter — split markdown/text into sections or fixed-size chunks.</p>
+<dl class="simple">
+<dt>Supports two modes:</dt><dd><ol class="arabic simple">
+<li><p>Heading-based segmentation (uses ##/### markers)</p></li>
+<li><p>Fixed-size chunking (by character or line count)</p></li>
+</ol>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">seg</span> <span class="o">=</span> <span class="n">Segmenter</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chunks</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">segment_heading</span><span class="p">(</span><span class="n">md_text</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chunks</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">segment_fixed</span><span class="p">(</span><span class="n">md_text</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">4000</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.segmenter.</span></span><span class="sig-name descname"><span class="pre">Chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_char</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_char</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/extraction/segmenter.html#Chunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A text chunk from segmentation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.index">
+<span class="sig-name descname"><span class="pre">index</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.index" title="Link to this definition">¶</a></dt>
+<dd><p>Chunk sequence number (0-based).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.title">
+<span class="sig-name descname"><span class="pre">title</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.title" title="Link to this definition">¶</a></dt>
+<dd><p>Section title (from heading) or “chunk_{index}”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.content">
+<span class="sig-name descname"><span class="pre">content</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.content" title="Link to this definition">¶</a></dt>
+<dd><p>The text content.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.start_char">
+<span class="sig-name descname"><span class="pre">start_char</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.start_char" title="Link to this definition">¶</a></dt>
+<dd><p>Start character offset in original text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.end_char">
+<span class="sig-name descname"><span class="pre">end_char</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.end_char" title="Link to this definition">¶</a></dt>
+<dd><p>End character offset in original text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.level">
+<span class="sig-name descname"><span class="pre">level</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.level" title="Link to this definition">¶</a></dt>
+<dd><p>Heading level (1-6), or 0 for fixed chunks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.metadata">
+<span class="sig-name descname"><span class="pre">metadata</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.metadata" title="Link to this definition">¶</a></dt>
+<dd><p>Optional metadata dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.char_count">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">char_count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.char_count" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">content</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#id5" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">end_char</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#id6" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#id7" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">level</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.line_count">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">line_count</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.line_count" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">metadata</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">start_char</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">title</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Chunk.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/segmenter.html#Chunk.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.segmenter.Chunk.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Segmenter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.segmenter.</span></span><span class="sig-name descname"><span class="pre">Segmenter</span></span><a class="reference internal" href="_modules/ontofuel/extraction/segmenter.html#Segmenter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.segmenter.Segmenter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Split text into manageable chunks for extraction.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">seg</span> <span class="o">=</span> <span class="n">Segmenter</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chunks</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">segment_heading</span><span class="p">(</span><span class="s2">&quot;# Title</span><span class="se">\n</span><span class="s2">## Section 1</span><span class="se">\n</span><span class="s2">Content&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Segmenter.HEADING_RE">
+<span class="sig-name descname"><span class="pre">HEADING_RE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('^(#{1,6})\\s+(.+)$',</span> <span class="pre">re.MULTILINE)</span></span><a class="headerlink" href="#ontofuel.extraction.segmenter.Segmenter.HEADING_RE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Segmenter.segment_by_keywords">
+<span class="sig-name descname"><span class="pre">segment_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ontofuel.extraction.segmenter.Chunk" title="ontofuel.extraction.segmenter.Chunk"><span class="pre">Chunk</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/segmenter.html#Segmenter.segment_by_keywords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.segmenter.Segmenter.segment_by_keywords" title="Link to this definition">¶</a></dt>
+<dd><p>Extract chunks around keyword occurrences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Input text.</p></li>
+<li><p><strong>keywords</strong> – Keywords to search for.</p></li>
+<li><p><strong>window</strong> – Characters to include before/after each match.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of Chunk objects centered on keyword matches.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Segmenter.segment_fixed">
+<span class="sig-name descname"><span class="pre">segment_fixed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ontofuel.extraction.segmenter.Chunk" title="ontofuel.extraction.segmenter.Chunk"><span class="pre">Chunk</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/segmenter.html#Segmenter.segment_fixed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.segmenter.Segmenter.segment_fixed" title="Link to this definition">¶</a></dt>
+<dd><p>Split text into fixed-size chunks with overlap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Input text.</p></li>
+<li><p><strong>chunk_size</strong> – Maximum characters per chunk.</p></li>
+<li><p><strong>overlap</strong> – Number of overlapping characters between chunks.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of Chunk objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.segmenter.Segmenter.segment_heading">
+<span class="sig-name descname"><span class="pre">segment_heading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ontofuel.extraction.segmenter.Chunk" title="ontofuel.extraction.segmenter.Chunk"><span class="pre">Chunk</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/segmenter.html#Segmenter.segment_heading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.segmenter.Segmenter.segment_heading" title="Link to this definition">¶</a></dt>
+<dd><p>Split text by markdown headings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Input markdown text.</p></li>
+<li><p><strong>min_size</strong> – Minimum chunk size in characters. Smaller chunks are
+merged with the previous one.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of Chunk objects, one per section.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ontofuel.extraction.merger">
+<span id="merger"></span><h3>merger<a class="headerlink" href="#module-ontofuel.extraction.merger" title="Link to this heading">¶</a></h3>
+<p>Merger — merge extraction results with deduplication and conflict resolution.</p>
+<dl class="simple">
+<dt>Supports:</dt><dd><ul class="simple">
+<li><p>Merging multiple ExtractionResults into one</p></li>
+<li><p>Deduplication by name (exact and fuzzy)</p></li>
+<li><p>Conflict resolution (latest wins, or priority-based)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">merger</span> <span class="o">=</span> <span class="n">Merger</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">merged</span> <span class="o">=</span> <span class="n">merger</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">result1</span><span class="p">,</span> <span class="n">result2</span><span class="p">,</span> <span class="n">result3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">merged</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.merger.</span></span><span class="sig-name descname"><span class="pre">MergeStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_individuals_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_properties_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_relationships_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duplicates_removed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conflicts_resolved</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_individuals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_relationships</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/extraction/merger.html#MergeStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Statistics from a merge operation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.conflicts_resolved">
+<span class="sig-name descname"><span class="pre">conflicts_resolved</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.conflicts_resolved" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.duplicates_removed">
+<span class="sig-name descname"><span class="pre">duplicates_removed</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.duplicates_removed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.final_individuals">
+<span class="sig-name descname"><span class="pre">final_individuals</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.final_individuals" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.final_properties">
+<span class="sig-name descname"><span class="pre">final_properties</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.final_properties" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.final_relationships">
+<span class="sig-name descname"><span class="pre">final_relationships</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.final_relationships" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.input_results">
+<span class="sig-name descname"><span class="pre">input_results</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.input_results" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/merger.html#MergeStats.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.total_individuals_in">
+<span class="sig-name descname"><span class="pre">total_individuals_in</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.total_individuals_in" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.total_properties_in">
+<span class="sig-name descname"><span class="pre">total_properties_in</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.total_properties_in" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergeStats.total_relationships_in">
+<span class="sig-name descname"><span class="pre">total_relationships_in</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergeStats.total_relationships_in" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergedResult">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.merger.</span></span><span class="sig-name descname"><span class="pre">MergedResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">individuals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relationships</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list[dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]]</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ontofuel.extraction.merger.MergeStats" title="ontofuel.extraction.merger.MergeStats"><span class="pre">MergeStats</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/extraction/merger.html#MergedResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.merger.MergedResult" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Merged extraction results.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergedResult.individuals">
+<span class="sig-name descname"><span class="pre">individuals</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergedResult.individuals" title="Link to this definition">¶</a></dt>
+<dd><p>Deduplicated individuals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergedResult.properties">
+<span class="sig-name descname"><span class="pre">properties</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergedResult.properties" title="Link to this definition">¶</a></dt>
+<dd><p>Merged properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergedResult.relationships">
+<span class="sig-name descname"><span class="pre">relationships</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergedResult.relationships" title="Link to this definition">¶</a></dt>
+<dd><p>Merged relationships.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict[str, Any]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergedResult.stats">
+<span class="sig-name descname"><span class="pre">stats</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergedResult.stats" title="Link to this definition">¶</a></dt>
+<dd><p>Merge statistics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ontofuel.extraction.merger.MergeStats" title="ontofuel.extraction.merger.MergeStats">ontofuel.extraction.merger.MergeStats</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergedResult.sources">
+<span class="sig-name descname"><span class="pre">sources</span></span><a class="headerlink" href="#ontofuel.extraction.merger.MergedResult.sources" title="Link to this definition">¶</a></dt>
+<dd><p>List of source identifiers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">individuals</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">properties</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">relationships</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">sources</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#id15" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">stats</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ontofuel.extraction.merger.MergeStats" title="ontofuel.extraction.merger.MergeStats"><span class="pre">MergeStats</span></a></span><a class="headerlink" href="#id16" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.MergedResult.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/merger.html#MergedResult.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.merger.MergedResult.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.Merger">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.merger.</span></span><span class="sig-name descname"><span class="pre">Merger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fuzzy_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.85</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conflict_resolution</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'latest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/extraction/merger.html#Merger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.merger.Merger" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Merge extraction results with deduplication.</p>
+<dl class="simple">
+<dt>Strategies:</dt><dd><ul class="simple">
+<li><p>“exact”: Exact name matching (default)</p></li>
+<li><p>“fuzzy”: Fuzzy matching with configurable threshold</p></li>
+<li><p>“normalized”: Normalize names before comparing</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ontofuel.extraction.extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtractionResult</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r1</span> <span class="o">=</span> <span class="n">ExtractionResult</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;chunk_0&quot;</span><span class="p">,</span> <span class="n">individuals</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;U-10Mo&quot;</span><span class="p">}])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r2</span> <span class="o">=</span> <span class="n">ExtractionResult</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;chunk_1&quot;</span><span class="p">,</span> <span class="n">individuals</span><span class="o">=</span><span class="p">[{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;U-10Mo&quot;</span><span class="p">}])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">merger</span> <span class="o">=</span> <span class="n">Merger</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">merged</span> <span class="o">=</span> <span class="n">merger</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">merged</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">duplicates_removed</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.merger.Merger.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ontofuel.extraction.merger.MergedResult" title="ontofuel.extraction.merger.MergedResult"><span class="pre">MergedResult</span></a></span></span><a class="reference internal" href="_modules/ontofuel/extraction/merger.html#Merger.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.merger.Merger.merge" title="Link to this definition">¶</a></dt>
+<dd><p>Merge multiple ExtractionResults.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>results</strong> – List of ExtractionResult objects.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>MergedResult with deduplicated data and merge statistics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ontofuel.extraction.updater">
+<span id="updater"></span><h3>updater<a class="headerlink" href="#module-ontofuel.extraction.updater" title="Link to this heading">¶</a></h3>
+<p>Updater — incrementally update an ontology with extracted data.</p>
+<dl class="simple">
+<dt>Supports:</dt><dd><ul class="simple">
+<li><p>Adding new individuals</p></li>
+<li><p>Adding new property values</p></li>
+<li><p>Updating existing individuals</p></li>
+<li><p>Backup before modification</p></li>
+<li><p>Change tracking with statistics</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">updater</span> <span class="o">=</span> <span class="n">OntologyUpdater</span><span class="p">(</span><span class="s2">&quot;ontology.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">add_individuals</span><span class="p">(</span><span class="n">merged_result</span><span class="o">.</span><span class="n">individuals</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">updater</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;ontology_updated.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.OntologyUpdater">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.updater.</span></span><span class="sig-name descname"><span class="pre">OntologyUpdater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ontology_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ontofuel/extraction/updater.html#OntologyUpdater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.updater.OntologyUpdater" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Incrementally update an ontology with extraction results.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">updater</span> <span class="o">=</span> <span class="n">OntologyUpdater</span><span class="p">(</span><span class="s2">&quot;ontology.json&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span> <span class="o">=</span> <span class="n">updater</span><span class="o">.</span><span class="n">add_individuals</span><span class="p">([{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;U-10Mo&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Alloy&quot;</span><span class="p">}])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">updater</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.OntologyUpdater.add_individuals">
+<span class="sig-name descname"><span class="pre">add_individuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">individuals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dedup</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ontofuel.extraction.updater.UpdateStats" title="ontofuel.extraction.updater.UpdateStats"><span class="pre">UpdateStats</span></a></span></span><a class="reference internal" href="_modules/ontofuel/extraction/updater.html#OntologyUpdater.add_individuals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.updater.OntologyUpdater.add_individuals" title="Link to this definition">¶</a></dt>
+<dd><p>Add new individuals to the ontology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>individuals</strong> – List of individual dicts with at least “name” field.</p></li>
+<li><p><strong>dedup</strong> – Whether to skip individuals that already exist.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>UpdateStats with counts.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.OntologyUpdater.add_properties">
+<span class="sig-name descname"><span class="pre">add_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_individual</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#ontofuel.extraction.updater.UpdateStats" title="ontofuel.extraction.updater.UpdateStats"><span class="pre">UpdateStats</span></a></span></span><a class="reference internal" href="_modules/ontofuel/extraction/updater.html#OntologyUpdater.add_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.updater.OntologyUpdater.add_properties" title="Link to this definition">¶</a></dt>
+<dd><p>Add property values to individuals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>properties</strong> – List of property dicts.</p></li>
+<li><p><strong>target_individual</strong> – If set, add all properties to this individual.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>UpdateStats with counts.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.OntologyUpdater.get_before_stats">
+<span class="sig-name descname"><span class="pre">get_before_stats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/updater.html#OntologyUpdater.get_before_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.updater.OntologyUpdater.get_before_stats" title="Link to this definition">¶</a></dt>
+<dd><p>Get ontology stats before changes (recomputed from current state).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.OntologyUpdater.get_changes">
+<span class="sig-name descname"><span class="pre">get_changes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/updater.html#OntologyUpdater.get_changes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.updater.OntologyUpdater.get_changes" title="Link to this definition">¶</a></dt>
+<dd><p>Get list of all changes made.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.OntologyUpdater.ontology">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">ontology</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></span><a class="headerlink" href="#ontofuel.extraction.updater.OntologyUpdater.ontology" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.OntologyUpdater.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/updater.html#OntologyUpdater.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.updater.OntologyUpdater.save" title="Link to this definition">¶</a></dt>
+<dd><p>Save the updated ontology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_path</strong> – Output path. Defaults to original path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to saved file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.OntologyUpdater.stats">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">stats</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ontofuel.extraction.updater.UpdateStats" title="ontofuel.extraction.updater.UpdateStats"><span class="pre">UpdateStats</span></a></span><a class="headerlink" href="#ontofuel.extraction.updater.OntologyUpdater.stats" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.UpdateStats">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ontofuel.extraction.updater.</span></span><span class="sig-name descname"><span class="pre">UpdateStats</span></span><a class="reference internal" href="_modules/ontofuel/extraction/updater.html#UpdateStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.updater.UpdateStats" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Statistics from an ontology update operation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ontofuel.extraction.updater.UpdateStats.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/ontofuel/extraction/updater.html#UpdateStats.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ontofuel.extraction.updater.UpdateStats.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">OntoFuel</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-ontofuel.cli">Command-Line Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#core-modules">Core Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#database-modules">Database Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#extraction-modules">Extraction Modules</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">OntoFuel API Documentation</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, OntoFuel Contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/api_reference.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ontofuel.extraction.updater &#8212; OntoFuel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for ontofuel.extraction.updater</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Updater — incrementally update an ontology with extracted data.</span>
+
+<span class="sd">Supports:</span>
+<span class="sd">  - Adding new individuals</span>
+<span class="sd">  - Adding new property values</span>
+<span class="sd">  - Updating existing individuals</span>
+<span class="sd">  - Backup before modification</span>
+<span class="sd">  - Change tracking with statistics</span>
+
+<span class="sd">Example:</span>
+<span class="sd">    &gt;&gt;&gt; updater = OntologyUpdater(&quot;ontology.json&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; stats = updater.add_individuals(merged_result.individuals)</span>
+<span class="sd">    &gt;&gt;&gt; updater.save(&quot;ontology_updated.json&quot;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..core.ontology</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_ontology</span><span class="p">,</span> <span class="n">get_stats</span>
+
+
+<div class="viewcode-block" id="UpdateStats">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.updater.UpdateStats">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UpdateStats</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Statistics from an ontology update operation.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_individuals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updated_individuals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skipped_individuals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_properties</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">added_relationships</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="UpdateStats.to_dict">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.updater.UpdateStats.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;added_individuals&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">added_individuals</span><span class="p">,</span>
+            <span class="s2">&quot;updated_individuals&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">updated_individuals</span><span class="p">,</span>
+            <span class="s2">&quot;skipped_individuals&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">skipped_individuals</span><span class="p">,</span>
+            <span class="s2">&quot;added_properties&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">added_properties</span><span class="p">,</span>
+            <span class="s2">&quot;added_relationships&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">added_relationships</span><span class="p">,</span>
+            <span class="s2">&quot;errors&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="OntologyUpdater">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.updater.OntologyUpdater">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OntologyUpdater</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Incrementally update an ontology with extraction results.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; updater = OntologyUpdater(&quot;ontology.json&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; stats = updater.add_individuals([{&quot;name&quot;: &quot;U-10Mo&quot;, &quot;type&quot;: &quot;Alloy&quot;}])</span>
+<span class="sd">        &gt;&gt;&gt; updater.save()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ontology_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">backup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize updater.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ontology_path: Path to ontology JSON. None for auto-detect.</span>
+<span class="sd">            backup: Whether to create backup before saving.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">ontology_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">ontology_path</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ontology</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_backup</span> <span class="o">=</span> <span class="n">backup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span> <span class="o">=</span> <span class="n">UpdateStats</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_changes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ontology</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ontology</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ontology</span> <span class="o">=</span> <span class="n">load_ontology</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ontology</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UpdateStats</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span>
+
+<div class="viewcode-block" id="OntologyUpdater.add_individuals">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.updater.OntologyUpdater.add_individuals">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_individuals</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">individuals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+        <span class="n">dedup</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UpdateStats</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add new individuals to the ontology.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            individuals: List of individual dicts with at least &quot;name&quot; field.</span>
+<span class="sd">            dedup: Whether to skip individuals that already exist.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            UpdateStats with counts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">UpdateStats</span><span class="p">()</span>
+        <span class="n">existing_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_existing_names</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">individuals</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">ind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">skipped_individuals</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">dedup</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">existing_names</span><span class="p">:</span>
+                <span class="c1"># Try to update existing individual with new properties</span>
+                <span class="n">updated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_existing</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">updated</span><span class="p">:</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">updated_individuals</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">skipped_individuals</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Add new individual</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_individual</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+            <span class="n">stats</span><span class="o">.</span><span class="n">added_individuals</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_changes</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;individual&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
+            <span class="p">})</span>
+
+        <span class="c1"># Merge stats</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_merge_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stats</span></div>
+
+
+<div class="viewcode-block" id="OntologyUpdater.add_properties">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.updater.OntologyUpdater.add_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">properties</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+        <span class="n">target_individual</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UpdateStats</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add property values to individuals.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            properties: List of property dicts.</span>
+<span class="sd">            target_individual: If set, add all properties to this individual.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            UpdateStats with counts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">UpdateStats</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+            <span class="n">prop_name</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">prop_value</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">target_individual</span><span class="p">:</span>
+                <span class="n">ind_name</span> <span class="o">=</span> <span class="n">target_individual</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Try to find individual from property context</span>
+                <span class="n">ind_name</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individual&quot;</span><span class="p">,</span> <span class="n">prop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ind_name</span><span class="p">:</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">skipped_individuals</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+
+            <span class="n">added</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_property_to_individual</span><span class="p">(</span><span class="n">ind_name</span><span class="p">,</span> <span class="n">prop_name</span><span class="p">,</span> <span class="n">prop_value</span><span class="p">,</span> <span class="n">prop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">added</span><span class="p">:</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">added_properties</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">skipped_individuals</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_merge_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stats</span></div>
+
+
+<div class="viewcode-block" id="OntologyUpdater.save">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.updater.OntologyUpdater.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the updated ontology.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            output_path: Output path. Defaults to original path.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Path to saved file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">output_path</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No output path specified and no original path&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Backup</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backup</span> <span class="ow">and</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">backup_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;.backup_</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H%M%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">.json&quot;</span>
+            <span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">backup_path</span><span class="p">)</span>
+
+        <span class="c1"># Save</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ontology</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="OntologyUpdater.get_changes">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.updater.OntologyUpdater.get_changes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_changes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get list of all changes made.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_changes</span></div>
+
+
+<div class="viewcode-block" id="OntologyUpdater.get_before_stats">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.updater.OntologyUpdater.get_before_stats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_before_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get ontology stats before changes (recomputed from current state).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ontology</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_existing_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get set of existing individual names.&quot;&quot;&quot;</span>
+        <span class="n">individuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">individuals</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">individuals</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">ind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">individuals</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ind</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an individual to the ontology.&quot;&quot;&quot;</span>
+        <span class="n">individuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="c1"># Normalize to list if dict-keyed</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">individuals</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">ind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">individuals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ind</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ontology</span><span class="p">[</span><span class="s2">&quot;individuals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">individuals</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">individuals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_existing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">new_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update an existing individual with new data.</span>
+
+<span class="sd">        Returns True if any new data was added.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">individuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">updated</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">individuals</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">individuals</span><span class="p">:</span>
+                <span class="n">existing</span> <span class="o">=</span> <span class="n">individuals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">new_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing</span><span class="p">:</span>
+                        <span class="n">existing</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+                        <span class="n">updated</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">individuals</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">new_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ind</span><span class="p">:</span>
+                            <span class="n">ind</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+                            <span class="n">updated</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">updated</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_property_to_individual</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ind_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">prop_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a property to an individual.</span>
+
+<span class="sd">        Returns True if property was added.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">individuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">prop_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;prop_</span><span class="si">{</span><span class="n">prop_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">individuals</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ind_name</span> <span class="ow">in</span> <span class="n">individuals</span><span class="p">:</span>
+                <span class="n">individuals</span><span class="p">[</span><span class="n">ind_name</span><span class="p">][</span><span class="n">prop_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop_value</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">individuals</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">ind_name</span><span class="p">:</span>
+                    <span class="n">ind</span><span class="p">[</span><span class="n">prop_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop_value</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">UpdateStats</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge another stats into this one.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">added_individuals</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">added_individuals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">updated_individuals</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">updated_individuals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">skipped_individuals</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">skipped_individuals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">added_properties</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">added_properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">added_relationships</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">added_relationships</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">OntoFuel</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, OntoFuel Contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
