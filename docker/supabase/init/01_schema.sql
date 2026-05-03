@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS materials (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  "name" text NOT NULL,
+  "name" text NOT NULL UNIQUE,
   "chemical_formula" text,
   "material_type" text,
   "created_at" timestamptz DEFAULT now(),
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS material_properties (
   "temperature" float8,
   "temperature_unit" text DEFAULT 'K',
   "notes" text,
-  FOREIGN KEY ("material_id") REFERENCES materials(id)
+  FOREIGN KEY ("material_id") REFERENCES materials(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_material_properties_material_id ON material_properties("material_id");
 CREATE INDEX IF NOT EXISTS idx_material_properties_property_name ON material_properties("property_name");
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS material_composition (
   "element" text NOT NULL,
   "weight_fraction" float8,
   "atomic_fraction" float8,
-  FOREIGN KEY ("material_id") REFERENCES materials(id)
+  FOREIGN KEY ("material_id") REFERENCES materials(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_material_composition_material_id ON material_composition("material_id");
 CREATE INDEX IF NOT EXISTS idx_material_composition_element ON material_composition("element");
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS literature_sources (
   "title" text NOT NULL,
   "authors" text[],
   "year" int4,
-  "doi" text,
+  "doi" text UNIQUE,
   "journal" text,
   "url" text
 );
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS irradiation_behavior (
   "temperature" float8,
   "property_changed" text,
   "change_percent" float8,
-  FOREIGN KEY ("material_id") REFERENCES materials(id)
+  FOREIGN KEY ("material_id") REFERENCES materials(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_irradiation_behavior_material_id ON irradiation_behavior("material_id");
 CREATE INDEX IF NOT EXISTS idx_irradiation_behavior_irradiation_type ON irradiation_behavior("irradiation_type");
