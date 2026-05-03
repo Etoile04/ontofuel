@@ -68,3 +68,4 @@ docker/supabase/.temp/
 # Build artifacts
 *.whl
 tools/WebVOWL
+.worktrees/
