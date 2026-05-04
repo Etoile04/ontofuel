@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ontofuel.extraction.segmenter &#8212; OntoFuel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for ontofuel.extraction.segmenter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Segmenter — split markdown/text into sections or fixed-size chunks.</span>
+
+<span class="sd">Supports two modes:</span>
+<span class="sd">  1. Heading-based segmentation (uses ##/### markers)</span>
+<span class="sd">  2. Fixed-size chunking (by character or line count)</span>
+
+<span class="sd">Example:</span>
+<span class="sd">    &gt;&gt;&gt; seg = Segmenter()</span>
+<span class="sd">    &gt;&gt;&gt; chunks = seg.segment_heading(md_text)</span>
+<span class="sd">    &gt;&gt;&gt; chunks = seg.segment_fixed(md_text, chunk_size=4000)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="Chunk">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.segmenter.Chunk">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Chunk</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A text chunk from segmentation.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        index: Chunk sequence number (0-based).</span>
+<span class="sd">        title: Section title (from heading) or &quot;chunk_{index}&quot;.</span>
+<span class="sd">        content: The text content.</span>
+<span class="sd">        start_char: Start character offset in original text.</span>
+<span class="sd">        end_char: End character offset in original text.</span>
+<span class="sd">        level: Heading level (1-6), or 0 for fixed chunks.</span>
+<span class="sd">        metadata: Optional metadata dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">start_char</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">end_char</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">char_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">line_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="Chunk.to_dict">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.segmenter.Chunk.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
+            <span class="s2">&quot;start_char&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_char</span><span class="p">,</span>
+            <span class="s2">&quot;end_char&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_char</span><span class="p">,</span>
+            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">,</span>
+            <span class="s2">&quot;char_count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">char_count</span><span class="p">,</span>
+            <span class="s2">&quot;line_count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_count</span><span class="p">,</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Segmenter">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.segmenter.Segmenter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Segmenter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split text into manageable chunks for extraction.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; seg = Segmenter()</span>
+<span class="sd">        &gt;&gt;&gt; chunks = seg.segment_heading(&quot;# Title\\n## Section 1\\nContent&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; len(chunks)</span>
+<span class="sd">        2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Heading pattern: captures level and title</span>
+    <span class="n">HEADING_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(#{1,6})\s+(.+)$&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Segmenter.segment_heading">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.segmenter.Segmenter.segment_heading">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">segment_heading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">min_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Split text by markdown headings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: Input markdown text.</span>
+<span class="sd">            min_size: Minimum chunk size in characters. Smaller chunks are</span>
+<span class="sd">                      merged with the previous one.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of Chunk objects, one per section.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">HEADING_RE</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">headings</span><span class="p">:</span>
+            <span class="c1"># No headings found — treat entire text as one chunk</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">Chunk</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="s2">&quot;full_document&quot;</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                <span class="n">start_char</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="n">end_char</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span>
+                <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="p">)]</span>
+
+        <span class="n">chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">chunk_idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Content before first heading</span>
+        <span class="n">first_start</span> <span class="o">=</span> <span class="n">headings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">first_start</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">preamble</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="n">first_start</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">preamble</span><span class="p">:</span>
+                <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Chunk</span><span class="p">(</span>
+                    <span class="n">index</span><span class="o">=</span><span class="n">chunk_idx</span><span class="p">,</span>
+                    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;preamble&quot;</span><span class="p">,</span>
+                    <span class="n">content</span><span class="o">=</span><span class="n">preamble</span><span class="p">,</span>
+                    <span class="n">start_char</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">end_char</span><span class="o">=</span><span class="n">first_start</span><span class="p">,</span>
+                    <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="p">))</span>
+                <span class="n">chunk_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Sections defined by headings</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">match</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">headings</span><span class="p">):</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">headings</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">headings</span><span class="p">)</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+            <span class="n">content</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">content</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Chunk</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">chunk_idx</span><span class="p">,</span>
+                <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+                <span class="n">start_char</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">(),</span>
+                <span class="n">end_char</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+            <span class="p">))</span>
+            <span class="n">chunk_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Merge small chunks into previous</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_small</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">min_size</span><span class="p">)</span>
+
+        <span class="c1"># Re-index</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+            <span class="n">chunk</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="k">return</span> <span class="n">chunks</span></div>
+
+
+<div class="viewcode-block" id="Segmenter.segment_fixed">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.segmenter.Segmenter.segment_fixed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">segment_fixed</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">,</span>
+        <span class="n">overlap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Split text into fixed-size chunks with overlap.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: Input text.</span>
+<span class="sd">            chunk_size: Maximum characters per chunk.</span>
+<span class="sd">            overlap: Number of overlapping characters between chunks.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of Chunk objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+            <span class="c1"># Try to break at paragraph boundary</span>
+            <span class="k">if</span> <span class="n">end</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                <span class="c1"># Look for last newline within the chunk</span>
+                <span class="n">last_nl</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">last_nl</span> <span class="o">&gt;</span> <span class="n">start</span> <span class="o">+</span> <span class="n">chunk_size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">end</span> <span class="o">=</span> <span class="n">last_nl</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="n">content</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">content</span><span class="p">:</span>
+                <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Chunk</span><span class="p">(</span>
+                    <span class="n">index</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                    <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;chunk_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+                    <span class="n">start_char</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+                    <span class="n">end_char</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                    <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                <span class="p">))</span>
+                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="c1"># Prevent infinite loop: if we&#39;ve consumed everything, break</span>
+            <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Advance start, ensuring at least 1 char progress</span>
+            <span class="n">next_start</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">overlap</span>
+            <span class="k">if</span> <span class="n">next_start</span> <span class="o">&lt;=</span> <span class="n">start</span><span class="p">:</span>
+                <span class="n">next_start</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">next_start</span>
+
+        <span class="k">return</span> <span class="n">chunks</span></div>
+
+
+<div class="viewcode-block" id="Segmenter.segment_by_keywords">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.segmenter.Segmenter.segment_by_keywords">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">segment_by_keywords</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">keywords</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">window</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract chunks around keyword occurrences.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text: Input text.</span>
+<span class="sd">            keywords: Keywords to search for.</span>
+<span class="sd">            window: Characters to include before/after each match.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of Chunk objects centered on keyword matches.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">seen_positions</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">kw</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">pattern</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                <span class="c1"># Avoid overlapping chunks</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">window</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">seen_positions</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">seen_positions</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+
+                <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pos</span> <span class="o">-</span> <span class="n">window</span><span class="p">)</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">window</span><span class="p">)</span>
+                <span class="n">content</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">content</span><span class="p">:</span>
+                    <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Chunk</span><span class="p">(</span>
+                        <span class="n">index</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                        <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;keyword:</span><span class="si">{</span><span class="n">kw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
+                        <span class="n">start_char</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+                        <span class="n">end_char</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+                        <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;keyword&quot;</span><span class="p">:</span> <span class="n">kw</span><span class="p">,</span> <span class="s2">&quot;match_position&quot;</span><span class="p">:</span> <span class="n">pos</span><span class="p">},</span>
+                    <span class="p">))</span>
+                    <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">chunks</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_small</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">],</span> <span class="n">min_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge consecutive small chunks into the previous one.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">chunks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">chunks</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">chunks</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">char_count</span> <span class="o">&lt;</span> <span class="n">min_size</span><span class="p">:</span>
+                <span class="c1"># Merge into previous</span>
+                <span class="n">prev</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">prev</span><span class="o">.</span><span class="n">content</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span>
+                <span class="n">prev</span><span class="o">.</span><span class="n">end_char</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">end_char</span>
+                <span class="n">prev</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prev</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">OntoFuel</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, OntoFuel Contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

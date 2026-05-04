@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ontofuel.extraction.merger &#8212; OntoFuel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for ontofuel.extraction.merger</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Merger — merge extraction results with deduplication and conflict resolution.</span>
+
+<span class="sd">Supports:</span>
+<span class="sd">  - Merging multiple ExtractionResults into one</span>
+<span class="sd">  - Deduplication by name (exact and fuzzy)</span>
+<span class="sd">  - Conflict resolution (latest wins, or priority-based)</span>
+
+<span class="sd">Example:</span>
+<span class="sd">    &gt;&gt;&gt; merger = Merger()</span>
+<span class="sd">    &gt;&gt;&gt; merged = merger.merge([result1, result2, result3])</span>
+<span class="sd">    &gt;&gt;&gt; print(merged.stats)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">difflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">SequenceMatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="MergeStats">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.merger.MergeStats">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MergeStats</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Statistics from a merge operation.&quot;&quot;&quot;</span>
+    <span class="n">input_results</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total_individuals_in</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total_properties_in</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">total_relationships_in</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">duplicates_removed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">conflicts_resolved</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">final_individuals</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">final_properties</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">final_relationships</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="MergeStats.to_dict">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.merger.MergeStats.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;input_results&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_results</span><span class="p">,</span>
+            <span class="s2">&quot;total_individuals_in&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_individuals_in</span><span class="p">,</span>
+            <span class="s2">&quot;duplicates_removed&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicates_removed</span><span class="p">,</span>
+            <span class="s2">&quot;conflicts_resolved&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">conflicts_resolved</span><span class="p">,</span>
+            <span class="s2">&quot;final_individuals&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_individuals</span><span class="p">,</span>
+            <span class="s2">&quot;final_properties&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_properties</span><span class="p">,</span>
+            <span class="s2">&quot;dedup_rate&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">duplicates_removed</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_individuals_in</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MergedResult">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.merger.MergedResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MergedResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merged extraction results.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        individuals: Deduplicated individuals.</span>
+<span class="sd">        properties: Merged properties.</span>
+<span class="sd">        relationships: Merged relationships.</span>
+<span class="sd">        stats: Merge statistics.</span>
+<span class="sd">        sources: List of source identifiers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">individuals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">properties</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">relationships</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">stats</span><span class="p">:</span> <span class="n">MergeStats</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">MergeStats</span><span class="p">)</span>
+    <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MergedResult.to_dict">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.merger.MergedResult.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;individuals&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="p">,</span>
+            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">,</span>
+            <span class="s2">&quot;relationships&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">relationships</span><span class="p">,</span>
+            <span class="s2">&quot;stats&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;sources&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">,</span>
+        <span class="p">}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Merger">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.merger.Merger">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Merger</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge extraction results with deduplication.</span>
+
+<span class="sd">    Strategies:</span>
+<span class="sd">      - &quot;exact&quot;: Exact name matching (default)</span>
+<span class="sd">      - &quot;fuzzy&quot;: Fuzzy matching with configurable threshold</span>
+<span class="sd">      - &quot;normalized&quot;: Normalize names before comparing</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from ontofuel.extraction.extractor import ExtractionResult</span>
+<span class="sd">        &gt;&gt;&gt; r1 = ExtractionResult(source=&quot;chunk_0&quot;, individuals=[{&quot;name&quot;: &quot;U-10Mo&quot;}])</span>
+<span class="sd">        &gt;&gt;&gt; r2 = ExtractionResult(source=&quot;chunk_1&quot;, individuals=[{&quot;name&quot;: &quot;U-10Mo&quot;}])</span>
+<span class="sd">        &gt;&gt;&gt; merger = Merger()</span>
+<span class="sd">        &gt;&gt;&gt; merged = merger.merge([r1, r2])</span>
+<span class="sd">        &gt;&gt;&gt; print(merged.stats.duplicates_removed)</span>
+<span class="sd">        1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">strategy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;exact&quot;</span><span class="p">,</span>
+        <span class="n">fuzzy_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.85</span><span class="p">,</span>
+        <span class="n">conflict_resolution</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize merger.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            strategy: Deduplication strategy (&quot;exact&quot;, &quot;fuzzy&quot;, &quot;normalized&quot;).</span>
+<span class="sd">            fuzzy_threshold: Similarity threshold for fuzzy matching (0-1).</span>
+<span class="sd">            conflict_resolution: How to resolve conflicts (&quot;latest&quot;, &quot;priority&quot;, &quot;merge&quot;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">strategy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fuzzy_threshold</span> <span class="o">=</span> <span class="n">fuzzy_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolution</span> <span class="o">=</span> <span class="n">conflict_resolution</span>
+
+<div class="viewcode-block" id="Merger.merge">
+<a class="viewcode-back" href="../../../api_reference.html#ontofuel.extraction.merger.Merger.merge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MergedResult</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge multiple ExtractionResults.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            results: List of ExtractionResult objects.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            MergedResult with deduplicated data and merge statistics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">MergeStats</span><span class="p">(</span><span class="n">input_results</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+
+        <span class="n">all_individuals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">all_properties</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">all_relationships</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sources</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">all_individuals</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">individuals</span><span class="p">)</span>
+            <span class="n">all_properties</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
+            <span class="n">all_relationships</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">relationships</span><span class="p">)</span>
+            <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">stats</span><span class="o">.</span><span class="n">total_individuals_in</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">individuals</span><span class="p">)</span>
+            <span class="n">stats</span><span class="o">.</span><span class="n">total_properties_in</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
+            <span class="n">stats</span><span class="o">.</span><span class="n">total_relationships_in</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">relationships</span><span class="p">)</span>
+
+        <span class="c1"># Deduplicate</span>
+        <span class="n">deduped_individuals</span><span class="p">,</span> <span class="n">dup_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deduplicate</span><span class="p">(</span><span class="n">all_individuals</span><span class="p">)</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">duplicates_removed</span> <span class="o">=</span> <span class="n">dup_count</span>
+
+        <span class="c1"># Merge properties by name</span>
+        <span class="n">merged_props</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_properties</span><span class="p">(</span><span class="n">all_properties</span><span class="p">)</span>
+
+        <span class="c1"># Deduplicate relationships</span>
+        <span class="n">deduped_rels</span><span class="p">,</span> <span class="n">rel_dups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deduplicate</span><span class="p">(</span><span class="n">all_relationships</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;context&quot;</span><span class="p">)</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">duplicates_removed</span> <span class="o">+=</span> <span class="n">rel_dups</span>
+
+        <span class="n">stats</span><span class="o">.</span><span class="n">final_individuals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">deduped_individuals</span><span class="p">)</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">final_properties</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">merged_props</span><span class="p">)</span>
+        <span class="n">stats</span><span class="o">.</span><span class="n">final_relationships</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">deduped_rels</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">MergedResult</span><span class="p">(</span>
+            <span class="n">individuals</span><span class="o">=</span><span class="n">deduped_individuals</span><span class="p">,</span>
+            <span class="n">properties</span><span class="o">=</span><span class="n">merged_props</span><span class="p">,</span>
+            <span class="n">relationships</span><span class="o">=</span><span class="n">deduped_rels</span><span class="p">,</span>
+            <span class="n">stats</span><span class="o">=</span><span class="n">stats</span><span class="p">,</span>
+            <span class="n">sources</span><span class="o">=</span><span class="n">sources</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_deduplicate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+        <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deduplicate items by key.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (deduplicated items, duplicates removed count).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="mi">0</span>
+
+        <span class="n">seen</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dups</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">normalized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">==</span> <span class="s2">&quot;exact&quot;</span><span class="p">:</span>
+                <span class="n">match_key</span> <span class="o">=</span> <span class="n">normalized</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">==</span> <span class="s2">&quot;fuzzy&quot;</span><span class="p">:</span>
+                <span class="n">match_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fuzzy_match</span><span class="p">(</span><span class="n">normalized</span><span class="p">,</span> <span class="n">seen</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">==</span> <span class="s2">&quot;normalized&quot;</span><span class="p">:</span>
+                <span class="n">match_key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\s\-_]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">normalized</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">match_key</span> <span class="o">=</span> <span class="n">normalized</span>
+
+            <span class="k">if</span> <span class="n">match_key</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+                <span class="n">dups</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="c1"># Resolve conflict</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolution</span> <span class="o">==</span> <span class="s2">&quot;latest&quot;</span><span class="p">:</span>
+                    <span class="c1"># Replace in both seen and result</span>
+                    <span class="n">idx_to_replace</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+                        <span class="n">r_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">==</span> <span class="s2">&quot;fuzzy&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">SequenceMatcher</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">r_key</span><span class="p">,</span> <span class="n">match_key</span><span class="p">)</span><span class="o">.</span><span class="n">ratio</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuzzy_threshold</span><span class="p">:</span>
+                                <span class="n">idx_to_replace</span> <span class="o">=</span> <span class="n">i</span>
+                                <span class="k">break</span>
+                        <span class="k">elif</span> <span class="n">r_key</span> <span class="o">==</span> <span class="n">match_key</span><span class="p">:</span>
+                            <span class="n">idx_to_replace</span> <span class="o">=</span> <span class="n">i</span>
+                            <span class="k">break</span>
+                    <span class="k">if</span> <span class="n">idx_to_replace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">result</span><span class="p">[</span><span class="n">idx_to_replace</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+                    <span class="n">seen</span><span class="p">[</span><span class="n">match_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolution</span> <span class="o">==</span> <span class="s2">&quot;merge&quot;</span><span class="p">:</span>
+                    <span class="n">existing</span> <span class="o">=</span> <span class="n">seen</span><span class="p">[</span><span class="n">match_key</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing</span><span class="p">:</span>
+                            <span class="n">existing</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seen</span><span class="p">[</span><span class="n">match_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">dups</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">properties</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge properties, combining values for the same property name.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">properties</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">grouped</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="n">properties</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">prop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">grouped</span><span class="p">:</span>
+                <span class="n">grouped</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">grouped</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">props</span> <span class="ow">in</span> <span class="n">grouped</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">props</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Keep unique values</span>
+                <span class="n">values_seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+                    <span class="n">val_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;unit&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">if</span> <span class="n">val_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">values_seen</span><span class="p">:</span>
+                        <span class="n">values_seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">val_key</span><span class="p">)</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize a name for comparison.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fuzzy_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seen</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find fuzzy match in seen keys, or return original name.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">existing_key</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="n">SequenceMatcher</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">existing_key</span><span class="p">)</span><span class="o">.</span><span class="n">ratio</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">ratio</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fuzzy_threshold</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">existing_key</span>
+        <span class="k">return</span> <span class="n">name</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">OntoFuel</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, OntoFuel Contributors.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
