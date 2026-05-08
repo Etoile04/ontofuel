@@ -20,6 +20,12 @@ html_theme = "alabaster"
 html_static_path = ["_static"]
 
 # -- autodoc settings --------------------------------------------------------
+# -- intersphinx configuration ----------------------------------------------
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}
+
+# -- autodoc settings --------------------------------------------------------
 autodoc_default_options = {
     "members": True,
     "member-order": "bysource",

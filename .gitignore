@@ -46,3 +46,4 @@ node_modules/
 # Environment
 .env
 .env.local
+docs/api/_build/

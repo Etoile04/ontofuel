@@ -3,7 +3,7 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    ?=
-SPHINXBUILD   ?= $(shell pwd)/../.venv/bin/sphinx-build
+SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = api
 BUILDDIR      = api/_build
 
