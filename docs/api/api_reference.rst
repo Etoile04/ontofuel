@@ -48,35 +48,14 @@ client
 .. automodule:: ontofuel.database.client
    :members:
 
-restore
-~~~~~~~
-
-.. automodule:: ontofuel.database.restore
-   :members:
-
 Extraction Modules
 ------------------
 
-extractor
-~~~~~~~~~
-
-.. automodule:: ontofuel.extraction.extractor
+.. automodule:: ontofuel.extraction
    :members:
 
-segmenter
-~~~~~~~~~
+Visualization
+-------------
 
-.. automodule:: ontofuel.extraction.segmenter
-   :members:
-
-merger
-~~~~~~
-
-.. automodule:: ontofuel.extraction.merger
-   :members:
-
-updater
-~~~~~~~
-
-.. automodule:: ontofuel.extraction.updater
+.. automodule:: ontofuel.visualization
    :members:

@@ -1,6 +1,6 @@
 # -- Sphinx configuration for OntoFuel API documentation --------------------
 
-project = "OntoFuel"
+project = "OntoFuel API"
 copyright = "2026, OntoFuel Contributors"
 author = "OntoFuel Contributors"
 
@@ -22,6 +22,7 @@ html_static_path = ["_static"]
 # -- autodoc settings --------------------------------------------------------
 autodoc_default_options = {
     "members": True,
+    "member-order": "bysource",
     "undoc-members": True,
     "show-inheritance": True,
 }
