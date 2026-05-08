@@ -16,3 +16,9 @@ def test_test_workflow_valid_yaml():
         data = yaml.safe_load(f)
     assert "jobs" in data
     assert "test" in data["jobs"]
+
+
+def test_test_workflow_has_codecov():
+    content = pathlib.Path(".github/workflows/test.yml").read_text()
+    assert "codecov" in content
+    assert "matrix.python-version == '3.12'" in content
