@@ -217,6 +217,65 @@ pytest --cov=src --cov-report=term-missing
 
 ---
 
+## Superpowers 工作流
+
+本项目使用 [Superpowers](docs/superpowers/) 工作流进行功能开发，所有功能开发和 Bug 修复必须遵循此流程。
+
+### 流程概览
+
+1. **Brainstorming** → 写 spec → 用户审批
+2. **Writing-Plans** → 拆分为 bite-sized tasks
+3. **Subagent-Driven-Dev** → TDD + Spec Review + Code Review
+4. **Finishing-Branch** → 测试 → Merge/PR
+
+### 关键原则
+
+- **Spec-First**: 先写规格说明，经审批后再开发
+- **TDD**: 先写失败测试，再写实现代码
+- **Code Review**: 每个 PR 至少需要一次 Review
+- **小步提交**: 每个任务保持小而聚焦
+
+### 开发步骤详解
+
+#### 1. Brainstorming → Spec
+
+- 明确需求范围和验收标准
+- 编写 spec 文档（参考 `docs/superpowers/plans/` 目录）
+- 等待维护者审批
+
+#### 2. Writing-Plans
+
+- 将 spec 拆分为可独立执行的子任务
+- 每个子任务应有明确的输入、输出和验收标准
+- 使用 worktree 进行隔离开发
+
+#### 3. Subagent-Driven-Development
+
+- 每个子任务遵循 TDD 流程：
+  1. 先写失败测试
+  2. 运行测试 — 确认 FAIL
+  3. 编写实现
+  4. 运行测试 — 确认 PASS
+  5. Commit
+- 完成后进行 Spec Review 和 Code Review
+
+#### 4. Finishing-Branch
+
+- 确保所有测试通过（`pytest`）
+- 检查代码风格（`ruff check`）
+- 创建 PR 并等待 Review
+- 合并后删除 feature 分支
+
+### CI 参考
+
+所有 PR 会自动运行 CI 检查（参考 `.github/workflows/test.yml`）：
+
+- **多版本测试**: Python 3.10 / 3.11 / 3.12
+- **pytest**: `pytest tests/ -v --tb=short --cov=ontofuel`
+- **Coverage**: 使用 Codecov 上传覆盖率报告
+
+---
+
 ## 有问题？
 
 如果你在贡献过程中遇到任何问题，欢迎：
