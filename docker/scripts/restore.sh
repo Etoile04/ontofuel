@@ -10,7 +10,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-ONTOLOGY_JSON="${1:-${PROJECT_ROOT}/memory/trustgraph-fix/material_ontology_enhanced.json}"
+ONTOLOGY_JSON="${1:-${PROJECT_ROOT}/ontology/material_ontology_enhanced.json}"
 
 DB_HOST="${DB_HOST:-localhost}"
 DB_PORT="${DB_PORT:-5432}"

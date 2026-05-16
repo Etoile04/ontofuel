@@ -2,10 +2,10 @@ name: Docker Image
 
 on:
   push:
-    branches: [ontofuel-v0.1]
+    branches: [main, ontofuel-v0.1]
     tags: ["v*"]
   pull_request:
-    branches: [ontofuel-v0.1]
+    branches: [main, ontofuel-v0.1]
 
 jobs:
   api-image:

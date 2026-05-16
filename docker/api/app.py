@@ -16,7 +16,7 @@ from pydantic import BaseModel
 # ---------------------------------------------------------------------------
 # FastAPI application
 # ---------------------------------------------------------------------------
-app = FastAPI(title="OntoFuel API", version="0.1.0")
+app = FastAPI(title="OntoFuel API", version="1.0.0")
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
