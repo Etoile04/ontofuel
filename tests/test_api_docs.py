@@ -6,6 +6,9 @@ import subprocess
 
 import pytest
 
+# Skip if sphinx not installed
+pytest.importorskip("sphinx", reason="sphinx not installed (optional dep)")
+
 # Resolve paths relative to this test file (not cwd)
 HERE = pathlib.Path(__file__).resolve().parent
 PROJECT_ROOT = HERE.parent

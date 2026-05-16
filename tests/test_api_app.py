@@ -6,6 +6,10 @@ without requiring a live database connection.
 import sys
 import pytest
 
+# Skip entire module if FastAPI or psycopg2 not installed
+pytest.importorskip("fastapi", reason="fastapi not installed (optional dep)")
+pytest.importorskip("psycopg2", reason="psycopg2 not installed (optional dep)")
+
 # Ensure docker/api is importable
 sys.path.insert(0, "docker/api")
 

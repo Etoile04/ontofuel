@@ -3,14 +3,14 @@ import subprocess
 import pathlib
 import pytest
 
-WORKTREE = "/Users/lwj04/.openclaw/workspace-extractor/.worktrees/o4-docs"
+PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
 def test_docker_compose_file_valid():
     """docker-compose.yml should be valid YAML with required services."""
     result = subprocess.run(
         ["docker", "compose", "-f", "docker/docker-compose.yml", "config"],
-        capture_output=True, text=True, cwd=WORKTREE,
+        capture_output=True, text=True, cwd=str(PROJECT_ROOT),
     )
     assert result.returncode == 0, f"docker compose config failed: {result.stderr}"
     output = result.stdout
@@ -21,7 +21,7 @@ def test_docker_compose_file_valid():
 
 def test_schema_sql_exists_and_valid():
     """01_schema.sql should exist and contain CREATE TABLE statements."""
-    p = pathlib.Path(f"{WORKTREE}/docker/supabase/init/01_schema.sql")
+    p = PROJECT_ROOT / "docker" / "supabase" / "init" / "01_schema.sql"
     assert p.exists()
     content = p.read_text()
     assert "CREATE TABLE" in content
@@ -34,7 +34,7 @@ def test_schema_sql_exists_and_valid():
 
 def test_env_example_exists():
     """docker/.env.example should exist with required variables."""
-    p = pathlib.Path(f"{WORKTREE}/docker/.env.example")
+    p = PROJECT_ROOT / "docker" / ".env.example"
     assert p.exists()
     content = p.read_text()
     assert "POSTGRES_PASSWORD" in content
