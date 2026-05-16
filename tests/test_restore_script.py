@@ -3,9 +3,8 @@
 import pathlib
 import stat
 
-SCRIPT_PATH = pathlib.Path(
-    "/Users/lwj04/.openclaw/workspace-extractor/.worktrees/o4-docs/docker/scripts/restore.sh"
-)
+PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
+SCRIPT_PATH = PROJECT_ROOT / "docker" / "scripts" / "restore.sh"
 
 
 def test_restore_script_exists():
