@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ontofuel"
-version = "0.1.0-alpha"
+version = "1.0.0"
 description = "Ontology-driven knowledge extraction for nuclear materials science"
 readme = "README.md"
 license = {text = "MIT"}
@@ -27,10 +27,11 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0", "pytest-cov"]
+dev = ["pytest>=7.0", "pytest-cov", "pyyaml>=6.0"]
 database = ["supabase>=2.0"]
 viz = ["Pillow>=9.0", "numpy>=1.24"]
-all = ["ontofuel[dev,database,viz]"]
+docs = ["sphinx>=7.0", "sphinx-rtd-theme>=2.0"]
+all = ["ontofuel[dev,database,viz,docs]"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
