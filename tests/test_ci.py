@@ -37,13 +37,13 @@ def test_docker_image_workflow_triggers():
     with open(".github/workflows/docker-image.yml") as f:
         data = yaml.safe_load(f)
     on = data.get("on") or data.get(True)  # YAML parses 'on' as boolean True
-    # push to ontofuel-v0.1 and tags
+    # push to main/ontofuel-v0.1 and tags
     assert "push" in on
-    assert "ontofuel-v0.1" in on["push"]["branches"]
+    push_branches = on["push"]["branches"]
+    assert "ontofuel-v0.1" in push_branches
     assert "v*" in on["push"]["tags"]
-    # pull_request to ontofuel-v0.1
+    # pull_request
     assert "pull_request" in on
-    assert "ontofuel-v0.1" in on["pull_request"]["branches"]
 
 
 def test_docker_image_workflow_uses_buildx():

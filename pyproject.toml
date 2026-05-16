@@ -27,7 +27,7 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0", "pytest-cov"]
+dev = ["pytest>=7.0", "pytest-cov", "pyyaml>=6.0"]
 database = ["supabase>=2.0"]
 viz = ["Pillow>=9.0", "numpy>=1.24"]
 docs = ["sphinx>=7.0", "sphinx-rtd-theme>=2.0"]
