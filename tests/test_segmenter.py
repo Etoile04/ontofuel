@@ -156,6 +156,63 @@ class TestChonkieIntegration:
         assert seg.embedding_config["model"] == "sentence-transformers/all-MiniLM-L6-v2"
 
 
+class TestRecursiveStrategy:
+    """Test recursive chunking strategy."""
+
+    def test_recursive_basic(self):
+        seg = Segmenter(strategy="recursive", chunk_size=256)
+        text = "# Title\n\n" + "Alpha beta gamma delta. " * 50
+        chunks = seg.segment(text)
+        assert len(chunks) >= 1
+        for chunk in chunks:
+            assert chunk.content.strip() != ""
+
+    def test_recursive_returns_chunk_objects(self):
+        seg = Segmenter(strategy="recursive", chunk_size=256)
+        text = "# Section A\n\n" + "Word " * 200 + "\n\n# Section B\n\n" + "More " * 200
+        chunks = seg.segment(text)
+        assert all(isinstance(c, Chunk) for c in chunks)
+
+    def test_recursive_metadata_has_strategy(self):
+        seg = Segmenter(strategy="recursive", chunk_size=256)
+        text = "Some content " * 100
+        chunks = seg.segment(text)
+        for chunk in chunks:
+            assert chunk.metadata.get("strategy") == "recursive"
+
+    def test_segment_method_override_strategy(self):
+        seg = Segmenter(strategy="fixed")
+        text = "Content " * 200
+        chunks = seg.segment(text, strategy="recursive", chunk_size=256)
+        for chunk in chunks:
+            assert chunk.metadata.get("strategy") == "recursive"
+
+    def test_segment_empty_text(self):
+        seg = Segmenter(strategy="recursive")
+        chunks = seg.segment("")
+        # Empty text should return empty list from segment_fixed fallback or single empty
+        assert isinstance(chunks, list)
+
+    def test_segment_passes_chunk_size(self):
+        seg = Segmenter(strategy="recursive", chunk_size=128)
+        text = "Word " * 500
+        chunks = seg.segment(text)
+        # Should produce multiple chunks with small size
+        assert len(chunks) >= 2
+
+
+class TestSegmentMethod:
+    """Test unified segment() method routing."""
+
+    def test_fixed_strategy_route(self):
+        seg = Segmenter(strategy="fixed", chunk_size=256)
+        text = "A" * 5000
+        chunks = seg.segment(text)
+        assert len(chunks) >= 1
+        # Fixed route uses segment_fixed, which produces chunk_0, chunk_1 etc.
+        assert all(c.title.startswith("chunk_") for c in chunks)
+
+
 class TestChunk:
     """Test Chunk dataclass."""
 

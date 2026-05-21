@@ -119,6 +119,88 @@ class Segmenter:
             ))
         return chunks
 
+    def _chunk_recursive(self, text: str, chunk_size: int) -> list[Chunk]:
+        from chonkie import RecursiveChunker
+        chunker = RecursiveChunker(tokenizer="character", chunk_size=chunk_size)
+        result = chunker(text)
+        return self._chonkie_to_chunk(result, "recursive")
+
+    def segment(self, text: str, strategy: str | None = None, chunk_size: int | None = None, overlap_size: int | None = None) -> list[Chunk]:
+        strat = strategy or self.strategy
+        size = chunk_size or self.chunk_size
+        overlap = overlap_size if overlap_size is not None else self.overlap_size
+        if strat == "auto":
+            strat = self._detect_strategy(text)
+        if strat == "recursive" and CHONKIE_AVAILABLE:
+            chunks = self._chunk_recursive(text, size)
+        elif strat == "semantic" and CHONKIE_AVAILABLE:
+            chunks = self._chunk_semantic(text, size)
+        elif strat == "late" and CHONKIE_AVAILABLE:
+            chunks = self._chunk_late(text, size)
+        else:
+            chunks = self.segment_fixed(text, chunk_size=size * 4, overlap=0)
+        if overlap > 0 and CHONKIE_AVAILABLE and len(chunks) > 1:
+            chunks = self._apply_overlap(chunks, overlap)
+        return chunks
+
+    def _detect_strategy(self, text: str) -> str:
+        headings = self.HEADING_RE.findall(text)
+        line_count = text.count('\n') + 1
+        heading_ratio = len(headings) / max(line_count, 1)
+        if heading_ratio > 0.01:
+            return "recursive"
+        elif CHONKIE_AVAILABLE and self._embedding_ready():
+            return "semantic"
+        else:
+            return "fixed"
+
+    def _embedding_ready(self) -> bool:
+        try:
+            self._get_embeddings()
+            return True
+        except Exception:
+            return False
+
+    def _get_embeddings(self):
+        from chonkie import AutoEmbeddings
+        model = self.embedding_config.get("model", EMBEDDING_DEFAULTS["model"])
+        return AutoEmbeddings.get_embeddings(model)
+
+    def _chunk_semantic(self, text: str, chunk_size: int) -> list[Chunk]:
+        from chonkie import SemanticChunker
+        embeddings = self._get_embeddings()
+        chunker = SemanticChunker(embedding_model=embeddings, chunk_size=chunk_size)
+        result = chunker(text)
+        return self._chonkie_to_chunk(result, "semantic")
+
+    def _chunk_late(self, text: str, chunk_size: int) -> list[Chunk]:
+        from chonkie import LateChunker
+        embeddings = self._get_embeddings()
+        chunker = LateChunker(embedding_model=embeddings, chunk_size=chunk_size)
+        result = chunker(text)
+        return self._chonkie_to_chunk(result, "late")
+
+    def _apply_overlap(self, chunks: list[Chunk], overlap_size: int) -> list[Chunk]:
+        if len(chunks) <= 1:
+            return chunks
+        result = [chunks[0]]
+        for i in range(1, len(chunks)):
+            prev = chunks[i - 1]
+            curr = chunks[i]
+            prev_words = prev.content.split()
+            overlap_words = prev_words[-overlap_size:] if len(prev_words) > overlap_size else prev_words
+            overlap_text = " ".join(overlap_words)
+            enhanced_content = overlap_text + " " + curr.content if overlap_text else curr.content
+            result.append(Chunk(
+                index=i, title=curr.title, content=enhanced_content,
+                start_char=curr.start_char, end_char=curr.end_char,
+                level=curr.level,
+                metadata={**curr.metadata, "overlap_applied": True},
+            ))
+        for i, chunk in enumerate(result):
+            chunk.index = i
+        return result
+
     def segment_heading(self, text: str, min_size: int = 100) -> list[Chunk]:
         """Split text by markdown headings.
 
