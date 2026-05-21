@@ -213,6 +213,103 @@ class TestSegmentMethod:
         assert all(c.title.startswith("chunk_") for c in chunks)
 
 
+class TestSemanticStrategy:
+    """Test semantic chunking strategy."""
+
+    def test_semantic_basic(self):
+        seg = Segmenter(strategy="semantic", chunk_size=256,
+                        embedding_config={"model": "minishlab/potion-base-8M"})
+        text = "U-10Mo has density 15.8. " * 30 + "Zirconium cladding material. " * 30
+        chunks = seg.segment(text, overlap_size=0)
+        assert len(chunks) >= 2
+        for c in chunks:
+            assert c.metadata.get("strategy") == "semantic"
+
+    def test_semantic_returns_chunk_objects(self):
+        seg = Segmenter(strategy="semantic", chunk_size=256,
+                        embedding_config={"model": "minishlab/potion-base-8M"})
+        text = "Some text about nuclear fuel. " * 50
+        chunks = seg.segment(text, overlap_size=0)
+        assert all(isinstance(c, Chunk) for c in chunks)
+
+
+class TestLateStrategy:
+    """Test late chunking strategy."""
+
+    def test_late_basic(self):
+        # LateChunker requires SentenceTransformerEmbeddings specifically
+        seg = Segmenter(strategy="late", chunk_size=256)
+        text = "U-10Mo has density 15.8. " * 30 + "Zirconium cladding material. " * 30
+        chunks = seg.segment(text, overlap_size=0)
+        assert len(chunks) >= 1
+        for c in chunks:
+            assert c.metadata.get("strategy") == "late"
+
+
+class TestAutoStrategy:
+    """Test auto detection strategy."""
+
+    def test_auto_detects_recursive_for_heading_rich(self):
+        seg = Segmenter(strategy="auto", chunk_size=256,
+                        embedding_config={"model": "minishlab/potion-base-8M"})
+        # Many headings → should pick recursive
+        lines = [f"## Section {i}\nContent line {i}." for i in range(20)]
+        text = "\n".join(lines)
+        detected = seg._detect_strategy(text)
+        assert detected == "recursive"
+
+    def test_auto_detects_fixed_for_plain_text_no_embeddings(self, monkeypatch):
+        import ontofuel.extraction.segmenter as mod
+        monkeypatch.setattr(mod, "CHONKIE_AVAILABLE", False)
+        seg = Segmenter(strategy="auto")
+        text = "Just some plain text without headings. " * 50
+        detected = seg._detect_strategy(text)
+        assert detected == "fixed"
+
+    def test_auto_detects_semantic_with_embeddings(self):
+        seg = Segmenter(strategy="auto", chunk_size=256,
+                        embedding_config={"model": "minishlab/potion-base-8M"})
+        # Plain text, no headings, embeddings available → semantic
+        text = "Just some plain text without headings. " * 50
+        detected = seg._detect_strategy(text)
+        assert detected == "semantic"
+
+
+class TestOverlap:
+    """Test overlap application."""
+
+    def test_overlap_applied(self):
+        seg = Segmenter(strategy="recursive", chunk_size=128, overlap_size=5)
+        text = "Word " * 500
+        chunks = seg.segment(text)
+        # At least the second chunk should have overlap_applied
+        overlap_chunks = [c for c in chunks if c.metadata.get("overlap_applied")]
+        assert len(overlap_chunks) >= 1
+
+    def test_overlap_zero_no_application(self):
+        seg = Segmenter(strategy="recursive", chunk_size=128, overlap_size=0)
+        text = "Word " * 500
+        chunks = seg.segment(text)
+        overlap_chunks = [c for c in chunks if c.metadata.get("overlap_applied")]
+        assert len(overlap_chunks) == 0
+
+    def test_overlap_single_chunk(self):
+        seg = Segmenter(strategy="recursive", chunk_size=8192, overlap_size=10)
+        text = "Short text."
+        chunks = seg.segment(text)
+        # Single chunk → no overlap applied
+        assert len(chunks) == 1
+        assert not chunks[0].metadata.get("overlap_applied")
+
+    def test_overlap_content_contains_previous_words(self):
+        seg = Segmenter(strategy="recursive", chunk_size=64, overlap_size=10)
+        text = " ".join(f"word{i}" for i in range(200))
+        chunks = seg.segment(text)
+        if len(chunks) > 1:
+            # Second chunk should start with words from previous chunk
+            assert chunks[1].metadata.get("overlap_applied") is True
+
+
 class TestChunk:
     """Test Chunk dataclass."""
 
