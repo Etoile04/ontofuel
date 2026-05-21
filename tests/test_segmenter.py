@@ -120,6 +120,42 @@ class TestSegmentByKeywords:
         assert len(chunks) >= 2
 
 
+class TestChonkieIntegration:
+    """Test Chonkie-backed segmentation strategies."""
+
+    def test_chonkie_available(self):
+        from ontofuel.extraction.segmenter import CHONKIE_AVAILABLE
+        assert CHONKIE_AVAILABLE is True
+
+    def test_segmenter_default_init(self):
+        seg = Segmenter()
+        assert seg.strategy == "auto"
+        assert seg.chunk_size == 2048
+        assert seg.overlap_size == 128
+
+    def test_segmenter_explicit_strategy(self):
+        seg = Segmenter(strategy="recursive")
+        assert seg.strategy == "recursive"
+
+    def test_segmenter_invalid_strategy_raises(self):
+        with pytest.raises(ValueError, match="Unknown strategy"):
+            Segmenter(strategy="nonexistent")
+
+    def test_segmenter_fallback_without_chonkie(self, monkeypatch):
+        import ontofuel.extraction.segmenter as mod
+        monkeypatch.setattr(mod, "CHONKIE_AVAILABLE", False)
+        seg = Segmenter(strategy="semantic")
+        assert seg.strategy == "fixed"
+
+    def test_segmenter_custom_embedding_config(self):
+        seg = Segmenter(embedding_config={"model": "custom-model"})
+        assert seg.embedding_config["model"] == "custom-model"
+
+    def test_segmenter_default_embedding_config(self):
+        seg = Segmenter()
+        assert seg.embedding_config["model"] == "sentence-transformers/all-MiniLM-L6-v2"
+
+
 class TestChunk:
     """Test Chunk dataclass."""
 

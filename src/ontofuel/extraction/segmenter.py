@@ -13,8 +13,22 @@ Example:
 from __future__ import annotations
 
 import re
+import warnings
 from dataclasses import dataclass, field
 from typing import Any
+
+try:
+    import chonkie
+    CHONKIE_AVAILABLE = True
+except ImportError:
+    CHONKIE_AVAILABLE = False
+
+EMBEDDING_DEFAULTS: dict[str, Any] = {
+    "provider": "sentence-transformers",
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+}
+
+VALID_STRATEGIES = {"auto", "recursive", "semantic", "late", "fixed"}
 
 
 @dataclass
@@ -72,6 +86,38 @@ class Segmenter:
 
     # Heading pattern: captures level and title
     HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)
+
+    def __init__(
+        self,
+        strategy: str = "auto",
+        chunk_size: int = 2048,
+        overlap_size: int = 128,
+        embedding_config: dict[str, Any] | None = None,
+    ) -> None:
+        if strategy not in VALID_STRATEGIES:
+            raise ValueError(f"Unknown strategy '{strategy}'. Must be one of {VALID_STRATEGIES}")
+        if strategy not in ("fixed", "auto") and not CHONKIE_AVAILABLE:
+            warnings.warn("chonkie not installed, falling back to 'fixed' strategy.", stacklevel=2)
+            strategy = "fixed"
+        self.strategy = strategy
+        self.chunk_size = chunk_size
+        self.overlap_size = overlap_size
+        self.embedding_config = embedding_config or EMBEDDING_DEFAULTS.copy()
+
+    @staticmethod
+    def _chonkie_to_chunk(chonkie_chunks, strategy_name: str) -> list[Chunk]:
+        chunks: list[Chunk] = []
+        for i, cc in enumerate(chonkie_chunks):
+            text = cc.text if hasattr(cc, 'text') else str(cc)
+            first_line = text.strip().split('\n')[0][:80] if text.strip() else f"chunk_{i}"
+            chunks.append(Chunk(
+                index=i, title=first_line, content=text,
+                start_char=getattr(cc, 'start_index', 0),
+                end_char=getattr(cc, 'end_index', len(text)),
+                level=0,
+                metadata={"strategy": strategy_name, "token_count": getattr(cc, 'token_count', 0)},
+            ))
+        return chunks
 
     def segment_heading(self, text: str, min_size: int = 100) -> list[Chunk]:
         """Split text by markdown headings.
