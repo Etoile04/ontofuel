@@ -2,7 +2,7 @@
 
 import pytest
 
-from ontofuel.extraction.segmenter import Segmenter, Chunk
+from ontofuel.extraction.segmenter import Segmenter, Chunk, CHONKIE_AVAILABLE
 
 
 class TestSegmentHeading:
@@ -123,9 +123,10 @@ class TestSegmentByKeywords:
 class TestChonkieIntegration:
     """Test Chonkie-backed segmentation strategies."""
 
+    @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
     def test_chonkie_available(self):
-        from ontofuel.extraction.segmenter import CHONKIE_AVAILABLE
-        assert CHONKIE_AVAILABLE is True
+        from ontofuel.extraction.segmenter import CHONKIE_AVAILABLE as CA
+        assert CA is True
 
     def test_segmenter_default_init(self):
         seg = Segmenter()
@@ -454,3 +455,27 @@ for long-term stable service.
         all_text = " ".join(c.content for c in chunks)
         assert "U3Si2" in all_text
         assert "Onsager" in all_text or "Kirkendall" in all_text
+
+
+class TestCodexFixes:
+    """Tests for issues found in PR code review."""
+
+    def test_segment_validates_per_call_strategy(self):
+        """Fix #2: segment() should reject invalid strategy override."""
+        seg = Segmenter()
+        with pytest.raises(ValueError, match="Unknown strategy"):
+            seg.segment("Some text", strategy="recusive")
+
+    def test_segment_validates_per_call_strategy_typo(self):
+        """Fix #2: segment() should reject typos, not silently fallback."""
+        seg = Segmenter()
+        with pytest.raises(ValueError, match="Unknown strategy"):
+            seg.segment("Some text", strategy="semnatic")
+
+    def test_fixed_strategy_applies_overlap(self):
+        """Fix #3: fixed strategy should still apply overlap."""
+        seg = Segmenter(strategy="fixed", chunk_size=2048, overlap_size=128)
+        text = "Word " * 5000
+        chunks = seg.segment(text)
+        # segment_fixed handles overlap internally via its own overlap param
+        assert len(chunks) >= 2

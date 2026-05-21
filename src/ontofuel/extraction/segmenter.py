@@ -138,6 +138,11 @@ class Segmenter:
         strat = strategy or self.strategy
         size = chunk_size or self.chunk_size
         overlap = overlap_size if overlap_size is not None else self.overlap_size
+
+        # Fix #2: validate per-call strategy override
+        if strategy is not None and strat not in VALID_STRATEGIES:
+            raise ValueError(f"Unknown strategy '{strat}'. Must be one of {VALID_STRATEGIES}")
+
         if strat == "auto":
             strat = self._detect_strategy(text)
         if strat == "recursive" and CHONKIE_AVAILABLE:
@@ -147,8 +152,13 @@ class Segmenter:
         elif strat == "late" and CHONKIE_AVAILABLE:
             chunks = self._chunk_late(text, size)
         else:
-            chunks = self.segment_fixed(text, chunk_size=size * 4, overlap=0)
-        if overlap > 0 and CHONKIE_AVAILABLE and len(chunks) > 1:
+            # Fix #3: pass overlap to segment_fixed, not hardcode 0
+            chunks = self.segment_fixed(text, chunk_size=size * 4, overlap=overlap)
+            return chunks  # segment_fixed already handles overlap
+
+        # Fix #3: apply overlap post-processing for Chonkie strategies
+        # (overlap for fixed is handled by segment_fixed itself)
+        if overlap > 0 and len(chunks) > 1:
             chunks = self._apply_overlap(chunks, overlap)
         return chunks
 
