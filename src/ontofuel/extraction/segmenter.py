@@ -1,20 +1,43 @@
-"""Segmenter — split markdown/text into sections or fixed-size chunks.
+"""Segmenter — split markdown/text into sections or chunks.
 
-Supports two modes:
-  1. Heading-based segmentation (uses ##/### markers)
-  2. Fixed-size chunking (by character or line count)
+Supports multiple chunking strategies via Chonkie integration:
+  1. "recursive" — RecursiveChunker (best for structured markdown docs)
+  2. "semantic"  — SemanticChunker (best for unstructured text, needs embeddings)
+  3. "late"      — LateChunker (embed-then-split for better context)
+  4. "auto"      — Auto-detect best strategy based on document structure
+  5. "fixed"     — Pure-Python fixed-size chunking (fallback, no dependencies)
 
-Example:
-    >>> seg = Segmenter()
-    >>> chunks = seg.segment_heading(md_text)
-    >>> chunks = seg.segment_fixed(md_text, chunk_size=4000)
+Unified entry:
+    >>> seg = Segmenter(strategy="auto")
+    >>> chunks = seg.segment(text)
+
+Legacy methods (backward compatible):
+    >>> seg.segment_heading(md_text)
+    >>> seg.segment_fixed(md_text, chunk_size=4000)
+    >>> seg.segment_by_keywords(md_text, ["U3Si2"])
+
+Requires: chonkie (optional, pip install ontofuel[chonkie-semantic])
 """
 
 from __future__ import annotations
 
 import re
+import warnings
 from dataclasses import dataclass, field
 from typing import Any
+
+try:
+    import chonkie
+    CHONKIE_AVAILABLE = True
+except ImportError:
+    CHONKIE_AVAILABLE = False
+
+EMBEDDING_DEFAULTS: dict[str, Any] = {
+    "provider": "sentence-transformers",
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+}
+
+VALID_STRATEGIES = {"auto", "recursive", "semantic", "late", "fixed"}
 
 
 @dataclass
@@ -72,6 +95,130 @@ class Segmenter:
 
     # Heading pattern: captures level and title
     HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$", re.MULTILINE)
+
+    def __init__(
+        self,
+        strategy: str = "auto",
+        chunk_size: int = 2048,
+        overlap_size: int = 128,
+        embedding_config: dict[str, Any] | None = None,
+    ) -> None:
+        if strategy not in VALID_STRATEGIES:
+            raise ValueError(f"Unknown strategy '{strategy}'. Must be one of {VALID_STRATEGIES}")
+        if strategy not in ("fixed", "auto") and not CHONKIE_AVAILABLE:
+            warnings.warn("chonkie not installed, falling back to 'fixed' strategy.", stacklevel=2)
+            strategy = "fixed"
+        self.strategy = strategy
+        self.chunk_size = chunk_size
+        self.overlap_size = overlap_size
+        self.embedding_config = embedding_config or EMBEDDING_DEFAULTS.copy()
+
+    @staticmethod
+    def _chonkie_to_chunk(chonkie_chunks, strategy_name: str) -> list[Chunk]:
+        chunks: list[Chunk] = []
+        for i, cc in enumerate(chonkie_chunks):
+            text = cc.text if hasattr(cc, 'text') else str(cc)
+            first_line = text.strip().split('\n')[0][:80] if text.strip() else f"chunk_{i}"
+            chunks.append(Chunk(
+                index=i, title=first_line, content=text,
+                start_char=getattr(cc, 'start_index', 0),
+                end_char=getattr(cc, 'end_index', len(text)),
+                level=0,
+                metadata={"strategy": strategy_name, "token_count": getattr(cc, 'token_count', 0)},
+            ))
+        return chunks
+
+    def _chunk_recursive(self, text: str, chunk_size: int) -> list[Chunk]:
+        from chonkie import RecursiveChunker
+        chunker = RecursiveChunker(tokenizer="character", chunk_size=chunk_size)
+        result = chunker(text)
+        return self._chonkie_to_chunk(result, "recursive")
+
+    def segment(self, text: str, strategy: str | None = None, chunk_size: int | None = None, overlap_size: int | None = None) -> list[Chunk]:
+        strat = strategy or self.strategy
+        size = chunk_size or self.chunk_size
+        overlap = overlap_size if overlap_size is not None else self.overlap_size
+
+        # Fix #2: validate per-call strategy override
+        if strategy is not None and strat not in VALID_STRATEGIES:
+            raise ValueError(f"Unknown strategy '{strat}'. Must be one of {VALID_STRATEGIES}")
+
+        if strat == "auto":
+            strat = self._detect_strategy(text)
+        if strat == "recursive" and CHONKIE_AVAILABLE:
+            chunks = self._chunk_recursive(text, size)
+        elif strat == "semantic" and CHONKIE_AVAILABLE:
+            chunks = self._chunk_semantic(text, size)
+        elif strat == "late" and CHONKIE_AVAILABLE:
+            chunks = self._chunk_late(text, size)
+        else:
+            # Fix #3: pass overlap to segment_fixed, not hardcode 0
+            chunks = self.segment_fixed(text, chunk_size=size * 4, overlap=overlap)
+            return chunks  # segment_fixed already handles overlap
+
+        # Fix #3: apply overlap post-processing for Chonkie strategies
+        # (overlap for fixed is handled by segment_fixed itself)
+        if overlap > 0 and len(chunks) > 1:
+            chunks = self._apply_overlap(chunks, overlap)
+        return chunks
+
+    def _detect_strategy(self, text: str) -> str:
+        headings = self.HEADING_RE.findall(text)
+        line_count = text.count('\n') + 1
+        heading_ratio = len(headings) / max(line_count, 1)
+        if heading_ratio > 0.01:
+            return "recursive"
+        elif CHONKIE_AVAILABLE and self._embedding_ready():
+            return "semantic"
+        else:
+            return "fixed"
+
+    def _embedding_ready(self) -> bool:
+        try:
+            self._get_embeddings()
+            return True
+        except Exception:
+            return False
+
+    def _get_embeddings(self):
+        from chonkie import AutoEmbeddings
+        model = self.embedding_config.get("model", EMBEDDING_DEFAULTS["model"])
+        return AutoEmbeddings.get_embeddings(model)
+
+    def _chunk_semantic(self, text: str, chunk_size: int) -> list[Chunk]:
+        from chonkie import SemanticChunker
+        embeddings = self._get_embeddings()
+        chunker = SemanticChunker(embedding_model=embeddings, chunk_size=chunk_size)
+        result = chunker(text)
+        return self._chonkie_to_chunk(result, "semantic")
+
+    def _chunk_late(self, text: str, chunk_size: int) -> list[Chunk]:
+        from chonkie import LateChunker
+        embeddings = self._get_embeddings()
+        chunker = LateChunker(embedding_model=embeddings, chunk_size=chunk_size)
+        result = chunker(text)
+        return self._chonkie_to_chunk(result, "late")
+
+    def _apply_overlap(self, chunks: list[Chunk], overlap_size: int) -> list[Chunk]:
+        if len(chunks) <= 1:
+            return chunks
+        result = [chunks[0]]
+        for i in range(1, len(chunks)):
+            prev = chunks[i - 1]
+            curr = chunks[i]
+            prev_words = prev.content.split()
+            overlap_words = prev_words[-overlap_size:] if len(prev_words) > overlap_size else prev_words
+            overlap_text = " ".join(overlap_words)
+            enhanced_content = overlap_text + " " + curr.content if overlap_text else curr.content
+            result.append(Chunk(
+                index=i, title=curr.title, content=enhanced_content,
+                start_char=curr.start_char, end_char=curr.end_char,
+                level=curr.level,
+                metadata={**curr.metadata, "overlap_applied": True},
+            ))
+        for i, chunk in enumerate(result):
+            chunk.index = i
+        return result
 
     def segment_heading(self, text: str, min_size: int = 100) -> list[Chunk]:
         """Split text by markdown headings.
