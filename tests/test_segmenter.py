@@ -327,3 +327,130 @@ class TestChunk:
         assert d["index"] == 0
         assert d["title"] == "test"
         assert d["char_count"] == 5
+
+
+class TestBackwardCompatibility:
+    """Verify existing API still works identically."""
+
+    def test_segment_heading_returns_list_chunk(self):
+        seg = Segmenter()
+        text = "# Title\n## A\n" + "X" * 200 + "\n## B\n" + "Y" * 200
+        chunks = seg.segment_heading(text)
+        assert isinstance(chunks, list)
+        for c in chunks:
+            assert isinstance(c, Chunk)
+            assert hasattr(c, 'index')
+            assert hasattr(c, 'title')
+            assert hasattr(c, 'content')
+            assert hasattr(c, 'start_char')
+            assert hasattr(c, 'end_char')
+            assert hasattr(c, 'level')
+            assert hasattr(c, 'metadata')
+            assert hasattr(c, 'char_count')
+            assert hasattr(c, 'line_count')
+            assert hasattr(c, 'to_dict')
+
+    def test_segment_fixed_returns_list_chunk(self):
+        seg = Segmenter()
+        chunks = seg.segment_fixed("A" * 5000, chunk_size=2000)
+        assert isinstance(chunks, list)
+        for c in chunks:
+            assert isinstance(c, Chunk)
+            assert isinstance(c.to_dict(), dict)
+
+    def test_segment_by_keywords_returns_list_chunk(self):
+        seg = Segmenter()
+        chunks = seg.segment_by_keywords("U-10Mo is great.", ["U-10Mo"])
+        assert isinstance(chunks, list)
+        for c in chunks:
+            assert isinstance(c, Chunk)
+
+    def test_segment_heading_no_chonkie_still_works(self):
+        """Even without chonkie, segment_heading works (pure Python fallback)."""
+        import ontofuel.extraction.segmenter as seg_mod
+        original = seg_mod.CHONKIE_AVAILABLE
+        seg_mod.CHONKIE_AVAILABLE = False
+        try:
+            seg = seg_mod.Segmenter()
+            text = "## Section\n" + "Content " * 100
+            chunks = seg.segment_heading(text)
+            assert len(chunks) >= 1
+            assert chunks[0].title == "Section"
+        finally:
+            seg_mod.CHONKIE_AVAILABLE = original
+
+
+class TestIntegration:
+    """Integration test with realistic nuclear material document."""
+
+    NUCLEAR_TEXT = """# U3Si2 Fuel-Cladding Compatibility
+
+## 1. Introduction
+
+U3Si2 is a promising accident tolerant fuel with high thermal conductivity
+(15-30 W/mK) and high uranium density (11.3 g-U/cm3). The fuel-cladding
+chemical interaction (FCCI) between U3Si2 and candidate cladding materials
+is a key concern for engineering application.
+
+## 2. Thermodynamic Analysis
+
+The interface reaction enthalpy was calculated using DFT+U method with
+Ueff = 1.6 eV. The convex hull construction established local multiphase
+equilibrium chemical potentials. Results show two distinct pathways:
+
+- SiC and Zr systems exhibit "self-passivating" characteristics
+- Fe and Cr systems face "continuous degradation" risk
+
+## 3. Kinetic Migration Barriers
+
+The CI-NEB method was used to calculate solute transition barriers.
+Key findings include:
+
+| System | Barrier (eV) | Migration Path |
+|--------|-------------|----------------|
+| Fe in U3Si2 | 0.66 | U1-U2 vacancy |
+| Zr in U3Si2 | 1.56 | U1-U2 vacancy |
+| U in alpha-Fe | 0.37 | 5NN-1NN (OSA) |
+| Si in alpha-Cr | 0.70 | NN exchange |
+
+## 4. Diffusion Behavior
+
+The Onsager transport coefficients were calculated using KineCluE method.
+Temperature range: 400-2200 K. The inverse Kirkendall effect dominates
+cladding element penetration into U3Si2 fuel.
+
+## 5. Conclusions
+
+SiC and Zr alloys demonstrate relatively superior performance.
+FeCrAl alloys and pure Cr coatings require intermediate barrier layers
+for long-term stable service.
+"""
+
+    def test_recursive_on_nuclear_doc(self):
+        seg = Segmenter(strategy="recursive", chunk_size=512)
+        chunks = seg.segment(self.NUCLEAR_TEXT)
+        assert len(chunks) >= 3
+        for c in chunks:
+            assert len(c.content) > 20, f"Chunk {c.index} too short"
+
+    def test_semantic_on_nuclear_doc(self):
+        seg = Segmenter(strategy="semantic", chunk_size=512)
+        chunks = seg.segment(self.NUCLEAR_TEXT)
+        assert len(chunks) >= 1
+        all_text = " ".join(c.content for c in chunks)
+        assert "U3Si2" in all_text
+        assert "FCCI" in all_text
+
+    def test_auto_on_nuclear_doc(self):
+        seg = Segmenter(strategy="auto", chunk_size=512)
+        chunks = seg.segment(self.NUCLEAR_TEXT)
+        assert len(chunks) >= 2
+        strategies = {c.metadata.get("strategy") for c in chunks}
+        assert "recursive" in strategies
+
+    def test_overlap_preserves_context(self):
+        seg = Segmenter(strategy="recursive", chunk_size=256, overlap_size=32)
+        chunks = seg.segment(self.NUCLEAR_TEXT)
+        all_text = " ".join(c.content for c in chunks)
+        assert "U3Si2" in all_text
+        assert "Onsager" in all_text or "Kirkendall" in all_text

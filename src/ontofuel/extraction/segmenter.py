@@ -1,13 +1,22 @@
-"""Segmenter — split markdown/text into sections or fixed-size chunks.
+"""Segmenter — split markdown/text into sections or chunks.
 
-Supports two modes:
-  1. Heading-based segmentation (uses ##/### markers)
-  2. Fixed-size chunking (by character or line count)
+Supports multiple chunking strategies via Chonkie integration:
+  1. "recursive" — RecursiveChunker (best for structured markdown docs)
+  2. "semantic"  — SemanticChunker (best for unstructured text, needs embeddings)
+  3. "late"      — LateChunker (embed-then-split for better context)
+  4. "auto"      — Auto-detect best strategy based on document structure
+  5. "fixed"     — Pure-Python fixed-size chunking (fallback, no dependencies)
 
-Example:
-    >>> seg = Segmenter()
-    >>> chunks = seg.segment_heading(md_text)
-    >>> chunks = seg.segment_fixed(md_text, chunk_size=4000)
+Unified entry:
+    >>> seg = Segmenter(strategy="auto")
+    >>> chunks = seg.segment(text)
+
+Legacy methods (backward compatible):
+    >>> seg.segment_heading(md_text)
+    >>> seg.segment_fixed(md_text, chunk_size=4000)
+    >>> seg.segment_by_keywords(md_text, ["U3Si2"])
+
+Requires: chonkie (optional, pip install ontofuel[chonkie-semantic])
 """
 
 from __future__ import annotations
