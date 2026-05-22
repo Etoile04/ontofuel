@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OntoFuel 本体可视化</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="d3.v7.min.js"></script>
+    <script src="fuse.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { overflow: hidden; background: #0d1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #e6edf3; }
@@ -81,26 +82,28 @@
         #legend .leg-item { display: flex; align-items: center; gap: 6px; margin: 3px 0; }
         #legend .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
 
-        /* Spinner animation (used by loading overlay) */
+        /* Loading */
+        #loading {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; z-index: 300;
+        }
+        #loading .spinner { width: 40px; height: 40px; border: 3px solid #30363d; border-top-color: #58a6ff; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        #loading p { color: #8b949e; font-size: 13px; }
+
+        /* Error */
+        #error-banner {
+            position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+            background: #da3633; color: white; padding: 8px 20px; border-radius: 6px;
+            font-size: 13px; z-index: 300; display: none;
+        }
     </style>
 </head>
 <body>
-    <!-- Full-screen loading overlay -->
-    <div id="loading" style="display:flex;align-items:center;justify-content:center;height:100vh;background:#0d1117;color:#e6edf3;font-family:sans-serif;flex-direction:column;gap:16px;">
-        <div style="width:40px;height:40px;border:3px solid #30363d;border-top-color:#58a6ff;border-radius:50%;animation:spin 1s linear infinite;"></div>
-        <div>正在加载本体数据...</div>
-    </div>
-    <div id="error-panel" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#da3633;color:white;padding:24px 32px;border-radius:8px;font-family:sans-serif;z-index:9999;max-width:500px;">
-        <h3 style="margin:0 0 8px">⚠️ 数据加载失败</h3>
-        <p id="error-msg" style="margin:0"></p>
-        <p style="margin:8px 0 0;font-size:0.85em;opacity:0.8;">请确保通过 HTTP 服务访问此页面，或使用 standalone 版本。</p>
-    </div>
-
     <!-- Toolbar -->
     <div id="toolbar">
         <h1>📊 <span>OntoFuel</span> 本体可视化</h1>
-        <input id="search-box" type="text" placeholder="搜索节点名称... (Enter 确认)">
+        <input id="search-box" type="text" placeholder="模糊搜索节点... (如: umo, u mo)">
         <button class="filter-btn active" data-type="all">全部</button>
         <button class="filter-btn" data-type="class">类</button>
         <button class="filter-btn" data-type="individual">个体</button>
@@ -136,7 +139,14 @@
         <div style="margin-top:6px;color:#484f58">滚轮缩放 | 拖拽平移 | 点击查看详情</div>
     </div>
 
+    <!-- Loading -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>加载本体数据...</p>
+    </div>
 
+    <!-- Error banner -->
+    <div id="error-banner"></div>
 
     <script>
     // ============ State ============
@@ -166,6 +176,9 @@
             // Build adjacency for tooltips
             buildAdjacency();
 
+            // Build initial Fuse.js search index
+            fuseInstance = buildFuseIndex(allNodes);
+
             document.getElementById('loading').style.display = 'none';
             document.getElementById('node-count').textContent = allNodes.length;
             document.getElementById('rel-count').textContent = allRels.length;
@@ -173,8 +186,7 @@
             renderGraph();
         } catch (err) {
             document.getElementById('loading').style.display = 'none';
-            document.getElementById('error-panel').style.display = 'block';
-            document.getElementById('error-msg').textContent = err.message;
+            showError('数据加载失败: ' + err.message);
         }
     }
 
@@ -211,6 +223,58 @@
         });
     }
 
+    // ============ Fuzzy Search ============
+    let fuseInstance = null;
+    let searchMatchIds = new Set();  // track which nodes matched search
+
+    function buildFuseIndex(nodes) {
+        // Use Fuse.js if available, otherwise fallback to inline fuzzy
+        if (typeof Fuse !== 'undefined') {
+            return new Fuse(nodes, {
+                keys: [
+                    { name: 'name', weight: 2 },
+                    { name: 'id', weight: 1.5 },
+                    { name: 'label', weight: 1 },
+                    { name: 'type', weight: 0.5 }
+                ],
+                threshold: 0.4,
+                distance: 100,
+                minMatchCharLength: 2,
+                includeScore: true,
+                ignoreLocation: true
+            });
+        }
+        return null;
+    }
+
+    function fuzzyMatch(text, query) {
+        const t = text.toLowerCase();
+        const q = query.toLowerCase();
+        // All query chars must appear in order (subsequence match)
+        let ti = 0;
+        for (let qi = 0; qi < q.length; qi++) {
+            ti = t.indexOf(q[qi], ti);
+            if (ti === -1) return false;
+            ti++;
+        }
+        return true;
+    }
+
+    function filterByQuery(nodes, query) {
+        if (!query || query.length < 1) return nodes;
+        // Try Fuse.js first
+        if (fuseInstance) {
+            const results = fuseInstance.search(query);
+            return results.map(r => r.item);
+        }
+        // Fallback: inline fuzzy
+        const q = query.toLowerCase();
+        return nodes.filter(n => {
+            const fields = [n.id, n.label, n.name, n.type].filter(Boolean);
+            return fields.some(f => fuzzyMatch(String(f), q));
+        });
+    }
+
     // ============ Filter ============
     function getFiltered() {
         let nodes = allNodes;
@@ -218,8 +282,10 @@
             nodes = nodes.filter(n => n.type === activeFilter);
         }
         if (searchTerm) {
-            const q = searchTerm.toLowerCase();
-            nodes = nodes.filter(n => (n.name || '').toLowerCase().includes(q));
+            nodes = filterByQuery(nodes, searchTerm);
+            searchMatchIds = new Set(nodes.map(n => n.id));
+        } else {
+            searchMatchIds.clear();
         }
         const nodeIds = new Set(nodes.map(n => n.id));
         // Deep copy rels to prevent D3 from mutating original data
@@ -270,14 +336,25 @@
             return 4;
         };
 
+        const isSearchActive = searchTerm && searchMatchIds.size > 0;
+
         nodeSel = svgG.append('g')
             .selectAll('circle')
             .data(nodes)
             .join('circle')
-            .attr('r', radiusScale)
+            .attr('r', d => {
+                if (isSearchActive && searchMatchIds.has(d.id)) return radiusScale(d) + 3;
+                return radiusScale(d);
+            })
             .attr('fill', d => nodeColor(d.type))
-            .attr('stroke', '#0d1117')
-            .attr('stroke-width', 1)
+            .attr('stroke', d => {
+                if (isSearchActive && searchMatchIds.has(d.id)) return '#ffd33d';
+                return '#0d1117';
+            })
+            .attr('stroke-width', d => {
+                if (isSearchActive && searchMatchIds.has(d.id)) return 2.5;
+                return 1;
+            })
             .style('cursor', 'pointer')
             .on('mouseover', showTooltip)
             .on('mousemove', moveTooltip)
@@ -285,14 +362,15 @@
             .on('click', showPanel)
             .call(dragBehavior());
 
-        // Labels - show for classes and hovered nodes
+        // Labels - show for classes and search-matched nodes
         labelSel = svgG.append('g')
             .selectAll('text')
-            .data(nodes.filter(n => n.type === 'class'))
+            .data(nodes.filter(n => n.type === 'class' || (isSearchActive && searchMatchIds.has(n.id))))
             .join('text')
             .text(d => truncateName(d.name || d.id, 20))
-            .attr('font-size', 9)
-            .attr('fill', '#8b949e')
+            .attr('font-size', d => (isSearchActive && searchMatchIds.has(d.id)) ? 11 : 9)
+            .attr('fill', d => (isSearchActive && searchMatchIds.has(d.id)) ? '#ffd33d' : '#8b949e')
+            .attr('font-weight', d => (isSearchActive && searchMatchIds.has(d.id)) ? 'bold' : 'normal')
             .attr('dx', 10)
             .attr('dy', 3)
             .style('pointer-events', 'none');
@@ -433,6 +511,9 @@
     // ============ Search & Filter ============
     document.getElementById('search-box').addEventListener('input', e => {
         searchTerm = e.target.value.trim();
+        // Rebuild fuse index with current filter applied
+        const filtered = activeFilter !== 'all' ? allNodes.filter(n => n.type === activeFilter) : allNodes;
+        fuseInstance = buildFuseIndex(filtered);
         renderGraph();
     });
 
@@ -451,6 +532,11 @@
         return name.length > max ? name.slice(0, max) + '…' : name;
     }
 
+    function showError(msg) {
+        const el = document.getElementById('error-banner');
+        el.textContent = '❌ ' + msg;
+        el.style.display = 'block';
+    }
 
     // ============ Resize ============
     window.addEventListener('resize', () => {
