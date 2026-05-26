@@ -161,6 +161,13 @@ class OntologyUpdater:
             added = self._add_property_to_individual(ind_name, prop_name, prop_value, prop.get("unit", ""))
             if added:
                 stats.added_properties += 1
+                self._changes.append({
+                    "action": "add",
+                    "type": "property",
+                    "name": prop_name,
+                    "individual": ind_name,
+                    "timestamp": datetime.now().isoformat(),
+                })
             else:
                 stats.skipped_individuals += 1
 
@@ -199,6 +206,10 @@ class OntologyUpdater:
     def get_changes(self) -> list[dict[str, Any]]:
         """Get list of all changes made."""
         return self._changes
+
+    def get_stats(self) -> UpdateStats:
+        """Get accumulated update statistics."""
+        return self._stats
 
     def get_before_stats(self) -> dict[str, int]:
         """Get ontology stats before changes (recomputed from current state)."""
