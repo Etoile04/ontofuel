@@ -12,6 +12,7 @@ OntoFuel 是一个面向核材料领域的本体驱动知识提取与管理系�
 - **📊 本体验证** — 5 维质量评估（命名/结构/语义/完整/覆盖）
 - **🖥️ Web 可视化** — D3.js 力导向图，支持搜索、过滤、缩放
 - **💾 数据库集成** — Supabase (PostgreSQL) 存储，REST API
+- **🐳 Docker 全栈部署** — `docker compose up` 一键启动 PostgreSQL + FastAPI API + Web 管理界面
 
 ## 📦 安装
 
@@ -50,6 +51,29 @@ ontofuel validate --quick
 ontofuel viz --port 9999
 ```
 
+## 🐳 Docker 部署
+
+```bash
+cd docker
+cp .env.example .env   # 编辑 .env 设置密码
+docker compose up -d --build
+
+# 数据恢复（等待 DB 就绪后自动导入本体数据）
+docker/scripts/restore.sh
+
+# 访问服务
+# API:  http://localhost:8000/health
+# API 文档: http://localhost:8000/docs
+# Web 管理界面: http://localhost:3000
+```
+
+服务包含：
+| 服务 | 端口 | 说明 |
+|------|------|------|
+| PostgreSQL | 5432 | Supabase/PostgreSQL 15.6，5 表 + 索引 |
+| FastAPI API | 8000 | 8 个 REST 端点，材料 CRUD + 属性管理 |
+| Web 管理界面 | 3000 | 搜索、类型过滤、属性面板 |
+
 ## 🏗️ 项目结构
 
 ```
@@ -71,10 +95,16 @@ ontofuel/
 │   │   └── restore.py      # 数据恢复
 │   ├── visualization/      # Web 可视化
 │   └── cli.py              # 命令行工具
-├── ontology/               # 本体数据
+├── docker/                 # Docker 全栈部署
+│   ├── docker-compose.yml  # 3 服务编排
+│   ├── api/                # FastAPI CRUD API
+│   ├── web/                # Web 管理界面
+│   ├── supabase/           # 数据库 schema
+│   └── scripts/            # 数据恢复脚本
+├── data/                   # 本体数据
 │   ├── material_ontology_enhanced.json   # 主本体 (738KB)
 │   └── nvl_ontology_data.json            # NVL 可视化数据
-├── tests/                  # 测试套件 (139 tests)
+├── tests/                  # 测试套件 (300+ tests)
 ├── docs/                   # 文档
 └── scripts/                # 辅助脚本
 ```
@@ -101,7 +131,7 @@ pytest tests/ -v
 pytest tests/ --cov=ontofuel --cov-report=term-missing
 ```
 
-**测试统计**: 139 tests, 100% pass rate, >80% coverage
+**测试统计**: 300+ tests, 100% pass rate, >80% coverage
 
 ## 🐍 Python API
 
