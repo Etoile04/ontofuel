@@ -33,6 +33,18 @@ class OntologyValidator:
             self._ontology = load_ontology()
         return self._ontology
 
+    def _normalize_classes(self) -> list[dict[str, Any]]:
+        """Normalize classes to a flat list of dicts, handling both list and dict formats."""
+        raw = self.ontology.get("classes", [])
+        if isinstance(raw, dict):
+            result = []
+            for name, data in raw.items():
+                entry = dict(data)
+                entry["name"] = name
+                result.append(entry)
+            return result
+        return list(raw)
+
     def validate(self) -> dict[str, Any]:
         """Run full validation and return scores.
 
@@ -89,13 +101,20 @@ class OntologyValidator:
         issues = 0
         total = 0
 
-        for cls in ont.get("classes", []):
+        for cls in self._normalize_classes():
             name = cls.get("name", cls.get("className", ""))
             if not name:
                 issues += 1
             total += 1
 
-        for prop in ont.get("objectProperties", []) + ont.get("datatypeProperties", []):
+        obj_props = ont.get("objectProperties", [])
+        dt_props = ont.get("datatypeProperties", [])
+        if isinstance(obj_props, dict):
+            obj_props = [{**v, "name": k} for k, v in obj_props.items()]
+        if isinstance(dt_props, dict):
+            dt_props = [{**v, "name": k} for k, v in dt_props.items()]
+
+        for prop in obj_props + dt_props:
             name = prop.get("name", "")
             if not name:
                 issues += 1
@@ -107,13 +126,13 @@ class OntologyValidator:
 
     def _check_hierarchy(self) -> int:
         """Check class hierarchy structure."""
-        classes = self.ontology.get("classes", [])
+        classes = self._normalize_classes()
         if not classes:
             return 0
 
         with_parent = 0
         for cls in classes:
-            parent = cls.get("subClassOf", cls.get("parentClass", ""))
+            parent = cls.get("parent", cls.get("subClassOf", cls.get("parentClass", "")))
             if parent:
                 with_parent += 1
 
@@ -122,6 +141,8 @@ class OntologyValidator:
     def _check_semantic(self) -> int:
         """Check semantic consistency (domain/range)."""
         props = self.ontology.get("objectProperties", [])
+        if isinstance(props, dict):
+            props = [{**v, "name": k} for k, v in props.items()]
         if not props:
             return 50  # Neutral if no properties
 
@@ -133,11 +154,11 @@ class OntologyValidator:
 
     def _check_completeness(self) -> int:
         """Check annotation completeness."""
-        classes = self.ontology.get("classes", [])
+        classes = self._normalize_classes()
         if not classes:
             return 0
 
-        with_comment = sum(1 for c in classes if c.get("comment"))
+        with_comment = sum(1 for c in classes if c.get("comment") or c.get("rdfs:comment"))
         return min(100, int(100 * with_comment / len(classes)))
 
     def _check_coverage(self) -> int:
