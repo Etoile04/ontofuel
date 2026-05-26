@@ -31,7 +31,7 @@ dev = ["pytest>=7.0", "pytest-cov"]
 database = ["supabase>=2.0"]
 viz = ["Pillow>=9.0", "numpy>=1.24"]
 chonkie = ["chonkie>=0.4.0"]
-chonkie-semantic = ["chonkie[semantic]>=0.4.0"]
+chonkie-semantic = ["chonkie[semantic]>=0.4.0", "model2vec>=0.1.0"]
 all = ["ontofuel[dev,database,viz,chonkie-semantic]"]
 
 [tool.setuptools.packages.find]
