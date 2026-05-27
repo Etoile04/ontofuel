@@ -2,6 +2,10 @@
 
 **本体驱动的核材料知识提取系统**
 
+[![Tests](https://github.com/Etoile04/ontofuel/actions/workflows/test.yml/badge.svg?branch=ontofuel-v0.1)](https://github.com/Etoile04/ontofuel/actions/workflows/test.yml)
+[![Docker](https://github.com/Etoile04/ontofuel/actions/workflows/docker-image.yml/badge.svg?branch=ontofuel-v0.1)](https://github.com/Etoile04/ontofuel/actions/workflows/docker-image.yml)
+[![Release](https://img.shields.io/github/v/release/Etoile04/ontofuel)](https://github.com/Etoile04/ontofuel/releases/latest)
+
 OntoFuel 是一个面向核材料领域的本体驱动知识提取与管理系统。它能够从超长文档（200-2000页）中自动提取结构化材料数据，并将结果整合到本体知识库中。
 
 ## ✨ 核心功能
@@ -74,6 +78,13 @@ docker/scripts/restore.sh
 | FastAPI API | 8000 | 8 个 REST 端点，材料 CRUD + 属性管理 |
 | Web 管理界面 | 3000 | 搜索、类型过滤、属性面板 |
 
+## 📥 预构建镜像
+
+```bash
+docker pull lwj280/ontofuel-api:latest
+docker pull lwj280/ontofuel-web:latest
+```
+
 ## 🏗️ 项目结构
 
 ```
@@ -104,7 +115,7 @@ ontofuel/
 ├── data/                   # 本体数据
 │   ├── material_ontology_enhanced.json   # 主本体 (738KB)
 │   └── nvl_ontology_data.json            # NVL 可视化数据
-├── tests/                  # 测试套件 (300+ tests)
+├── tests/                  # 测试套件 (217+ tests)
 ├── docs/                   # 文档
 └── scripts/                # 辅助脚本
 ```
@@ -116,8 +127,8 @@ ontofuel/
 | 类 (Classes) | 139 |
 | 对象属性 | 162 |
 | 数据属性 | 279 |
-| 个体 (Individuals) | 755 |
-| 质量评分 | 80/100 (A) |
+| 个体 (Individuals) | 755+ |
+| 质量评分 | 100/100 (A+) |
 
 覆盖领域：核燃料、包壳材料、冷却剂、高熵合金、辐照效应、扩散系数、热物理性能等。
 
@@ -131,7 +142,7 @@ pytest tests/ -v
 pytest tests/ --cov=ontofuel --cov-report=term-missing
 ```
 
-**测试统计**: 300+ tests, 100% pass rate, >80% coverage
+**测试统计**: 217+ tests, CI 全绿, >80% coverage
 
 ## 🐍 Python API
 
