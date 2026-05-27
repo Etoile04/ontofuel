@@ -25,7 +25,7 @@ jobs:
         context: .
         file: ./docker/api/Dockerfile
         push: true
-        tags: ontofuel/api:latest,ontofuel/api:${{ github.ref_name }}
+        tags: lwj280/ontofuel-api:latest,lwj280/ontofuel-api:${{ github.ref_name }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -46,6 +46,6 @@ jobs:
         context: .
         file: ./docker/web/Dockerfile
         push: true
-        tags: ontofuel/web:latest,ontofuel/web:${{ github.ref_name }}
+        tags: lwj280/ontofuel-web:latest,lwj280/ontofuel-web:${{ github.ref_name }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
