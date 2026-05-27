@@ -52,10 +52,10 @@
 ## O2: 生产级部署 (P1)
 
 ### KR 2.1: CI/CD 全流程
-| Task | 描述 | 预计耗时 |
-|------|------|---------|
-| T2.1a: Lint step (ruff/mypy) | 已有 test.yml | 2h |
-| T2.1b: Coverage gate (>90%) | Codecov 已配 | 1h |
+| Task | 描述 | 预计耗时 | 执行 |
+|------|------|---------|------|
+| T2.1a: Lint step (ruff/mypy) | 已有 test.yml | 2h | 🔶6月 |
+| T2.1b: Coverage gate (>90%) | Codecov 已配 | 1h | 🔶6月 |
 | T2.1c: Release automation (tag → publish) | GitHub Action | 3h |
 | T2.1d: Pre-commit hooks | ruff + mypy | 1h |
 
@@ -96,7 +96,7 @@
 ### KR 3.2: MinerU 本地部署
 | Task | 描述 | 预计耗时 |
 |------|------|---------|
-| T3.2a: MinerU 本地安装 | pip install | 1h |
+| T3.2a: MinerU 本地安装 | pip install | 1h | 🔶6月 |
 | T3.2b: GPU 加速配置 | Magic-PDF | 2h |
 | T3.2c: 批量解析性能测试 | vs MCP | 2h |
 
@@ -111,7 +111,7 @@
 ### KR 3.4: 语义搜索增强
 | Task | 描述 | 预计耗时 |
 |------|------|---------|
-| T3.4a: Embedding pipeline | model2vec/sentence-transformers | 3h |
+| T3.4a: Embedding pipeline | model2vec/sentence-transformers | 3h | 🔶6月 |
 | T3.4b: 向量存储 (pgvector/ChromaDB) | 选型 + 集成 | 4h |
 | T3.4c: 混合检索 (关键词 + 向量) | fusion ranking | 3h |
 | T3.4d: 评测基准 | MRR/Recall@K | 2h |
@@ -125,8 +125,8 @@
 ### KR 4.1: README + Quick Start
 | Task | 描述 | 预计耗时 |
 |------|------|---------|
-| T4.1a: README 重写 | 架构图 + 特性列表 | 3h |
-| T4.1b: Quick Start guide | 5 分钟上手 | 2h |
+| T4.1a: README 重写 | 架构图 + 特性列表 | 3h | 🔶6月 |
+| T4.1b: Quick Start guide | 5 分钟上手 | 2h | 🔶6月 |
 | T4.1c: 示例 notebook | 3 个用例 | 3h |
 
 ### KR 4.2: API 文档自动生成
@@ -177,8 +177,8 @@
 ### KR 5.4: 性能基准套件
 | Task | 描述 | 预计耗时 |
 |------|------|---------|
-| T5.4a: benchmark 框架 | pytest-benchmark | 2h |
-| T5.4b: 关键路径基准 | 分段/提取/合并 | 3h |
+| T5.4a: benchmark 框架 | pytest-benchmark | 2h | 🔶6月 |
+| T5.4b: 关键路径基准 | 分段/提取/合并 | 3h | 🔶6月 |
 | T5.4c: CI 集成 + 回归检测 | performance gate | 2h |
 
 ---

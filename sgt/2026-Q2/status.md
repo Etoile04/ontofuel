@@ -105,4 +105,17 @@
 
 ---
 
+## 📅 6月执行计划 (Q3 前置任务)
+
+| Week | Tasks | 目标 |
+|------|-------|------|
+| 6/2-6/6 | T2.1a Lint, T2.1b Coverage gate | CI 增强完成 |
+| 6/9-6/13 | T5.4a Benchmark 框架, T5.4b 关键路径基准 | 性能基线建立 |
+| 6/16-6/20 | T4.1a README 重写, T4.1b Quick Start | 开源文档就绪 |
+| 6/23-6/27 | T3.2a MinerU 本地安装, T3.4a Embedding pipeline | 管道基础就位 |
+
+**目标**: 6月底前完成 8 个 Q3 前置任务，Q3 正式启动时直接进入核心工作。
+
+---
+
 *Update weekly (Fridays, 15 minutes)*

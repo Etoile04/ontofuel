@@ -104,6 +104,30 @@ O5 (性能)     ──→ 所有 O — 稳定性基础
 
 ---
 
+---
+
+## 🔶 6月提前启动 (Q3 前置)
+
+> Q2 18/18 KRs 已全部完成，利用6月提前启动部分 Q3 任务
+
+| Task | 原属 KR | 耗时 | 基础条件 |
+|------|---------|------|---------|
+| T2.1a Lint step (ruff/mypy) | O2.1 | 2h | CI 已就位 |
+| T2.1b Coverage gate (>90%) | O2.1 | 1h | Codecov 已配 |
+| T5.4a Benchmark 框架 | O5.4 | 2h | 无依赖 |
+| T5.4b 关键路径基准 | O5.4 | 3h | 配合 T5.4a |
+| T4.1a README 重写 | O4.1 | 3h | CI badges 已有 |
+| T4.1b Quick Start guide | O4.1 | 2h | 和 README 配套 |
+| T3.2a MinerU 本地安装 | O3.2 | 1h | 独立任务 |
+| T3.4a Embedding pipeline | O3.4 | 3h | model2vec 已装 |
+
+**预计总耗时**: ~17h（可在6月分散完成）
+
+**不提前的任务**（有前置依赖或工作量大）:
+- ❌ T1.1a~g — 需要大规模运行 extraction pipeline
+- ❌ T1.2a~d — OntoCast 集成工作量大
+- ❌ T1.3a~d — SPARQL 需要 RDF 转换先完成
+
 ## Q2 遗留 → Q3
 
 | 遗留项 | Q3 归属 | 状态 |
