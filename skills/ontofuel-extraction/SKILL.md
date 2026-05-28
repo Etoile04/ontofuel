@@ -1,3 +1,8 @@
+---
+name: ontofuel-extraction
+description: "OntoFuel 超长文档本体提取系统。用于从大型 PDF/文档（200-2000 页）中提取结构化材料知识并映射到领域本体。核心能力：章节分割→提取计划生成→并行 agent 提取→结果合并→本体增量更新。支持断点续传、智能模型切换、自动恢复。触发词：本体提取、ontology extraction、材料数据提取、文档本体化、PDF 本体、ontofuel、超长文档提取、章节提取。"
+---
+
 # OntoFuel Extraction Skill (v2.0)
 
 **版本**: v2.0 - 增强版
