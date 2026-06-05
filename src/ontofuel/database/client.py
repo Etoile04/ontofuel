@@ -7,7 +7,7 @@ import os
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 
 class SupabaseClient:
@@ -32,11 +32,12 @@ class SupabaseClient:
             "Prefer": "return=minimal",
         }
 
-    def _request(self, method: str, table: str, data: dict | None = None,
-                 query: str = "") -> tuple[int, Any]:
+    def _request(
+        self, method: str, table: str, data: dict | None = None, query: str = ""
+    ) -> tuple[int, Any]:
         """Make a REST request to Supabase."""
-        import urllib.request
         import urllib.error
+        import urllib.request
 
         url = f"{self.url}/rest/v1/{table}{query}"
         body = json.dumps(data).encode() if data else None
@@ -89,7 +90,16 @@ TABLES = {
         "columns": ["id", "name", "chemical_formula", "material_type", "created_at", "updated_at"],
     },
     "material_properties": {
-        "columns": ["id", "material_id", "property_name", "property_value", "unit", "source", "temperature", "notes"],
+        "columns": [
+            "id",
+            "material_id",
+            "property_name",
+            "property_value",
+            "unit",
+            "source",
+            "temperature",
+            "notes",
+        ],
     },
     "material_composition": {
         "columns": ["id", "material_id", "element", "weight_fraction", "atomic_fraction"],
@@ -98,7 +108,15 @@ TABLES = {
         "columns": ["id", "title", "authors", "year", "doi", "journal", "url"],
     },
     "irradiation_behavior": {
-        "columns": ["id", "material_id", "irradiation_type", "fluence", "temperature", "property_changed", "change_percent"],
+        "columns": [
+            "id",
+            "material_id",
+            "irradiation_type",
+            "fluence",
+            "temperature",
+            "property_changed",
+            "change_percent",
+        ],
     },
 }
 
@@ -180,7 +198,7 @@ class DataRestorer:
     def restore_from_json(self, data_path: str | Path, table: str) -> dict:
         """Restore data from a generic JSON file to a table."""
         path = Path(data_path)
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
         if isinstance(data, dict):

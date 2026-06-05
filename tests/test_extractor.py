@@ -1,8 +1,6 @@
 """Tests for extraction extractor module."""
 
-import pytest
-
-from ontofuel.extraction.extractor import Extractor, ExtractionResult
+from ontofuel.extraction.extractor import ExtractionResult, Extractor
 
 
 class TestExtractionResult:
@@ -64,17 +62,13 @@ class TestExtractorProperties:
     def test_extract_thermal_conductivity(self):
         ext = Extractor()
         result = ext.extract("Thermal conductivity: 25.3 W/mK at 300°C")
-        prop_names = [p["name"] for p in result.properties]
+        _prop_names = [p["name"] for p in result.properties]  # noqa: F841
         # May match thermal_conductivity
         assert len(result.properties) >= 0  # Depends on pattern match
 
     def test_extract_multiple_properties(self):
         ext = Extractor()
-        text = (
-            "Density: 15.8 g/cm³. "
-            "Melting point: 1132°C. "
-            "Yield strength: 650 MPa."
-        )
+        text = "Density: 15.8 g/cm³. Melting point: 1132°C. Yield strength: 650 MPa."
         result = ext.extract(text)
         assert len(result.properties) >= 2
 

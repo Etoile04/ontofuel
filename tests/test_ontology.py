@@ -3,11 +3,16 @@
 import json
 import tempfile
 from pathlib import Path
+
 import pytest
 
 from ontofuel.core.ontology import (
-    load_ontology, get_classes, get_object_properties,
-    get_datatype_properties, get_individuals, get_stats,
+    get_classes,
+    get_datatype_properties,
+    get_individuals,
+    get_object_properties,
+    get_stats,
+    load_ontology,
 )
 
 

@@ -1,8 +1,8 @@
 """Core ontology modules."""
 
-from .ontology import load_ontology, get_default_ontology_path, get_stats
-from .query import OntologyQuery
 from .exporter import OntologyExporter
+from .ontology import get_default_ontology_path, get_stats, load_ontology
+from .query import OntologyQuery
 from .validator import OntologyValidator
 
 __all__ = [

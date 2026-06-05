@@ -1,8 +1,8 @@
 """Visualization modules."""
 
-import webbrowser
 import http.server
-import threading
+import threading  # noqa: F401
+import webbrowser
 from pathlib import Path
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
@@ -23,6 +23,7 @@ def start_viewer(port: int = 9999, ontology_dir: str | None = None, open_browser
     # If ontology_dir provided, symlink data files into serve dir
     if ontology_dir:
         import os
+
         for f in Path(ontology_dir).glob("*.json"):
             target = Path(serve_dir) / f.name
             if not target.exists():

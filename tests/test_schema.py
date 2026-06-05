@@ -3,12 +3,11 @@
 import pytest
 
 from ontofuel.database.schema import (
-    TABLES,
     generate_all_sql,
     generate_create_sql,
     get_column_names,
-    get_table_names,
     get_table,
+    get_table_names,
 )
 
 

@@ -1,7 +1,6 @@
 # tests/test_docker.py
-import subprocess
 import pathlib
-import pytest
+import subprocess
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -10,7 +9,9 @@ def test_docker_compose_file_valid():
     """docker-compose.yml should be valid YAML with required services."""
     result = subprocess.run(
         ["docker", "compose", "-f", "docker/docker-compose.yml", "config"],
-        capture_output=True, text=True, cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
     )
     assert result.returncode == 0, f"docker compose config failed: {result.stderr}"
     output = result.stdout

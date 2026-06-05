@@ -10,7 +10,7 @@ from pathlib import Path
 
 def cmd_stats(args):
     """Show ontology statistics."""
-    from .core.ontology import load_ontology, get_stats
+    from .core.ontology import get_stats, load_ontology
 
     ont = load_ontology(args.ontology)
     stats = get_stats(ont)
@@ -23,6 +23,7 @@ def cmd_stats(args):
 
     if args.verbose:
         from .core.query import OntologyQuery
+
         q = OntologyQuery(ont)
 
         # Class distribution
@@ -33,7 +34,7 @@ def cmd_stats(args):
                 cls = cls[0] if cls else "Unknown"
             class_counts[cls] = class_counts.get(cls, 0) + 1
 
-        print(f"\n  Top classes by individuals:")
+        print("\n  Top classes by individuals:")
         for cls, count in sorted(class_counts.items(), key=lambda x: -x[1])[:10]:
             print(f"    {cls}: {count}")
 
@@ -93,8 +94,8 @@ def cmd_query(args):
 
 def cmd_export(args):
     """Export ontology to various formats."""
-    from .core.ontology import load_ontology
     from .core.exporter import OntologyExporter
+    from .core.ontology import load_ontology
 
     ont = load_ontology(args.ontology)
     exp = OntologyExporter(ont)
@@ -169,8 +170,13 @@ def main(argv=None):
         prog="ontofuel",
         description="OntoFuel — Ontology-driven knowledge extraction for nuclear materials",
     )
-    parser.add_argument("--ontology", "-o", type=Path, default=None,
-                        help="Path to ontology JSON file (default: auto-detect)")
+    parser.add_argument(
+        "--ontology",
+        "-o",
+        type=Path,
+        default=None,
+        help="Path to ontology JSON file (default: auto-detect)",
+    )
 
     sub = parser.add_subparsers(dest="command", help="Available commands")
 
@@ -192,9 +198,11 @@ def main(argv=None):
 
     # export
     p_export = sub.add_parser("export", help="Export ontology to various formats")
-    p_export.add_argument("format", choices=["json", "csv-classes", "csv-individuals",
-                                              "csv-properties", "graphml", "markdown"],
-                          help="Export format")
+    p_export.add_argument(
+        "format",
+        choices=["json", "csv-classes", "csv-individuals", "csv-properties", "graphml", "markdown"],
+        help="Export format",
+    )
     p_export.add_argument("output", type=Path, help="Output file path")
     p_export.set_defaults(func=cmd_export)
 

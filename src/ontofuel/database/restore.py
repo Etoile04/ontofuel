@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Any
 
 from .client import SupabaseClient
-from .schema import get_column_names, get_table_names
 
 
 class DataRestorer:
@@ -63,7 +62,7 @@ class DataRestorer:
         print(f"Restoring {len(individuals)} individuals...")
 
         batch: list[dict] = []
-        for i, ind in enumerate(individuals):
+        for _, ind in enumerate(individuals):
             name = ind.get("name", "")
             if not name:
                 self.stats["skipped"] += 1
@@ -117,7 +116,9 @@ class DataRestorer:
             self.stats["materials"] += len(batch)
 
         mode = " (dry run)" if dry_run else ""
-        print(f"Done{mode}: {self.stats['materials']} materials, {self.stats['properties']} properties")
+        mat_count = self.stats["materials"]
+        prop_count = self.stats["properties"]
+        print(f"Done{mode}: {mat_count} materials, {prop_count} properties")
 
         return self.stats
 
@@ -138,7 +139,7 @@ class DataRestorer:
             Stats dict.
         """
         path = Path(data_path)
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
 
         if isinstance(data, dict):

@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import csv
-import io
 import json
 from pathlib import Path
-from typing import Any
 
-from .ontology import load_ontology, get_classes, get_individuals, get_object_properties
+from .ontology import get_classes, get_individuals, get_object_properties, load_ontology
 
 
 class OntologyExporter:
@@ -68,14 +66,20 @@ class OntologyExporter:
         # Nodes for classes
         for name in classes:
             safe_id = name.replace(" ", "_").replace("/", "_")
-            lines.append(f'<node id="{safe_id}"><data key="label">{name}</data><data key="type">class</data></node>')
+            lines.append(
+                f'<node id="{safe_id}"><data key="label">{name}</data>'
+                f'<data key="type">class</data></node>'
+            )
 
         # Nodes for individuals
         for ind in ont.get("individuals", []):
             name = ind.get("name", "unknown")
             cls = ind.get("class", "")
             safe_id = name.replace(" ", "_").replace("/", "_")
-            lines.append(f'<node id="{safe_id}"><data key="label">{name}</data><data key="type">individual</data></node>')
+            lines.append(
+                f'<node id="{safe_id}"><data key="label">{name}</data>'
+                f'<data key="type">individual</data></node>'
+            )
             if cls and cls in classes:
                 cls_safe = cls.replace(" ", "_").replace("/", "_")
                 lines.append(f'<edge source="{safe_id}" target="{cls_safe}"/>')
@@ -90,6 +94,7 @@ class OntologyExporter:
     def export_markdown_report(self, path: str | Path) -> Path:
         """Export a markdown summary report."""
         from .ontology import get_stats
+
         path = Path(path)
         stats = get_stats(self.ontology)
 

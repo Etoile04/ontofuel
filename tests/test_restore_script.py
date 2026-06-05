@@ -43,9 +43,7 @@ def test_restore_script_is_idempotent():
 def test_restore_script_has_python_inline():
     content = SCRIPT_PATH.read_text()
     assert "python3" in content, "Missing python3 invocation"
-    assert "psycopg2" in content or "DATABASE_URL" in content, (
-        "Missing psycopg2 or DATABASE_URL"
-    )
+    assert "psycopg2" in content or "DATABASE_URL" in content, "Missing psycopg2 or DATABASE_URL"
 
 
 def test_restore_script_has_summary_output():

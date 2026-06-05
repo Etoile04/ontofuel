@@ -3,9 +3,6 @@
 import json
 import subprocess
 import sys
-from pathlib import Path
-
-import pytest
 
 from ontofuel.cli import main
 
@@ -115,7 +112,8 @@ class TestCLIEntryPoint:
     def test_help(self):
         result = subprocess.run(
             [sys.executable, "-m", "ontofuel.cli", "--help"],
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
         )
         assert result.returncode == 0
         assert "OntoFuel" in result.stdout
@@ -123,7 +121,8 @@ class TestCLIEntryPoint:
     def test_no_command_shows_help(self):
         result = subprocess.run(
             [sys.executable, "-m", "ontofuel.cli"],
-            capture_output=True, text=True,
+            capture_output=True,
+            text=True,
         )
         # Should exit cleanly (0 from help)
         assert result.returncode == 0

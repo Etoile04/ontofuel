@@ -2,11 +2,11 @@
 
 import json
 import tempfile
-from pathlib import Path
+
 import pytest
 
-from ontofuel.core.ontology import load_ontology
 from ontofuel.core.exporter import OntologyExporter
+from ontofuel.core.ontology import load_ontology
 
 
 @pytest.fixture

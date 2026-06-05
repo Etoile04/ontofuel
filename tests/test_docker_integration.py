@@ -1,6 +1,7 @@
 """Integration tests for Docker fullstack deployment.
 Requires Docker running — skipped if unavailable.
 """
+
 import json
 import os
 import pathlib
@@ -34,7 +35,10 @@ def docker_stack():
     # Build and start
     result = subprocess.run(
         ["docker", "compose", "-f", str(COMPOSE_FILE), "up", "-d", "--build"],
-        env=env, capture_output=True, text=True, timeout=300,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=300,
     )
     if result.returncode != 0:
         pytest.skip(f"docker compose up failed: {result.stderr}")
@@ -53,7 +57,9 @@ def docker_stack():
     # Tear down
     subprocess.run(
         ["docker", "compose", "-f", str(COMPOSE_FILE), "down", "-v"],
-        env=env, capture_output=True, timeout=60,
+        env=env,
+        capture_output=True,
+        timeout=60,
     )
 
 
@@ -71,11 +77,13 @@ def test_api_list_materials():
 
 
 def test_api_create_material():
-    body = json.dumps({
-        "name": "U-10Mo-integration-test",
-        "chemical_formula": "U-10Mo",
-        "material_type": "FuelMaterial",
-    }).encode()
+    body = json.dumps(
+        {
+            "name": "U-10Mo-integration-test",
+            "chemical_formula": "U-10Mo",
+            "material_type": "FuelMaterial",
+        }
+    ).encode()
     req = urllib.request.Request(
         f"{API_URL}/api/materials",
         data=body,
@@ -100,7 +108,9 @@ def test_api_update_material():
     body = json.dumps({"name": "update-test-material"}).encode()
     req = urllib.request.Request(
         f"{API_URL}/api/materials",
-        data=body, headers={"Content-Type": "application/json"}, method="POST",
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
     )
     resp = urllib.request.urlopen(req, timeout=5)
     mat = json.loads(resp.read())
@@ -109,7 +119,9 @@ def test_api_update_material():
     update = json.dumps({"chemical_formula": "UO2", "material_type": "CeramicMaterial"}).encode()
     req = urllib.request.Request(
         f"{API_URL}/api/materials/{mat['id']}",
-        data=update, headers={"Content-Type": "application/json"}, method="PATCH",
+        data=update,
+        headers={"Content-Type": "application/json"},
+        method="PATCH",
     )
     resp = urllib.request.urlopen(req, timeout=5)
     assert resp.status == 200
@@ -126,14 +138,17 @@ def test_api_delete_material():
     body = json.dumps({"name": "delete-test-material"}).encode()
     req = urllib.request.Request(
         f"{API_URL}/api/materials",
-        data=body, headers={"Content-Type": "application/json"}, method="POST",
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
     )
     resp = urllib.request.urlopen(req, timeout=5)
     mat = json.loads(resp.read())
 
     # Delete
     req = urllib.request.Request(
-        f"{API_URL}/api/materials/{mat['id']}", method="DELETE",
+        f"{API_URL}/api/materials/{mat['id']}",
+        method="DELETE",
     )
     resp = urllib.request.urlopen(req, timeout=5)
     assert resp.status == 200
@@ -141,7 +156,7 @@ def test_api_delete_material():
     # Verify gone
     try:
         urllib.request.urlopen(f"{API_URL}/api/materials/{mat['id']}", timeout=5)
-        assert False, "Should have raised 404"
+        assert False, "Should have raised 404"  # noqa: B011
     except urllib.error.HTTPError as e:
         assert e.code == 404
 
@@ -151,21 +166,27 @@ def test_api_properties():
     body = json.dumps({"name": "props-test-material"}).encode()
     req = urllib.request.Request(
         f"{API_URL}/api/materials",
-        data=body, headers={"Content-Type": "application/json"}, method="POST",
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
     )
     resp = urllib.request.urlopen(req, timeout=5)
     mat = json.loads(resp.read())
 
     # Add property
-    prop = json.dumps({
-        "material_id": mat["id"],
-        "property_name": "density",
-        "property_value": 19.1,
-        "unit": "g/cm³",
-    }).encode()
+    prop = json.dumps(
+        {
+            "material_id": mat["id"],
+            "property_name": "density",
+            "property_value": 19.1,
+            "unit": "g/cm³",
+        }
+    ).encode()
     req = urllib.request.Request(
         f"{API_URL}/api/materials/{mat['id']}/properties",
-        data=prop, headers={"Content-Type": "application/json"}, method="POST",
+        data=prop,
+        headers={"Content-Type": "application/json"},
+        method="POST",
     )
     resp = urllib.request.urlopen(req, timeout=5)
     assert resp.status == 201

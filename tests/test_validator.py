@@ -2,6 +2,7 @@
 
 import json
 import tempfile
+
 import pytest
 
 from ontofuel.core.ontology import load_ontology
@@ -12,13 +13,25 @@ from ontofuel.core.validator import OntologyValidator
 def validator():
     sample = {
         "classes": {
-            "TestClass": {"uri": "http://example.org/TestClass", "comment": "Test", "parent": "Entity"},
+            "TestClass": {
+                "uri": "http://example.org/TestClass",
+                "comment": "Test",
+                "parent": "Entity",
+            },
         },
         "objectProperties": {
-            "hasPart": {"uri": "http://example.org/hasPart", "domain": "TestClass", "range": "TestClass"},
+            "hasPart": {
+                "uri": "http://example.org/hasPart",
+                "domain": "TestClass",
+                "range": "TestClass",
+            },
         },
         "datatypeProperties": {
-            "density": {"uri": "http://example.org/density", "domain": "TestClass", "range": "xsd:float"},
+            "density": {
+                "uri": "http://example.org/density",
+                "domain": "TestClass",
+                "range": "xsd:float",
+            },
         },
         "individuals": {
             "Mat1": {"uri": "http://example.org/Mat1", "class": "TestClass"},

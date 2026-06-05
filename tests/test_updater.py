@@ -1,8 +1,6 @@
 """Tests for extraction updater module."""
 
 import json
-import pytest
-from pathlib import Path
 
 from ontofuel.extraction.updater import OntologyUpdater, UpdateStats
 
