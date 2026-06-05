@@ -1,0 +1,3 @@
+[submodule "tools/WebVOWL"]
+	path = tools/WebVOWL
+	url = https://github.com/VisualDataWeb/WebVOWL.git
