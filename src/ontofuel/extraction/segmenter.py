@@ -116,12 +116,12 @@ class Segmenter:
         self.embedding_config = embedding_config or EMBEDDING_DEFAULTS.copy()
 
     @staticmethod
-    def _chonkie_to_chunk(chonkie_chunks, strategy_name: str) -> list[Chunk]:  # pragma: no cover — chonkie optional
-        """Convert chonkie chunks to internal Chunk format."""  # pragma: no cover — chonkie optional
+    def _chonkie_to_chunk(chonkie_chunks, strategy_name: str) -> list[Chunk]:
+        """Convert chonkie chunks to internal Chunk format."""  # pragma: no cover  # chonkie
         chunks: list[Chunk] = []  # pragma: no cover
         for i, cc in enumerate(chonkie_chunks):  # pragma: no cover
             text = cc.text if hasattr(cc, "text") else str(cc)  # pragma: no cover
-            first_line = text.strip().split("\n")[0][:80] if text.strip() else f"chunk_{i}"  # pragma: no cover
+            first_line = text.strip().split("\n")[0][:80] if text.strip() else f"chunk_{i}"
             chunks.append(  # pragma: no cover
                 Chunk(  # pragma: no cover
                     index=i,  # pragma: no cover
@@ -138,7 +138,7 @@ class Segmenter:
             )  # pragma: no cover
         return chunks  # pragma: no cover
 
-    def _chunk_recursive(self, text: str, chunk_size: int) -> list[Chunk]:  # pragma: no cover — chonkie optional
+    def _chunk_recursive(self, text: str, chunk_size: int) -> list[Chunk]:
         from chonkie import RecursiveChunker  # pragma: no cover
 
         chunker = RecursiveChunker(tokenizer="character", chunk_size=chunk_size)  # pragma: no cover
@@ -207,11 +207,11 @@ class Segmenter:
         from chonkie import SemanticChunker  # pragma: no cover
 
         embeddings = self._get_embeddings()  # pragma: no cover
-        chunker = SemanticChunker(embedding_model=embeddings, chunk_size=chunk_size)  # pragma: no cover
+        chunker = SemanticChunker(embedding_model=embeddings, chunk_size=chunk_size)
         result = chunker(text)  # pragma: no cover
         return self._chonkie_to_chunk(result, "semantic")  # pragma: no cover
 
-    def _chunk_late(self, text: str, chunk_size: int) -> list[Chunk]:  # pragma: no cover — chonkie optional
+    def _chunk_late(self, text: str, chunk_size: int) -> list[Chunk]:  # pragma: no cover  # chonkie
         from chonkie import LateChunker  # pragma: no cover
 
         embeddings = self._get_embeddings()  # pragma: no cover
