@@ -28,6 +28,9 @@ jobs:
         pip install chonkie model2vec sentence-transformers
     - name: Run tests
       run: pytest tests/ --ignore=tests/test_docker_integration.py -v --tb=short --cov=ontofuel --cov-report=xml
+    - name: Enforce coverage gate
+      if: matrix.python-version == '3.12'
+      run: pytest tests/ --ignore=tests/test_docker_integration.py --cov=ontofuel --cov-fail-under=90 --cov-report=term-missing -q
     - name: Upload coverage
       uses: codecov/codecov-action@v4
       if: matrix.python-version == '3.12'

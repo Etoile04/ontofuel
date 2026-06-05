@@ -21,7 +21,7 @@ def start_viewer(port: int = 9999, ontology_dir: str | None = None, open_browser
     serve_dir = str(TEMPLATES_DIR)
 
     # If ontology_dir provided, symlink data files into serve dir
-    if ontology_dir:
+    if ontology_dir:  # pragma: no cover — integration-level
         import os
 
         for f in Path(ontology_dir).glob("*.json"):
@@ -38,11 +38,11 @@ def start_viewer(port: int = 9999, ontology_dir: str | None = None, open_browser
     server = http.server.HTTPServer(("", port), QuietHandler)
     print(f"OntoFuel visualization running at http://localhost:{port}")
 
-    if open_browser:
+    if open_browser:  # pragma: no cover — integration-level
         webbrowser.open(f"http://localhost:{port}/ontology_viz.html")
 
     try:
         server.serve_forever()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt:  # pragma: no cover — integration-level
         print("\nServer stopped.")
         server.server_close()

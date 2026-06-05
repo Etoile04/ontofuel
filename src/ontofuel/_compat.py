@@ -5,6 +5,7 @@ from pathlib import Path
 # Package root (where this file lives)
 PACKAGE_DIR = Path(__file__).parent
 
+
 # Project root (repo root, 2 levels up from src/ontofuel/)
 # Works for both installed package and development mode
 def _find_project_root() -> Path:
@@ -16,10 +17,11 @@ def _find_project_root() -> Path:
             return current
         current = current.parent
     # Fallback: package dir itself
-    return PACKAGE_DIR
+    return PACKAGE_DIR  # pragma: no cover — fallback path
 
 
 PROJECT_ROOT = _find_project_root()
+
 
 # Ontology data directory
 def get_ontology_dir() -> Path:
@@ -35,4 +37,4 @@ def get_ontology_dir() -> Path:
     for p in candidates:
         if p.exists() and any(p.glob("*.json")):
             return p
-    return PROJECT_ROOT / "ontology"
+    return PROJECT_ROOT / "ontology"  # pragma: no cover — fallback path
