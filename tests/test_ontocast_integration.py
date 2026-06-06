@@ -14,14 +14,11 @@ from pathlib import Path
 
 import pytest
 
+from ontofuel.extraction.critic import CritiqueSeverity, OntologyCritic
 from ontofuel.extraction.extractor import ExtractionResult
 from ontofuel.extraction.merger import Merger
 from ontofuel.extraction.updater import OntologyUpdater
-from ontofuel.extraction.graph_update import OntologyDiff
-from ontofuel.extraction.versioning import OntologyVersionControl, OntologyVersion
-from ontofuel.extraction.sublimation import OntologySublimator, SeparationResult
-from ontofuel.extraction.critic import OntologyCritic, CritiqueSeverity
-
+from ontofuel.extraction.versioning import OntologyVersion
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -240,7 +237,7 @@ class TestCriticQuality:
 # ---------------------------------------------------------------------------
 
 class TestFullPipeline:
-    """End-to-end: Extract → Merge (w/ sublimation) → Update (w/ critic + versioning + graph_update)."""
+    """End-to-end pipeline with OntoCast features."""
 
     def test_full_pipeline_with_ontocast(self, tmp_path):
         ont_file = _make_ontology_json(tmp_path)

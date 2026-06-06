@@ -121,8 +121,9 @@ class OntologyUpdater:
                 ):
                     import warnings
                     warnings.warn(
-                        f"本体质量批判: score={report.score}, success={report.success}. "
-                        f"继续更新。"
+                        f"本体质量批判: score={report.score}, "
+                        f"success={report.success}. 继续更新。",
+                        stacklevel=2,
                     )
             except Exception:
                 pass  # critic module unavailable or error

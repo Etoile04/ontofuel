@@ -27,7 +27,6 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # Result type
 # ---------------------------------------------------------------------------
@@ -92,11 +91,10 @@ class OntologySublimator:
         if "chunk_" in subject or subject.startswith("cd:"):
             return True
 
-        if any(c.isdigit() for c in subject):
-            if not re.search(r"v\d+\.\d+\.\d+", subject):
-                return True
-
-        return False
+        return (
+            any(c.isdigit() for c in subject)
+            and not re.search(r"v\d+\.\d+\.\d+", subject)
+        )
 
     def separate_ontology_facts(
         self, extraction_data: dict[str, Any]

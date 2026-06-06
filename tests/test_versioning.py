@@ -6,7 +6,7 @@ import json
 import time
 from pathlib import Path
 
-from ontofuel.extraction.versioning import OntologyVersion, OntologyVersionControl
+from ontofuel.extraction.versioning import OntologyVersionControl
 
 
 def _make_onto(
@@ -182,7 +182,7 @@ class TestCheckout:
     def test_checkout_updates_current_version(self, tmp_path: Path) -> None:
         vc = _vc(tmp_path)
         v1 = vc.commit("v1", ontology_data=_make_onto(classes={"A": {}}))
-        v2 = vc.commit("v2", ontology_data=_make_onto(classes={"A": {}, "B": {}}))
+        _ = vc.commit("v2", ontology_data=_make_onto(classes={"A": {}, "B": {}}))
         vc.checkout(v1.hash)
         # Current ontology should have only A
         assert "B" not in vc.current_version.get("classes", {})
@@ -239,7 +239,7 @@ class TestBranchMerge:
         branch_data = _make_onto(classes={"B": {}})
         branch_path.write_text(json.dumps(branch_data), encoding="utf-8")
 
-        merged_v = vc.merge("feature", "merge feature")
+        _ = vc.merge("feature", "merge feature")
         assert "A" in vc.current_version.get("classes", {})
         assert "B" in vc.current_version.get("classes", {})
 

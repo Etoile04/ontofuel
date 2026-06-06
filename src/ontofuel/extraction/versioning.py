@@ -13,9 +13,9 @@ Classes:
 
 from __future__ import annotations
 
-import json
 import hashlib
-from dataclasses import dataclass, asdict, field
+import json
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -75,13 +75,13 @@ class OntologyVersionControl:
     def _load_current_version(self) -> dict[str, Any] | None:
         if not self.ontology_path.exists():
             return None
-        with open(self.ontology_path, "r", encoding="utf-8") as f:
+        with open(self.ontology_path, encoding="utf-8") as f:
             return json.load(f)
 
     def _load_versions_history(self) -> dict[str, OntologyVersion]:
         if not self.versions_file.exists():
             return {}
-        with open(self.versions_file, "r", encoding="utf-8") as f:
+        with open(self.versions_file, encoding="utf-8") as f:
             data = json.load(f)
         return {k: OntologyVersion(**v) for k, v in data.items()}
 
@@ -229,7 +229,7 @@ class OntologyVersionControl:
         if not version_file.exists():
             raise FileNotFoundError(f"版本文件 {version_file} 不存在")
 
-        with open(version_file, "r", encoding="utf-8") as f:
+        with open(version_file, encoding="utf-8") as f:
             ontology = json.load(f)
 
         with open(self.ontology_path, "w", encoding="utf-8") as f:
@@ -255,9 +255,9 @@ class OntologyVersionControl:
         v1 = self.versions_history[hash1]
         v2 = self.versions_history[hash2]
 
-        with open(self.versions_dir / f"{hash1}.json", "r") as f:
+        with open(self.versions_dir / f"{hash1}.json") as f:
             onto1 = json.load(f)
-        with open(self.versions_dir / f"{hash2}.json", "r") as f:
+        with open(self.versions_dir / f"{hash2}.json") as f:
             onto2 = json.load(f)
 
         return {
@@ -283,15 +283,27 @@ class OntologyVersionControl:
         if not branch_path.exists():
             raise FileNotFoundError(f"分支 {branch_name} 不存在")
 
-        with open(branch_path, "r", encoding="utf-8") as f:
+        with open(branch_path, encoding="utf-8") as f:
             branch_ontology = json.load(f)
 
         cur = self.current_version or {}
         merged: dict[str, Any] = {
-            "classes": {**cur.get("classes", {}), **branch_ontology.get("classes", {})},
-            "objectProperties": {**cur.get("objectProperties", {}), **branch_ontology.get("objectProperties", {})},
-            "datatypeProperties": {**cur.get("datatypeProperties", {}), **branch_ontology.get("datatypeProperties", {})},
-            "individuals": {**cur.get("individuals", {}), **branch_ontology.get("individuals", {})},
+            "classes": {
+                **cur.get("classes", {}),
+                **branch_ontology.get("classes", {}),
+            },
+            "objectProperties": {
+                **cur.get("objectProperties", {}),
+                **branch_ontology.get("objectProperties", {}),
+            },
+            "datatypeProperties": {
+                **cur.get("datatypeProperties", {}),
+                **branch_ontology.get("datatypeProperties", {}),
+            },
+            "individuals": {
+                **cur.get("individuals", {}),
+                **branch_ontology.get("individuals", {}),
+            },
         }
 
         return self.commit(message=message or f"合并分支: {branch_name}", ontology_data=merged)

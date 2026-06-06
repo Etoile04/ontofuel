@@ -168,10 +168,19 @@ class Merger:
                 from .sublimation import OntologySublimator
 
                 sublimator = OntologySublimator()
-                # Convert list-based merged data to dict format expected by sublimate()
+                # Convert list-based merged data to dict format
+                # expected by sublimate()
                 merged_data = {
-                    "classes": {ind.get("name", ""): ind for ind in deduped_individuals if not sublimator.is_fact_triple(ind.get("name", ""))},
-                    "individuals": {ind.get("name", ""): ind for ind in deduped_individuals},
+                    "classes": {
+                        ind.get("name", ""): ind
+                        for ind in deduped_individuals
+                        if not sublimator.is_fact_triple(
+                            ind.get("name", "")
+                        )
+                    },
+                    "individuals": {
+                        ind.get("name", ""): ind for ind in deduped_individuals
+                    },
                     "objectProperties": {},
                     "datatypeProperties": {},
                 }
