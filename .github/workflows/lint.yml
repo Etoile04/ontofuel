@@ -11,8 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Install ruff
-        uses: astral-sh/setup-ruff@v3
+        run: pip install ruff
       - name: Lint check
         run: ruff check src/ tests/
       - name: Format check
