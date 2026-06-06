@@ -64,6 +64,7 @@ class MergedResult:
     relationships: list[dict[str, Any]] = field(default_factory=list)
     stats: MergeStats = field(default_factory=MergeStats)
     sources: list[str] = field(default_factory=list)
+    sublimation: dict | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -98,6 +99,7 @@ class Merger:
         strategy: str = "exact",
         fuzzy_threshold: float = 0.85,
         conflict_resolution: str = "latest",
+        enable_sublimation: bool = False,
     ):
         """Initialize merger.
 
@@ -105,10 +107,12 @@ class Merger:
             strategy: Deduplication strategy ("exact", "fuzzy", "normalized").
             fuzzy_threshold: Similarity threshold for fuzzy matching (0-1).
             conflict_resolution: How to resolve conflicts ("latest", "priority", "merge").
+            enable_sublimation: Whether to run ontology sublimation after merge.
         """
         self.strategy = strategy
         self.fuzzy_threshold = fuzzy_threshold
         self.conflict_resolution = conflict_resolution
+        self.enable_sublimation = enable_sublimation
 
     def merge(self, results: list) -> MergedResult:
         """Merge multiple ExtractionResults.
@@ -150,13 +154,37 @@ class Merger:
         stats.final_properties = len(merged_props)
         stats.final_relationships = len(deduped_rels)
 
-        return MergedResult(
+        merged = MergedResult(
             individuals=deduped_individuals,
             properties=merged_props,
             relationships=deduped_rels,
             stats=stats,
             sources=sources,
         )
+
+        # --- Integration: sublimation ---
+        if self.enable_sublimation:
+            try:
+                from .sublimation import OntologySublimator
+
+                sublimator = OntologySublimator()
+                # Convert list-based merged data to dict format expected by sublimate()
+                merged_data = {
+                    "classes": {ind.get("name", ""): ind for ind in deduped_individuals if not sublimator.is_fact_triple(ind.get("name", ""))},
+                    "individuals": {ind.get("name", ""): ind for ind in deduped_individuals},
+                    "objectProperties": {},
+                    "datatypeProperties": {},
+                }
+                result = sublimator.sublimate(merged_data, source_chunks=sources)
+                merged.sublimation = {
+                    "ontology": result.ontology,
+                    "facts": result.facts,
+                    "statistics": result.statistics,
+                }
+            except Exception:
+                pass  # sublimation module unavailable or error
+
+        return merged
 
     def _deduplicate(
         self,

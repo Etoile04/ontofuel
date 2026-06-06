@@ -59,18 +59,27 @@ class OntologyUpdater:
         self,
         ontology_path: str | Path | None = None,
         backup: bool = True,
+        enable_graph_update: bool = True,
+        enable_versioning: bool = True,
+        enable_critic: bool = False,
     ):
         """Initialize updater.
 
         Args:
             ontology_path: Path to ontology JSON. None for auto-detect.
             backup: Whether to create backup before saving.
+            enable_graph_update: Compute and save OntologyDiff on save().
+            enable_versioning: Commit new version on save().
+            enable_critic: Run quality critique before add_individuals().
         """
         self._path = Path(ontology_path) if ontology_path else None
         self._ontology: dict | None = None
         self._backup = backup
         self._stats = UpdateStats()
         self._changes: list[dict[str, Any]] = []
+        self.enable_graph_update = enable_graph_update
+        self.enable_versioning = enable_versioning
+        self.enable_critic = enable_critic
 
     @property
     def ontology(self) -> dict:
@@ -96,6 +105,28 @@ class OntologyUpdater:
         Returns:
             UpdateStats with counts.
         """
+        # Quality gate: critic before adding (warning only, never blocks)
+        if self.enable_critic:
+            try:
+                from .critic import OntologyCritic
+
+                # Ensure ontology is loaded for critique
+                _ = self.ontology
+                critic = OntologyCritic()
+                # Critic expects dict-keyed sections; convert from list format
+                crit_data = self._to_dict_keyed(self._ontology)
+                report = critic.critique_ontology(crit_data)
+                if report.score < 50 or any(
+                    s.severity.value == "critical" for s in report.suggestions
+                ):
+                    import warnings
+                    warnings.warn(
+                        f"本体质量批判: score={report.score}, success={report.success}. "
+                        f"继续更新。"
+                    )
+            except Exception:
+                pass  # critic module unavailable or error
+
         stats = UpdateStats()
         existing_names = self._get_existing_names()
 
@@ -204,6 +235,59 @@ class OntologyUpdater:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(self._ontology, f, ensure_ascii=False, indent=2)
 
+        # --- Integration: graph_update (OntologyDiff) ---
+        if self.enable_graph_update:
+            try:
+                from .graph_update import OntologyDiff
+
+                old_onto: dict | None = None
+                # Try to find the most recent backup for diff
+                backups = sorted(
+                    path.parent.glob(path.stem + ".backup_*.json"),
+                    key=lambda p: p.stat().st_mtime,
+                    reverse=True,
+                )
+                if backups:
+                    old_onto = json.loads(backups[0].read_text(encoding="utf-8"))
+
+                if old_onto is not None:
+                    # Convert list-based ontology to dict-keyed for diff
+                    old_dict = self._to_dict_keyed(old_onto)
+                    new_dict = self._to_dict_keyed(self._ontology)
+                    diff = OntologyDiff.diff_ontologies(old_dict, new_dict)
+                    diffs_dir = path.parent / "diffs"
+                    diffs_dir.mkdir(parents=True, exist_ok=True)
+                    diff_path = diffs_dir / f"diff_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+                    diff_data = {
+                        "old_hash": OntologyDiff.compute_hash(old_onto),
+                        "new_hash": OntologyDiff.compute_hash(self._ontology),
+                        "operations": diff.operations,
+                        "operation_type": diff.operation_type,
+                        "tokens_saved": diff.estimate_tokens(),
+                    }
+                    with open(diff_path, "w", encoding="utf-8") as f:
+                        json.dump(diff_data, f, ensure_ascii=False, indent=2)
+            except Exception:
+                pass  # graph_update module unavailable or error
+
+        # --- Integration: versioning (OntologyVersionControl) ---
+        if self.enable_versioning:
+            try:
+                from .versioning import OntologyVersionControl
+
+                vc = OntologyVersionControl(
+                    ontology_path=path,
+                )
+                # Convert to dict-keyed for versioning
+                vc_data = self._to_dict_keyed(self._ontology)
+                vc.commit(
+                    message=f"OntologyUpdater save — {datetime.now().isoformat()}",
+                    author="OntologyUpdater",
+                    ontology_data=vc_data,
+                )
+            except Exception:
+                pass  # versioning module unavailable or error
+
         return path
 
     def get_changes(self) -> list[dict[str, Any]]:
@@ -301,3 +385,26 @@ class OntologyUpdater:
         self._stats.added_properties += other.added_properties
         self._stats.added_relationships += other.added_relationships
         self._stats.errors.extend(other.errors)
+
+    @staticmethod
+    def _to_dict_keyed(ontology: dict[str, Any]) -> dict[str, Any]:
+        """Convert list-based ontology sections to dict-keyed format.
+
+        OntoFuel's load_ontology() normalizes sections to list-of-dicts.
+        graph_update and versioning expect dict-keyed sections.
+        """
+        result: dict[str, Any] = {}
+        for key in ("classes", "objectProperties", "datatypeProperties", "individuals"):
+            section = ontology.get(key, [])
+            if isinstance(section, list):
+                result[key] = {
+                    item.get("name", ""): {k: v for k, v in item.items() if k != "name"}
+                    for item in section
+                    if isinstance(item, dict)
+                }
+            else:
+                result[key] = dict(section) if section else {}
+        # Carry metadata
+        if "metadata" in ontology:
+            result["metadata"] = ontology["metadata"]
+        return result
