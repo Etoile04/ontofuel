@@ -1,7 +1,5 @@
 """Tests for extraction merger module."""
 
-import pytest
-
 from ontofuel.extraction.extractor import ExtractionResult
 from ontofuel.extraction.merger import Merger, MergeStats
 

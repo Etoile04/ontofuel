@@ -10,9 +10,9 @@ Core classes:
   - Updater: Incrementally update the ontology
 """
 
-from .segmenter import Segmenter
-from .extractor import Extractor, ExtractionResult
+from .extractor import ExtractionResult, Extractor
 from .merger import Merger
+from .segmenter import Segmenter
 from .updater import OntologyUpdater
 
 __all__ = [

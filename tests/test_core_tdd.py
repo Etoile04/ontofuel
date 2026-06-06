@@ -4,20 +4,24 @@ TDD flow: write failing tests first, then implement/fix.
 """
 
 import json
-import tempfile
 from pathlib import Path
 
 import pytest
 
 from ontofuel.core.ontology import (
-    load_ontology, load_nvl_data, get_classes, get_object_properties,
-    get_datatype_properties, get_individuals, get_stats, get_ontology_dir,
+    get_classes,
+    get_datatype_properties,
+    get_individuals,
+    get_object_properties,
+    get_ontology_dir,
+    get_stats,
+    load_ontology,
 )
 from ontofuel.core.query import OntologyQuery
 from ontofuel.core.validator import OntologyValidator
 
-
 # ─── Fixtures ──────────────────────────────────────────────────────────
+
 
 @pytest.fixture
 def ont_file(tmp_path):
@@ -56,6 +60,7 @@ def loaded_ont(ont_file):
 
 # ─── ontology.py: get_ontology_dir ──────────────────────────────────────
 
+
 class TestGetOntologyDir:
     def test_returns_path(self):
         """Should return a Path object."""
@@ -64,6 +69,7 @@ class TestGetOntologyDir:
 
 
 # ─── ontology.py: load_ontology normalization ──────────────────────────
+
 
 class TestLoadOntologyNormalize:
     def test_dict_to_list_classes(self, loaded_ont):
@@ -100,6 +106,7 @@ class TestLoadOntologyNormalize:
 
 # ─── ontology.py: getter functions with auto-load ──────────────────────
 
+
 class TestGetterAutoLoad:
     """Tests for get_classes/get_individuals/etc with ontology=None (auto-load)."""
 
@@ -130,6 +137,7 @@ class TestGetterAutoLoad:
 
 # ─── query.py: search ──────────────────────────────────────────────────
 
+
 class TestQuerySearch:
     def test_search_classes_only(self, loaded_ont):
         """Should search only in classes when category='classes'."""
@@ -159,6 +167,7 @@ class TestQuerySearch:
 
 
 # ─── query.py: by_class ────────────────────────────────────────────────
+
 
 class TestQueryByClass:
     def test_by_class_direct(self, loaded_ont):
@@ -191,6 +200,7 @@ class TestQueryByClass:
 
 # ─── query.py: by_property ─────────────────────────────────────────────
 
+
 class TestQueryByProperty:
     def test_by_property_name_only(self, loaded_ont):
         """Should find individuals with a specific property."""
@@ -215,6 +225,7 @@ class TestQueryByProperty:
 
 # ─── query.py: get_class_hierarchy ─────────────────────────────────────
 
+
 class TestClassHierarchy:
     def test_hierarchy_finds_children(self, loaded_ont):
         """Should find child classes."""
@@ -235,6 +246,7 @@ class TestClassHierarchy:
 
 # ─── query.py: stats ──────────────────────────────────────────────────
 
+
 class TestQueryStats:
     def test_stats_returns_dict(self, loaded_ont):
         """Should return stats dict."""
@@ -245,6 +257,7 @@ class TestQueryStats:
 
 
 # ─── validator.py: dimensions ──────────────────────────────────────────
+
 
 class TestValidatorDimensions:
     def test_naming_score(self, loaded_ont):
@@ -326,16 +339,26 @@ class TestValidatorDimensions:
 
 # ─── validator.py: _score_to_grade edge cases ─────────────────────────
 
+
 class TestScoreToGrade:
-    @pytest.mark.parametrize("score,expected", [
-        (95, "A+"), (85, "A"), (75, "B"), (65, "C"), (55, "D"), (30, "F"),
-    ])
+    @pytest.mark.parametrize(
+        "score,expected",
+        [
+            (95, "A+"),
+            (85, "A"),
+            (75, "B"),
+            (65, "C"),
+            (55, "D"),
+            (30, "F"),
+        ],
+    )
     def test_grade_mapping(self, loaded_ont, score, expected):
         v = OntologyValidator(loaded_ont)
         assert v._score_to_grade(score) == expected
 
 
 # ─── validator.py: hierarchy with parent field ────────────────────────
+
 
 class TestHierarchyWithParentField:
     def test_hierarchy_detects_parent_field(self):
@@ -345,7 +368,9 @@ class TestHierarchyWithParentField:
                 {"name": "Base"},
                 {"name": "Child", "parent": "Base"},
             ],
-            "objectProperties": [], "datatypeProperties": [], "individuals": [],
+            "objectProperties": [],
+            "datatypeProperties": [],
+            "individuals": [],
         }
         v = OntologyValidator(ont)
         assert v._check_hierarchy() == 50  # 1/2 has parent
@@ -357,7 +382,9 @@ class TestHierarchyWithParentField:
                 {"name": "Base", "parent": "Entity"},
                 {"name": "Child", "parent": "Base"},
             ],
-            "objectProperties": [], "datatypeProperties": [], "individuals": [],
+            "objectProperties": [],
+            "datatypeProperties": [],
+            "individuals": [],
         }
         v = OntologyValidator(ont)
         assert v._check_hierarchy() == 100  # Both count (Entity is a valid parent)
@@ -369,7 +396,9 @@ class TestHierarchyWithParentField:
                 "Base": {"comment": "root"},
                 "Child": {"parent": "Base", "comment": "child"},
             },
-            "objectProperties": [], "datatypeProperties": [], "individuals": [],
+            "objectProperties": [],
+            "datatypeProperties": [],
+            "individuals": [],
         }
         v = OntologyValidator(ont)
         assert v._check_hierarchy() == 50
@@ -377,6 +406,7 @@ class TestHierarchyWithParentField:
     def test_real_ontology_hierarchy_score(self):
         """Real ontology should have hierarchy >= 90."""
         from ontofuel.core.ontology import load_ontology
+
         ont = load_ontology()
         v = OntologyValidator(ont)
         score = v._check_hierarchy()
@@ -386,6 +416,7 @@ class TestHierarchyWithParentField:
         """Real dict-format ontology should validate without crashing."""
         import json
         from pathlib import Path
+
         ont = json.loads(Path("data/material_ontology_enhanced.json").read_text(encoding="utf-8"))
         v = OntologyValidator(ont)
         result = v.validate()
@@ -396,6 +427,7 @@ class TestHierarchyWithParentField:
         """All local rdfs:subClassOf refs should resolve to existing classes."""
         import json
         from pathlib import Path
+
         ont = json.loads(Path("data/material_ontology_enhanced.json").read_text(encoding="utf-8"))
         classes = ont["classes"]
         missing = set()
@@ -419,6 +451,7 @@ class TestHierarchyWithParentField:
         """Hard-fix hierarchy targets should be internally consistent."""
         import json
         from pathlib import Path
+
         ont = json.loads(Path("data/material_ontology_enhanced.json").read_text(encoding="utf-8"))
         classes = ont["classes"]
 

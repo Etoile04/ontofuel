@@ -25,7 +25,11 @@ def get_default_ontology_path() -> Path:
 def get_default_nvl_path() -> Path:
     """Get the default NVL visualization data path."""
     ont_dir = get_ontology_dir()
-    for p in [ont_dir / "nvl_ontology_data.json", ont_dir.parent / "data" / "nvl_ontology_data.json"]:
+    candidates = [
+        ont_dir / "nvl_ontology_data.json",
+        ont_dir.parent / "data" / "nvl_ontology_data.json",
+    ]
+    for p in candidates:
         if p.exists():
             return p
     raise FileNotFoundError("NVL data file not found")
@@ -49,7 +53,7 @@ def load_ontology(path: str | Path | None = None) -> dict[str, Any]:
         path = get_default_ontology_path()
     path = Path(path)
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         raw = json.load(f)
 
     # Normalize: convert dict-keyed sections to list of dicts with "name" field
@@ -78,7 +82,7 @@ def load_nvl_data(path: str | Path | None = None) -> dict[str, Any]:
     if path is None:
         path = get_default_nvl_path()
     path = Path(path)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 

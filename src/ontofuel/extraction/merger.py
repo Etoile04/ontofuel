@@ -22,6 +22,7 @@ from typing import Any
 @dataclass
 class MergeStats:
     """Statistics from a merge operation."""
+
     input_results: int = 0
     total_individuals_in: int = 0
     total_properties_in: int = 0
@@ -40,7 +41,9 @@ class MergeStats:
             "conflicts_resolved": self.conflicts_resolved,
             "final_individuals": self.final_individuals,
             "final_properties": self.final_properties,
-            "dedup_rate": round(self.duplicates_removed / max(self.total_individuals_in, 1) * 100, 1),
+            "dedup_rate": round(
+                self.duplicates_removed / max(self.total_individuals_in, 1) * 100, 1
+            ),
         }
 
 
@@ -55,6 +58,7 @@ class MergedResult:
         stats: Merge statistics.
         sources: List of source identifiers.
     """
+
     individuals: list[dict[str, Any]] = field(default_factory=list)
     properties: list[dict[str, Any]] = field(default_factory=list)
     relationships: list[dict[str, Any]] = field(default_factory=list)
@@ -197,7 +201,10 @@ class Merger:
                     for i, r in enumerate(result):
                         r_key = self._normalize(r.get(key, ""))
                         if self.strategy == "fuzzy":
-                            if SequenceMatcher(None, r_key, match_key).ratio() >= self.fuzzy_threshold:
+                            if (
+                                SequenceMatcher(None, r_key, match_key).ratio()
+                                >= self.fuzzy_threshold
+                            ):
                                 idx_to_replace = i
                                 break
                         elif r_key == match_key:
@@ -230,7 +237,7 @@ class Merger:
             grouped[name].append(prop)
 
         result = []
-        for name, props in grouped.items():
+        for _, props in grouped.items():
             if len(props) == 1:
                 result.append(props[0])
             else:

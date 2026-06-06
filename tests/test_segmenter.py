@@ -2,7 +2,7 @@
 
 import pytest
 
-from ontofuel.extraction.segmenter import Segmenter, Chunk, CHONKIE_AVAILABLE
+from ontofuel.extraction.segmenter import CHONKIE_AVAILABLE, Chunk, Segmenter
 
 
 class TestSegmentHeading:
@@ -126,6 +126,7 @@ class TestChonkieIntegration:
     @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
     def test_chonkie_available(self):
         from ontofuel.extraction.segmenter import CHONKIE_AVAILABLE as CA
+
         assert CA is True
 
     def test_segmenter_default_init(self):
@@ -136,7 +137,11 @@ class TestChonkieIntegration:
 
     def test_segmenter_explicit_strategy(self):
         seg = Segmenter(strategy="recursive")
-        assert seg.strategy == "recursive"
+        if not CHONKIE_AVAILABLE:
+            # chonkie not installed → falls back to 'fixed'
+            assert seg.strategy == "fixed"
+        else:
+            assert seg.strategy == "recursive"
 
     def test_segmenter_invalid_strategy_raises(self):
         with pytest.raises(ValueError, match="Unknown strategy"):
@@ -144,6 +149,7 @@ class TestChonkieIntegration:
 
     def test_segmenter_fallback_without_chonkie(self, monkeypatch):
         import ontofuel.extraction.segmenter as mod
+
         monkeypatch.setattr(mod, "CHONKIE_AVAILABLE", False)
         seg = Segmenter(strategy="semantic")
         assert seg.strategy == "fixed"
@@ -157,6 +163,7 @@ class TestChonkieIntegration:
         assert seg.embedding_config["model"] == "sentence-transformers/all-MiniLM-L6-v2"
 
 
+@pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
 class TestRecursiveStrategy:
     """Test recursive chunking strategy."""
 
@@ -214,12 +221,16 @@ class TestSegmentMethod:
         assert all(c.title.startswith("chunk_") for c in chunks)
 
 
+@pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
 class TestSemanticStrategy:
     """Test semantic chunking strategy."""
 
     def test_semantic_basic(self):
-        seg = Segmenter(strategy="semantic", chunk_size=256,
-                        embedding_config={"model": "minishlab/potion-base-8M"})
+        seg = Segmenter(
+            strategy="semantic",
+            chunk_size=256,
+            embedding_config={"model": "minishlab/potion-base-8M"},
+        )
         text = "U-10Mo has density 15.8. " * 30 + "Zirconium cladding material. " * 30
         chunks = seg.segment(text, overlap_size=0)
         assert len(chunks) >= 2
@@ -227,13 +238,17 @@ class TestSemanticStrategy:
             assert c.metadata.get("strategy") == "semantic"
 
     def test_semantic_returns_chunk_objects(self):
-        seg = Segmenter(strategy="semantic", chunk_size=256,
-                        embedding_config={"model": "minishlab/potion-base-8M"})
+        seg = Segmenter(
+            strategy="semantic",
+            chunk_size=256,
+            embedding_config={"model": "minishlab/potion-base-8M"},
+        )
         text = "Some text about nuclear fuel. " * 50
         chunks = seg.segment(text, overlap_size=0)
         assert all(isinstance(c, Chunk) for c in chunks)
 
 
+@pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
 class TestLateStrategy:
     """Test late chunking strategy."""
 
@@ -247,12 +262,14 @@ class TestLateStrategy:
             assert c.metadata.get("strategy") == "late"
 
 
+@pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
 class TestAutoStrategy:
     """Test auto detection strategy."""
 
     def test_auto_detects_recursive_for_heading_rich(self):
-        seg = Segmenter(strategy="auto", chunk_size=256,
-                        embedding_config={"model": "minishlab/potion-base-8M"})
+        seg = Segmenter(
+            strategy="auto", chunk_size=256, embedding_config={"model": "minishlab/potion-base-8M"}
+        )
         # Many headings → should pick recursive
         lines = [f"## Section {i}\nContent line {i}." for i in range(20)]
         text = "\n".join(lines)
@@ -261,6 +278,7 @@ class TestAutoStrategy:
 
     def test_auto_detects_fixed_for_plain_text_no_embeddings(self, monkeypatch):
         import ontofuel.extraction.segmenter as mod
+
         monkeypatch.setattr(mod, "CHONKIE_AVAILABLE", False)
         seg = Segmenter(strategy="auto")
         text = "Just some plain text without headings. " * 50
@@ -268,14 +286,16 @@ class TestAutoStrategy:
         assert detected == "fixed"
 
     def test_auto_detects_semantic_with_embeddings(self):
-        seg = Segmenter(strategy="auto", chunk_size=256,
-                        embedding_config={"model": "minishlab/potion-base-8M"})
+        seg = Segmenter(
+            strategy="auto", chunk_size=256, embedding_config={"model": "minishlab/potion-base-8M"}
+        )
         # Plain text, no headings, embeddings available → semantic
         text = "Just some plain text without headings. " * 50
         detected = seg._detect_strategy(text)
         assert detected == "semantic"
 
 
+@pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
 class TestOverlap:
     """Test overlap application."""
 
@@ -340,16 +360,16 @@ class TestBackwardCompatibility:
         assert isinstance(chunks, list)
         for c in chunks:
             assert isinstance(c, Chunk)
-            assert hasattr(c, 'index')
-            assert hasattr(c, 'title')
-            assert hasattr(c, 'content')
-            assert hasattr(c, 'start_char')
-            assert hasattr(c, 'end_char')
-            assert hasattr(c, 'level')
-            assert hasattr(c, 'metadata')
-            assert hasattr(c, 'char_count')
-            assert hasattr(c, 'line_count')
-            assert hasattr(c, 'to_dict')
+            assert hasattr(c, "index")
+            assert hasattr(c, "title")
+            assert hasattr(c, "content")
+            assert hasattr(c, "start_char")
+            assert hasattr(c, "end_char")
+            assert hasattr(c, "level")
+            assert hasattr(c, "metadata")
+            assert hasattr(c, "char_count")
+            assert hasattr(c, "line_count")
+            assert hasattr(c, "to_dict")
 
     def test_segment_fixed_returns_list_chunk(self):
         seg = Segmenter()
@@ -369,6 +389,7 @@ class TestBackwardCompatibility:
     def test_segment_heading_no_chonkie_still_works(self):
         """Even without chonkie, segment_heading works (pure Python fallback)."""
         import ontofuel.extraction.segmenter as seg_mod
+
         original = seg_mod.CHONKIE_AVAILABLE
         seg_mod.CHONKIE_AVAILABLE = False
         try:
@@ -427,6 +448,7 @@ FeCrAl alloys and pure Cr coatings require intermediate barrier layers
 for long-term stable service.
 """
 
+    @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
     def test_recursive_on_nuclear_doc(self):
         seg = Segmenter(strategy="recursive", chunk_size=512)
         chunks = seg.segment(self.NUCLEAR_TEXT)
@@ -434,6 +456,7 @@ for long-term stable service.
         for c in chunks:
             assert len(c.content) > 20, f"Chunk {c.index} too short"
 
+    @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
     def test_semantic_on_nuclear_doc(self):
         seg = Segmenter(strategy="semantic", chunk_size=512)
         chunks = seg.segment(self.NUCLEAR_TEXT)
@@ -442,6 +465,7 @@ for long-term stable service.
         assert "U3Si2" in all_text
         assert "FCCI" in all_text
 
+    @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
     def test_auto_on_nuclear_doc(self):
         seg = Segmenter(strategy="auto", chunk_size=512)
         chunks = seg.segment(self.NUCLEAR_TEXT)
@@ -449,6 +473,7 @@ for long-term stable service.
         strategies = {c.metadata.get("strategy") for c in chunks}
         assert "recursive" in strategies
 
+    @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
     def test_overlap_preserves_context(self):
         seg = Segmenter(strategy="recursive", chunk_size=256, overlap_size=32)
         chunks = seg.segment(self.NUCLEAR_TEXT)

@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from ..core.ontology import load_ontology, get_stats
+from ..core.ontology import get_stats, load_ontology
 
 
 class UpdateStats:
@@ -117,12 +117,14 @@ class OntologyUpdater:
             # Add new individual
             self._add_individual(ind)
             stats.added_individuals += 1
-            self._changes.append({
-                "action": "add",
-                "type": "individual",
-                "name": name,
-                "timestamp": datetime.now().isoformat(),
-            })
+            self._changes.append(
+                {
+                    "action": "add",
+                    "type": "individual",
+                    "name": name,
+                    "timestamp": datetime.now().isoformat(),
+                }
+            )
 
         # Merge stats
         self._merge_stats(stats)
@@ -148,26 +150,27 @@ class OntologyUpdater:
             prop_name = prop.get("name", "")
             prop_value = prop.get("value", "")
 
-            if target_individual:
-                ind_name = target_individual
-            else:
-                # Try to find individual from property context
-                ind_name = prop.get("individual", prop.get("source", ""))
+            # Try to find individual from property context
+            ind_name = target_individual or prop.get("individual", prop.get("source", ""))
 
             if not ind_name:
                 stats.skipped_individuals += 1
                 continue
 
-            added = self._add_property_to_individual(ind_name, prop_name, prop_value, prop.get("unit", ""))
+            added = self._add_property_to_individual(
+                ind_name, prop_name, prop_value, prop.get("unit", "")
+            )
             if added:
                 stats.added_properties += 1
-                self._changes.append({
-                    "action": "add",
-                    "type": "property",
-                    "name": prop_name,
-                    "individual": ind_name,
-                    "timestamp": datetime.now().isoformat(),
-                })
+                self._changes.append(
+                    {
+                        "action": "add",
+                        "type": "property",
+                        "name": prop_name,
+                        "individual": ind_name,
+                        "timestamp": datetime.now().isoformat(),
+                    }
+                )
             else:
                 stats.skipped_individuals += 1
 

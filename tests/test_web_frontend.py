@@ -1,4 +1,5 @@
 """Tests for Task 3: Web CRUD Management Interface."""
+
 import pathlib
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent

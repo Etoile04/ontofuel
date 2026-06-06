@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .ontology import load_ontology, get_stats
+from .ontology import get_stats, load_ontology
 
 
 class OntologyValidator:
@@ -93,19 +93,23 @@ class OntologyValidator:
             "has_properties": (stats["object_properties"] + stats["datatype_properties"]) > 0,
             "individuals_per_class": round(stats["individuals"] / max(stats["classes"], 1), 1),
             "properties_per_class": round(
-                (stats["object_properties"] + stats["datatype_properties"]) / max(stats["classes"], 1), 1
+                (stats["object_properties"] + stats["datatype_properties"])
+                / max(stats["classes"], 1),
+                1,
             ),
         }
-        checks["healthy"] = all([
-            checks["has_classes"],
-            checks["has_individuals"],
-            checks["has_properties"],
-        ])
+        checks["healthy"] = all(
+            [
+                checks["has_classes"],
+                checks["has_individuals"],
+                checks["has_properties"],
+            ]
+        )
         return checks
 
     def _check_naming(self) -> int:
         """Check naming conventions."""
-        ont = self.ontology
+        _ = self.ontology
         issues = 0
         total = 0
 
@@ -115,7 +119,9 @@ class OntologyValidator:
                 issues += 1
             total += 1
 
-        for prop in self._normalize_section("objectProperties") + self._normalize_section("datatypeProperties"):
+        obj_props = self._normalize_section("objectProperties")
+        dt_props = self._normalize_section("datatypeProperties")
+        for prop in obj_props + dt_props:
             name = prop.get("name", "")
             if not name:
                 issues += 1

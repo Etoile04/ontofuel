@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .ontology import load_ontology, get_classes, get_individuals
+from .ontology import get_classes, get_individuals, load_ontology
 
 
 class OntologyQuery:
@@ -151,18 +151,19 @@ class OntologyQuery:
         for ind in self.individuals:
             # Check exact prop key
             if prop_key in ind:
-                if prop_value is None:
-                    results.append(ind)
-                elif str(prop_value).lower() in str(ind[prop_key]).lower():
+                if prop_value is None or str(prop_value).lower() in str(ind[prop_key]).lower():
                     results.append(ind)
                 continue
 
             # Check all prop_ keys for substring match
             for key, val in ind.items():
-                if key.startswith("prop_") and prop_name.lower() in key.lower():
-                    if prop_value is None or str(prop_value).lower() in str(val).lower():
-                        results.append(ind)
-                        break
+                if (
+                    key.startswith("prop_")
+                    and prop_name.lower() in key.lower()
+                    and (prop_value is None or str(prop_value).lower() in str(val).lower())
+                ):
+                    results.append(ind)
+                    break
 
         return results
 
@@ -199,4 +200,5 @@ class OntologyQuery:
     def stats(self) -> dict[str, int]:
         """Return ontology statistics."""
         from .ontology import get_stats
+
         return get_stats(self.ontology)

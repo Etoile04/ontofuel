@@ -2,7 +2,7 @@
 
 import json
 import tempfile
-from pathlib import Path
+
 import pytest
 
 from ontofuel.core.ontology import load_ontology
@@ -13,8 +13,16 @@ from ontofuel.core.query import OntologyQuery
 def sample_ontology():
     return {
         "classes": {
-            "NuclearFuel": {"uri": "http://example.org/NuclearFuel", "comment": "Nuclear fuel", "parent": "Material"},
-            "AlloySystem": {"uri": "http://example.org/AlloySystem", "comment": "Alloy system", "parent": "Material"},
+            "NuclearFuel": {
+                "uri": "http://example.org/NuclearFuel",
+                "comment": "Nuclear fuel",
+                "parent": "Material",
+            },
+            "AlloySystem": {
+                "uri": "http://example.org/AlloySystem",
+                "comment": "Alloy system",
+                "parent": "Material",
+            },
         },
         "objectProperties": {},
         "datatypeProperties": {},
@@ -40,10 +48,15 @@ def sample_ontology():
 
 @pytest.fixture
 def query(sample_ontology):
-    ont = load_ontology.__wrapped__(sample_ontology) if hasattr(load_ontology, '__wrapped__') else None
+    ont = (
+        load_ontology.__wrapped__(sample_ontology)
+        if hasattr(load_ontology, "__wrapped__")
+        else None
+    )
     # Load directly since we have a dict, not a file
     # Normalize it like load_ontology does
     from ontofuel.core.ontology import load_ontology as _load
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(sample_ontology, f)
         fname = f.name

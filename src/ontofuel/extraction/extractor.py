@@ -14,7 +14,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..core.ontology import load_ontology, get_classes
+from ..core.ontology import get_classes, load_ontology
 
 
 @dataclass
@@ -28,6 +28,7 @@ class ExtractionResult:
         relationships: List of extracted relationships.
         metadata: Extraction metadata (method, confidence, etc.).
     """
+
     source: str
     individuals: list[dict[str, Any]] = field(default_factory=list)
     properties: list[dict[str, Any]] = field(default_factory=list)
@@ -57,14 +58,10 @@ ALLOY_PATTERN = re.compile(
 )
 
 # Numeric property: density: 15.8 g/cm³, Tm = 1132°C
-NUMERIC_PROP_PATTERN = re.compile(
-    r"([\w\s]+?)(?:[:=]\s*| is\s+| of\s+)(\d+\.?\d*)\s*([°%\w/³²·]+)"
-)
+NUMERIC_PROP_PATTERN = re.compile(r"([\w\s]+?)(?:[:=]\s*| is\s+| of\s+)(\d+\.?\d*)\s*([°%\w/³²·]+)")
 
 # Temperature range: 25–800°C, 300-500 K
-TEMP_RANGE_PATTERN = re.compile(
-    r"(\d+\.?\d*)\s*[–\-]\s*(\d+\.?\d*)\s*(°[CF]|K)"
-)
+TEMP_RANGE_PATTERN = re.compile(r"(\d+\.?\d*)\s*[–\-]\s*(\d+\.?\d*)\s*(°[CF]|K)")
 
 # Phase: γ phase, BCC, FCC, α-U
 PHASE_PATTERN = re.compile(
@@ -73,9 +70,7 @@ PHASE_PATTERN = re.compile(
 )
 
 # Percentage: 10 wt%, 5 at%, 20%
-PERCENTAGE_PATTERN = re.compile(
-    r"(\d+\.?\d*)\s*(wt%|at%|vol%|mol%)"
-)
+PERCENTAGE_PATTERN = re.compile(r"(\d+\.?\d*)\s*(wt%|at%|vol%|mol%)")
 
 # Property keywords common in materials science
 PROPERTY_KEYWORDS = {
@@ -127,10 +122,7 @@ class Extractor:
     def class_names(self) -> set[str]:
         if self._class_names is None:
             classes = get_classes(self.ontology)
-            self._class_names = {
-                c.get("name", c.get("className", ""))
-                for c in classes
-            }
+            self._class_names = {c.get("name", c.get("className", "")) for c in classes}
             self._class_names.discard("")
         return self._class_names
 
@@ -208,12 +200,14 @@ class Extractor:
                     groups = match.groups()
                     if groups:
                         value = groups[0] if len(groups) == 1 else list(groups)
-                        result.properties.append({
-                            "name": prop_name,
-                            "value": value,
-                            "context": match.group(0),
-                            "position": match.start(),
-                        })
+                        result.properties.append(
+                            {
+                                "name": prop_name,
+                                "value": value,
+                                "context": match.group(0),
+                                "position": match.start(),
+                            }
+                        )
 
         return result
 
@@ -231,12 +225,14 @@ class Extractor:
             # Parse composition
             composition = self._parse_alloy_composition(name)
 
-            individuals.append({
-                "name": name,
-                "type": "Alloy",
-                "composition": composition,
-                "extraction_confidence": 0.8,
-            })
+            individuals.append(
+                {
+                    "name": name,
+                    "type": "Alloy",
+                    "composition": composition,
+                    "extraction_confidence": 0.8,
+                }
+            )
 
         return individuals
 
@@ -257,13 +253,15 @@ class Extractor:
                     break
 
             if matched_prop:
-                props.append({
-                    "name": matched_prop,
-                    "value": value,
-                    "unit": unit,
-                    "raw_name": prop_name,
-                    "context": match.group(0),
-                })
+                props.append(
+                    {
+                        "name": matched_prop,
+                        "value": value,
+                        "unit": unit,
+                        "raw_name": prop_name,
+                        "context": match.group(0),
+                    }
+                )
 
         return props
 
@@ -276,11 +274,13 @@ class Extractor:
             # Normalize
             phase_str = phase_str.replace("phase", "").replace("Phase", "").strip()
             if phase_str:
-                phases.append({
-                    "type": "phase",
-                    "phase": phase_str,
-                    "context": match.group(0),
-                })
+                phases.append(
+                    {
+                        "type": "phase",
+                        "phase": phase_str,
+                        "context": match.group(0),
+                    }
+                )
 
         return phases
 
@@ -288,11 +288,13 @@ class Extractor:
         """Extract temperature ranges."""
         temps = []
         for match in TEMP_RANGE_PATTERN.finditer(text):
-            temps.append({
-                "min": float(match.group(1)),
-                "max": float(match.group(2)),
-                "unit": match.group(3),
-            })
+            temps.append(
+                {
+                    "min": float(match.group(1)),
+                    "max": float(match.group(2)),
+                    "unit": match.group(3),
+                }
+            )
         return temps
 
     def _parse_alloy_composition(self, name: str) -> dict[str, float]:

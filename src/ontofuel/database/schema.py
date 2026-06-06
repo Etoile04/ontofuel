@@ -23,7 +23,12 @@ TABLES: dict[str, dict[str, Any]] = {
         "description": "Material properties with values and units",
         "columns": [
             {"name": "id", "type": "uuid", "primary": True, "default": "gen_random_uuid()"},
-            {"name": "material_id", "type": "uuid", "nullable": False, "references": "materials(id)"},
+            {
+                "name": "material_id",
+                "type": "uuid",
+                "nullable": False,
+                "references": "materials(id)",
+            },
             {"name": "property_name", "type": "text", "nullable": False},
             {"name": "property_value", "type": "float8", "nullable": True},
             {"name": "value_string", "type": "text", "nullable": True},
@@ -39,7 +44,12 @@ TABLES: dict[str, dict[str, Any]] = {
         "description": "Elemental composition of materials",
         "columns": [
             {"name": "id", "type": "uuid", "primary": True, "default": "gen_random_uuid()"},
-            {"name": "material_id", "type": "uuid", "nullable": False, "references": "materials(id)"},
+            {
+                "name": "material_id",
+                "type": "uuid",
+                "nullable": False,
+                "references": "materials(id)",
+            },
             {"name": "element", "type": "text", "nullable": False},
             {"name": "weight_fraction", "type": "float8", "nullable": True},
             {"name": "atomic_fraction", "type": "float8", "nullable": True},
@@ -63,7 +73,12 @@ TABLES: dict[str, dict[str, Any]] = {
         "description": "Irradiation effects on material properties",
         "columns": [
             {"name": "id", "type": "uuid", "primary": True, "default": "gen_random_uuid()"},
-            {"name": "material_id", "type": "uuid", "nullable": False, "references": "materials(id)"},
+            {
+                "name": "material_id",
+                "type": "uuid",
+                "nullable": False,
+                "references": "materials(id)",
+            },
             {"name": "irradiation_type", "type": "text", "nullable": True},
             {"name": "fluence", "type": "float8", "nullable": True},
             {"name": "fluence_unit", "type": "text", "default": "'n/cm²'"},
@@ -120,9 +135,7 @@ def generate_create_sql(table_name: str) -> str:
         if "default" in col:
             parts.append(f"DEFAULT {col['default']}")
         if "references" in col:
-            constraints.append(
-                f'  FOREIGN KEY ("{col["name"]}") REFERENCES {col["references"]}'
-            )
+            constraints.append(f'  FOREIGN KEY ("{col["name"]}") REFERENCES {col["references"]}')
         col_defs.append(" ".join(parts))
 
     all_defs = col_defs + constraints

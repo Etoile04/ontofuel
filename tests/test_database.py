@@ -1,7 +1,6 @@
 """Tests for ontofuel.database module."""
 
-import pytest
-from ontofuel.database import SupabaseClient, DataRestorer, TABLES
+from ontofuel.database import TABLES, DataRestorer, SupabaseClient
 
 
 class TestSupabaseClient:
@@ -33,6 +32,6 @@ class TestSchema:
         assert "material_properties" in TABLES
 
     def test_tables_have_columns(self):
-        for name, schema in TABLES.items():
+        for _, schema in TABLES.items():
             assert "columns" in schema
             assert len(schema["columns"]) > 0

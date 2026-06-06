@@ -1,7 +1,6 @@
 """Tests for visualization module."""
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 from ontofuel.visualization import start_viewer
 
