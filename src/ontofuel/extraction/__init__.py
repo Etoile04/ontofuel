@@ -10,14 +10,14 @@ Core classes:
   - Updater: Incrementally update the ontology
 """
 
+from .critic import CritiqueSeverity, OntologyCritic, OntologyCritiqueReport, Suggestion
 from .extractor import ExtractionResult, Extractor
 from .graph_update import GraphUpdate, OntologyDiff
 from .merger import Merger
 from .segmenter import Segmenter
 from .sublimation import OntologySublimator, SeparationResult
 from .updater import OntologyUpdater
-from .versioning import OntologyVersionControl, OntologyVersion
-from .critic import OntologyCritic, OntologyCritiqueReport, CritiqueSeverity, Suggestion
+from .versioning import OntologyVersion, OntologyVersionControl
 
 __all__ = [
     "Segmenter",

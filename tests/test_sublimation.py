@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from ontofuel.extraction.sublimation import OntologySublimator, SeparationResult
 
-
 # ------------------------------------------------------------------
 # Helpers
 # ------------------------------------------------------------------
+
 
 def _make_extraction(
     *,
@@ -60,12 +60,8 @@ def _standard_extraction() -> dict:
             "EngineRoom2": {"label": "2号机舱"},  # has digit → fact
         },
         extra={
-            "propertyValues": {
-                "chunk_42_TemperatureSensor": {"hasSerialNumber": "SN-001"}
-            },
-            "relations": {
-                "chunk_42_TemperatureSensor": {"hasComponent": "EngineRoom2"}
-            },
+            "propertyValues": {"chunk_42_TemperatureSensor": {"hasSerialNumber": "SN-001"}},
+            "relations": {"chunk_42_TemperatureSensor": {"hasComponent": "EngineRoom2"}},
         },
     )
 
@@ -73,6 +69,7 @@ def _standard_extraction() -> dict:
 # ------------------------------------------------------------------
 # OntologySublimator.is_fact_triple
 # ------------------------------------------------------------------
+
 
 class TestIsFactTriple:
     def setup_method(self) -> None:
@@ -103,6 +100,7 @@ class TestIsFactTriple:
 # ------------------------------------------------------------------
 # OntologySublimator.separate_ontology_facts
 # ------------------------------------------------------------------
+
 
 class TestSeparateOntologyFacts:
     def setup_method(self) -> None:
@@ -162,6 +160,7 @@ class TestSeparateOntologyFacts:
 # ------------------------------------------------------------------
 # OntologySublimator.sublimate  (full pipeline)
 # ------------------------------------------------------------------
+
 
 class TestSublimate:
     def setup_method(self) -> None:

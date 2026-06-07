@@ -120,9 +120,9 @@ class OntologyUpdater:
                     s.severity.value == "critical" for s in report.suggestions
                 ):
                     import warnings
+
                     warnings.warn(
-                        f"本体质量批判: score={report.score}, "
-                        f"success={report.success}. 继续更新。",
+                        f"本体质量批判: score={report.score}, success={report.success}. 继续更新。",
                         stacklevel=2,
                     )
             except Exception:

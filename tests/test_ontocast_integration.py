@@ -24,6 +24,7 @@ from ontofuel.extraction.versioning import OntologyVersion
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_ontology_json(
     tmp_path: Path,
     name: str = "test_ont.json",
@@ -43,6 +44,7 @@ def _make_ontology_json(
 # ---------------------------------------------------------------------------
 # Test 1: Updater.save() triggers GraphUpdate
 # ---------------------------------------------------------------------------
+
 
 class TestUpdaterGraphUpdate:
     """Integration point 1a: save() computes and persists OntologyDiff."""
@@ -83,6 +85,7 @@ class TestUpdaterGraphUpdate:
 # Test 2: Updater.save() triggers Versioning
 # ---------------------------------------------------------------------------
 
+
 class TestUpdaterVersioning:
     """Integration point 1b: save() commits versions."""
 
@@ -108,10 +111,12 @@ class TestUpdaterVersioning:
             enable_graph_update=False,
             enable_versioning=True,
         )
-        updater2.add_individuals([
-            {"name": "chunk_2_Material", "type": "Material"},
-            {"name": "chunk_3_Material", "type": "NewType"},
-        ])
+        updater2.add_individuals(
+            [
+                {"name": "chunk_2_Material", "type": "Material"},
+                {"name": "chunk_3_Material", "type": "NewType"},
+            ]
+        )
         updater2.save()
 
         # versions/versions.json should exist with entries
@@ -130,6 +135,7 @@ class TestUpdaterVersioning:
 # ---------------------------------------------------------------------------
 # Test 3: Merger.merge() triggers Sublimation
 # ---------------------------------------------------------------------------
+
 
 class TestMergerSublimation:
     """Integration point 2: merge() runs sublimation when enabled."""
@@ -165,6 +171,7 @@ class TestMergerSublimation:
 # Test 4: OntologyCritic quality gate
 # ---------------------------------------------------------------------------
 
+
 class TestCriticQuality:
     """Integration point 3: critic evaluates ontology quality."""
 
@@ -181,9 +188,9 @@ class TestCriticQuality:
 
         # Should fail due to CRITICAL suggestion (no classes)
         assert report.success is False, "Low-quality ontology should not pass"
-        assert any(
-            s.severity == CritiqueSeverity.CRITICAL for s in report.suggestions
-        ), "Should have at least one CRITICAL suggestion"
+        assert any(s.severity == CritiqueSeverity.CRITICAL for s in report.suggestions), (
+            "Should have at least one CRITICAL suggestion"
+        )
 
     def test_critic_passes_good_ontology(self):
         good_ontology = {
@@ -235,6 +242,7 @@ class TestCriticQuality:
 # ---------------------------------------------------------------------------
 # Test 5: Full end-to-end pipeline
 # ---------------------------------------------------------------------------
+
 
 class TestFullPipeline:
     """End-to-end pipeline with OntoCast features."""
@@ -314,6 +322,7 @@ class TestFullPipeline:
 # ---------------------------------------------------------------------------
 # Test: Module independence (graceful degradation)
 # ---------------------------------------------------------------------------
+
 
 class TestGracefulDegradation:
     """Modules should degrade gracefully when disabled."""

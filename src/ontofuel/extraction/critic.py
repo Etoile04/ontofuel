@@ -127,9 +127,7 @@ class OntologyCritic:
         categories_scores["domain_coverage"] = coverage_score
         suggestions.extend(coverage_sugs)
 
-        total_score = sum(
-            categories_scores[cat] * self._WEIGHTS[cat] for cat in self._WEIGHTS
-        )
+        total_score = sum(categories_scores[cat] * self._WEIGHTS[cat] for cat in self._WEIGHTS)
 
         summary = self._generate_summary(total_score, categories_scores, suggestions)
 
@@ -157,33 +155,39 @@ class OntologyCritic:
             if not name:
                 continue
             if not name[0].isupper():
-                suggestions.append(Suggestion(
-                    severity=CritiqueSeverity.WARNING,
-                    category="naming",
-                    description=f"类名 '{name}' 应使用 PascalCase（首字母大写）",
-                    location=name,
-                    fix_hint=f"建议改为: {name[0].upper() + name[1:]}",
-                ))
+                suggestions.append(
+                    Suggestion(
+                        severity=CritiqueSeverity.WARNING,
+                        category="naming",
+                        description=f"类名 '{name}' 应使用 PascalCase（首字母大写）",
+                        location=name,
+                        fix_hint=f"建议改为: {name[0].upper() + name[1:]}",
+                    )
+                )
                 score -= 10
             if "_" in name:
-                suggestions.append(Suggestion(
-                    severity=CritiqueSeverity.WARNING,
-                    category="naming",
-                    description=f"类名 '{name}' 包含下划线，建议使用 PascalCase",
-                    location=name,
-                    fix_hint=f"建议改为: {name.replace('_', '')}",
-                ))
+                suggestions.append(
+                    Suggestion(
+                        severity=CritiqueSeverity.WARNING,
+                        category="naming",
+                        description=f"类名 '{name}' 包含下划线，建议使用 PascalCase",
+                        location=name,
+                        fix_hint=f"建议改为: {name.replace('_', '')}",
+                    )
+                )
                 score -= 8
 
         for name in ontology.get("objectProperties", {}):
             if name and name[0].isupper():
-                suggestions.append(Suggestion(
-                    severity=CritiqueSeverity.WARNING,
-                    category="naming",
-                    description=f"属性名 '{name}' 应使用 camelCase（首字母小写）",
-                    location=name,
-                    fix_hint=f"建议改为: {name[0].lower() + name[1:]}",
-                ))
+                suggestions.append(
+                    Suggestion(
+                        severity=CritiqueSeverity.WARNING,
+                        category="naming",
+                        description=f"属性名 '{name}' 应使用 camelCase（首字母小写）",
+                        location=name,
+                        fix_hint=f"建议改为: {name[0].lower() + name[1:]}",
+                    )
+                )
                 score -= 10
 
         return max(0, score), suggestions
@@ -196,29 +200,31 @@ class OntologyCritic:
         props = ontology.get("objectProperties", {})
 
         if not classes:
-            suggestions.append(Suggestion(
-                severity=CritiqueSeverity.CRITICAL,
-                category="structure",
-                description="本体没有定义任何类",
-                location=None,
-                fix_hint="至少需要定义一个顶层类",
-            ))
+            suggestions.append(
+                Suggestion(
+                    severity=CritiqueSeverity.CRITICAL,
+                    category="structure",
+                    description="本体没有定义任何类",
+                    location=None,
+                    fix_hint="至少需要定义一个顶层类",
+                )
+            )
             score -= 50
             return max(0, score), suggestions
 
         # Detect orphan classes (not referenced by any property)
         for class_name in classes:
-            has_link = any(
-                class_name in str(prop_def) for prop_def in props.values()
-            )
+            has_link = any(class_name in str(prop_def) for prop_def in props.values())
             if not has_link and len(classes) > 1:
-                suggestions.append(Suggestion(
-                    severity=CritiqueSeverity.WARNING,
-                    category="structure",
-                    description=f"类 '{class_name}' 没有关联任何属性",
-                    location=class_name,
-                    fix_hint="考虑添加相关属性或与其他类建立关系",
-                ))
+                suggestions.append(
+                    Suggestion(
+                        severity=CritiqueSeverity.WARNING,
+                        category="structure",
+                        description=f"类 '{class_name}' 没有关联任何属性",
+                        location=class_name,
+                        fix_hint="考虑添加相关属性或与其他类建立关系",
+                    )
+                )
                 score -= 5
 
         return max(0, score), suggestions
@@ -229,13 +235,15 @@ class OntologyCritic:
 
         for prop_name, prop_def in ontology.get("objectProperties", {}).items():
             if "domain" not in prop_def and "range" not in prop_def:
-                suggestions.append(Suggestion(
-                    severity=CritiqueSeverity.WARNING,
-                    category="semantics",
-                    description=f"属性 '{prop_name}' 缺少 domain 或 range 定义",
-                    location=prop_name,
-                    fix_hint="建议添加 domain 和 range 定义",
-                ))
+                suggestions.append(
+                    Suggestion(
+                        severity=CritiqueSeverity.WARNING,
+                        category="semantics",
+                        description=f"属性 '{prop_name}' 缺少 domain 或 range 定义",
+                        location=prop_name,
+                        fix_hint="建议添加 domain 和 range 定义",
+                    )
+                )
                 score -= 10
 
         return max(0, score), suggestions
@@ -246,23 +254,27 @@ class OntologyCritic:
 
         for class_name, class_def in ontology.get("classes", {}).items():
             if "comment" not in class_def and "description" not in class_def:
-                suggestions.append(Suggestion(
-                    severity=CritiqueSeverity.WARNING,
-                    category="completeness",
-                    description=f"类 '{class_name}' 缺少注释或描述",
-                    location=class_name,
-                    fix_hint="建议添加 comment 字段说明类的用途",
-                ))
+                suggestions.append(
+                    Suggestion(
+                        severity=CritiqueSeverity.WARNING,
+                        category="completeness",
+                        description=f"类 '{class_name}' 缺少注释或描述",
+                        location=class_name,
+                        fix_hint="建议添加 comment 字段说明类的用途",
+                    )
+                )
                 score -= 8
 
         if "metadata" not in ontology:
-            suggestions.append(Suggestion(
-                severity=CritiqueSeverity.WARNING,
-                category="completeness",
-                description="本体缺少元数据（metadata）",
-                location=None,
-                fix_hint="建议添加 metadata 字段，包含版本、创建时间等信息",
-            ))
+            suggestions.append(
+                Suggestion(
+                    severity=CritiqueSeverity.WARNING,
+                    category="completeness",
+                    description="本体缺少元数据（metadata）",
+                    location=None,
+                    fix_hint="建议添加 metadata 字段，包含版本、创建时间等信息",
+                )
+            )
             score -= 15
 
         return max(0, score), suggestions
@@ -275,26 +287,32 @@ class OntologyCritic:
         individuals = ontology.get("individuals", {})
 
         if classes and not individuals:
-            suggestions.append(Suggestion(
-                severity=CritiqueSeverity.WARNING,
-                category="domain_coverage",
-                description="本体没有定义任何个体实例",
-                location=None,
-                fix_hint="建议添加一些具体的个体实例",
-            ))
+            suggestions.append(
+                Suggestion(
+                    severity=CritiqueSeverity.WARNING,
+                    category="domain_coverage",
+                    description="本体没有定义任何个体实例",
+                    location=None,
+                    fix_hint="建议添加一些具体的个体实例",
+                )
+            )
             score -= 15
             return max(0, score), suggestions
 
         if classes and individuals:
             ratio = len(individuals) / len(classes)
             if ratio < 0.5:
-                suggestions.append(Suggestion(
-                    severity=CritiqueSeverity.INFO,
-                    category="domain_coverage",
-                    description=f"个体实例数量较少（{len(individuals)} 个，类 {len(classes)} 个）",
-                    location=None,
-                    fix_hint="建议为每个类至少添加 1-2 个个体实例",
-                ))
+                suggestions.append(
+                    Suggestion(
+                        severity=CritiqueSeverity.INFO,
+                        category="domain_coverage",
+                        description=(
+                            f"个体实例数量较少（{len(individuals)} 个，类 {len(classes)} 个）"
+                        ),
+                        location=None,
+                        fix_hint="建议为每个类至少添加 1-2 个个体实例",
+                    )
+                )
                 score -= 8
 
         return max(0, score), suggestions

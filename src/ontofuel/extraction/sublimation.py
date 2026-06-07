@@ -31,6 +31,7 @@ from typing import Any
 # Result type
 # ---------------------------------------------------------------------------
 
+
 @dataclass(slots=True)
 class SeparationResult:
     """Container for the two halves produced by ontology sublimation.
@@ -91,14 +92,9 @@ class OntologySublimator:
         if "chunk_" in subject or subject.startswith("cd:"):
             return True
 
-        return (
-            any(c.isdigit() for c in subject)
-            and not re.search(r"v\d+\.\d+\.\d+", subject)
-        )
+        return any(c.isdigit() for c in subject) and not re.search(r"v\d+\.\d+\.\d+", subject)
 
-    def separate_ontology_facts(
-        self, extraction_data: dict[str, Any]
-    ) -> SeparationResult:
+    def separate_ontology_facts(self, extraction_data: dict[str, Any]) -> SeparationResult:
         """Split *extraction_data* into ontology and facts.
 
         Parameters
@@ -117,12 +113,8 @@ class OntologySublimator:
         """
         ontology: dict[str, Any] = {
             "classes": dict(extraction_data.get("classes", {})),
-            "objectProperties": dict(
-                extraction_data.get("objectProperties", {})
-            ),
-            "datatypeProperties": dict(
-                extraction_data.get("datatypeProperties", {})
-            ),
+            "objectProperties": dict(extraction_data.get("objectProperties", {})),
+            "datatypeProperties": dict(extraction_data.get("datatypeProperties", {})),
         }
 
         facts_individuals: dict[str, Any] = {}
@@ -191,12 +183,8 @@ class OntologySublimator:
         result.statistics = {
             "ontology": {
                 "classes": len(result.ontology.get("classes", {})),
-                "objectProperties": len(
-                    result.ontology.get("objectProperties", {})
-                ),
-                "datatypeProperties": len(
-                    result.ontology.get("datatypeProperties", {})
-                ),
+                "objectProperties": len(result.ontology.get("objectProperties", {})),
+                "datatypeProperties": len(result.ontology.get("datatypeProperties", {})),
             },
             "facts": {
                 "individuals": len(result.facts.get("individuals", {})),

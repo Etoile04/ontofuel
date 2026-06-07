@@ -174,13 +174,9 @@ class Merger:
                     "classes": {
                         ind.get("name", ""): ind
                         for ind in deduped_individuals
-                        if not sublimator.is_fact_triple(
-                            ind.get("name", "")
-                        )
+                        if not sublimator.is_fact_triple(ind.get("name", ""))
                     },
-                    "individuals": {
-                        ind.get("name", ""): ind for ind in deduped_individuals
-                    },
+                    "individuals": {ind.get("name", ""): ind for ind in deduped_individuals},
                     "objectProperties": {},
                     "datatypeProperties": {},
                 }

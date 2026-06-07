@@ -2,19 +2,17 @@
 
 from __future__ import annotations
 
-import pytest
-
 from ontofuel.extraction.critic import (
     CritiqueSeverity,
-    OntologyCritiqueReport,
     OntologyCritic,
+    OntologyCritiqueReport,
     Suggestion,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 def _perfect_ontology() -> dict:
     """A well-formed ontology that should score 100."""
@@ -40,8 +38,8 @@ def _problematic_ontology() -> dict:
     """An ontology with deliberate quality issues."""
     return {
         "classes": {
-            "person": {},          # lowercase → naming warning
-            "my_class": {},       # underscore → naming warning
+            "person": {},  # lowercase → naming warning
+            "my_class": {},  # underscore → naming warning
         },
         "objectProperties": {
             "HasProp": {"domain": "Person"},  # capital letter property, missing range → 2 warnings
@@ -53,6 +51,7 @@ def _problematic_ontology() -> dict:
 # ---------------------------------------------------------------------------
 # _check_naming
 # ---------------------------------------------------------------------------
+
 
 class TestCheckNaming:
     def test_pascalcase_correct(self):
@@ -80,6 +79,7 @@ class TestCheckNaming:
 # ---------------------------------------------------------------------------
 # _check_structure
 # ---------------------------------------------------------------------------
+
 
 class TestCheckStructure:
     def test_no_classes_critical(self):
@@ -120,6 +120,7 @@ class TestCheckStructure:
 # _check_semantics
 # ---------------------------------------------------------------------------
 
+
 class TestCheckSemantics:
     def test_missing_domain_range_warning(self):
         critic = OntologyCritic()
@@ -138,6 +139,7 @@ class TestCheckSemantics:
 # ---------------------------------------------------------------------------
 # _check_completeness
 # ---------------------------------------------------------------------------
+
 
 class TestCheckCompleteness:
     def test_missing_comment_warning(self):
@@ -165,6 +167,7 @@ class TestCheckCompleteness:
 # ---------------------------------------------------------------------------
 # _check_domain_coverage
 # ---------------------------------------------------------------------------
+
 
 class TestCheckDomainCoverage:
     def test_no_individuals_warning(self):
@@ -197,6 +200,7 @@ class TestCheckDomainCoverage:
 # critique_ontology — full flow
 # ---------------------------------------------------------------------------
 
+
 class TestCritiqueOntology:
     def test_perfect_ontology_scores_100(self):
         critic = OntologyCritic()
@@ -216,7 +220,11 @@ class TestCritiqueOntology:
         critic = OntologyCritic()
         report = critic.critique_ontology(_problematic_ontology())
         assert set(report.categories_scores) == {
-            "naming", "structure", "semantics", "completeness", "domain_coverage",
+            "naming",
+            "structure",
+            "semantics",
+            "completeness",
+            "domain_coverage",
         }
 
     def test_critical_blocks_success(self):
@@ -240,17 +248,20 @@ class TestCritiqueOntology:
 # OntologyCritiqueReport data structure
 # ---------------------------------------------------------------------------
 
+
 class TestReportStructure:
     def test_report_fields(self):
         report = OntologyCritiqueReport(
             success=True,
             score=85,
             summary="good",
-            suggestions=[Suggestion(
-                severity=CritiqueSeverity.INFO,
-                category="naming",
-                description="test",
-            )],
+            suggestions=[
+                Suggestion(
+                    severity=CritiqueSeverity.INFO,
+                    category="naming",
+                    description="test",
+                )
+            ],
             categories_scores={"naming": 90},
         )
         assert report.success is True

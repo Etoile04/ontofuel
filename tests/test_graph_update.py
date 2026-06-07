@@ -7,10 +7,10 @@ from __future__ import annotations
 
 from ontofuel.extraction.graph_update import GraphUpdate, OntologyDiff
 
-
 # ---------------------------------------------------------------------------
 # Helpers / shared fixtures
 # ---------------------------------------------------------------------------
+
 
 def _empty_onto() -> dict:
     return {"classes": {}, "objectProperties": {}, "datatypeProperties": {}, "individuals": {}}
@@ -43,7 +43,6 @@ def _base_onto() -> dict:
 
 
 class TestGraphUpdate:
-
     # -- construction --------------------------------------------------------
 
     def test_default_operation_type_is_update(self) -> None:
@@ -151,7 +150,6 @@ class TestGraphUpdate:
 
 
 class TestOntologyDiff:
-
     # -- compute_hash --------------------------------------------------------
 
     def test_compute_hash_deterministic(self) -> None:

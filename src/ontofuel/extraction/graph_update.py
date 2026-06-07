@@ -25,9 +25,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field
 from typing import Any
-
 
 # ---------------------------------------------------------------------------
 # GraphUpdate
@@ -54,15 +52,11 @@ class GraphUpdate:
 
     def add_insert(self, subject: str, predicate: str, obj: Any) -> None:
         """Append an INSERT triple."""
-        self.operations.append(
-            {"operation": "insert", "triple": (subject, predicate, obj)}
-        )
+        self.operations.append({"operation": "insert", "triple": (subject, predicate, obj)})
 
     def add_delete(self, subject: str, predicate: str, obj: Any) -> None:
         """Append a DELETE triple."""
-        self.operations.append(
-            {"operation": "delete", "triple": (subject, predicate, obj)}
-        )
+        self.operations.append({"operation": "delete", "triple": (subject, predicate, obj)})
 
     # -- serialisation ------------------------------------------------------
 
