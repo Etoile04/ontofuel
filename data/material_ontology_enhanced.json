@@ -6,7 +6,7 @@
     "created": "2026-02-13T12:35:57.963082Z",
     "modified": "2026-03-23T16:15:27.059415",
     "lastUpdated": "2026-03-22T09:27:00.348245",
-    "individualsCount": 753,
+    "individualsCount": 755,
     "source": "OntoFuel extraction from Fundamentals of Radiation Materials Science",
     "hea_diffusion_integration": {
       "date": "2026-03-03",
@@ -326,7 +326,7 @@
         }
       ],
       "rdfs:comment": "Silicon carbide matrix material",
-      "parent": "CompositeMaterial",
+      "parent": "Matrix",
       "comment": "Silicon carbide matrix material"
     },
     "StainlessSteel": {
@@ -534,7 +534,7 @@
         }
       ],
       "rdfs:comment": "Reduction in thermal conductivity under irradiation",
-      "parent": "PhysicalProperty → ThermalProperty",
+      "parent": "ThermalProperty",
       "comment": "Reduction in thermal conductivity under irradiation"
     },
     "MetallicPrecipitateFormation": {
@@ -651,7 +651,7 @@
         }
       ],
       "rdfs:comment": "Degradation of thermal conductivity under irradiation",
-      "parent": "PhysicalProperty → ThermalProperty",
+      "parent": "ThermalProperty",
       "comment": "Degradation of thermal conductivity under irradiation"
     },
     "VoidSwelling": {
@@ -865,7 +865,7 @@
         }
       ],
       "rdfs:comment": "Processes involving chemical bond formation or breaking",
-      "parent": "PhysicalProperty → ChemicalProperty",
+      "parent": "ChemicalProperty",
       "comment": "Processes involving chemical bond formation or breaking"
     },
     "MicrostructureEvolution": {
@@ -917,7 +917,7 @@
         }
       ],
       "rdfs:comment": "Chemical compounds consisting of two or more elements",
-      "parent": "PhysicalProperty → ChemicalProperty",
+      "parent": "ChemicalProperty",
       "comment": "Chemical compounds consisting of two or more elements"
     },
     "NuclearMaterial": {
@@ -1423,7 +1423,7 @@
       ],
       "rdfs:comment": "Chemical interaction between nuclear fuel and cladding forming intermetallic compounds, leading to cladding wastage",
       "rdfs:subClassOf": "http://example.org/materials/phenomenon#IrradiationEffect",
-      "parent": "PhysicalProperty → ChemicalProperty",
+      "parent": "ChemicalProperty",
       "comment": "Chemical interaction between nuclear fuel and cladding forming intermetallic compounds, leading to cladding wastage"
     },
     "LanthanideDiffusion": {
@@ -1664,7 +1664,7 @@
       "rdfs:subClassOf": [
         "http://example.org/materials/ontology#ThermalProperty"
       ],
-      "parent": "PhysicalProperty → ThermalProperty",
+      "parent": "ThermalProperty",
       "comment": "A thermal property describing a material's tendency to change in shape, area, and volume in response to temperature changes."
     },
     "NeutronEconomy": {
@@ -1728,7 +1728,7 @@
       "rdfs:subClassOf": [
         "http://example.org/materials/ontology#ThermalProperty"
       ],
-      "parent": "PhysicalProperty → ThermalProperty",
+      "parent": "ThermalProperty",
       "comment": "A thermal property describing the amount of heat required to change a material's temperature by a given amount, measured in energy per mass per temperature (e.g., J/kgÂ·K)."
     },
     "HighEnrichedUranium": {
@@ -1783,7 +1783,7 @@
       "rdfs:subClassOf": [
         "http://example.org/materials/ontology#ThermalProperty"
       ],
-      "parent": "PhysicalProperty → ThermalProperty",
+      "parent": "ThermalProperty",
       "comment": "A thermal property describing how quickly heat diffuses through a material, measured in area per unit time (e.g., mmÂ²/s)."
     },
     "ReactorPerformance": {
@@ -1825,7 +1825,7 @@
       "rdfs:subClassOf": [
         "http://example.org/materials/ontology#ThermalProperty"
       ],
-      "parent": "PhysicalProperty → ThermalProperty",
+      "parent": "ThermalProperty",
       "comment": "A thermal property describing a material's ability to conduct heat."
     },
     "WeightPercent": {
@@ -1850,7 +1850,7 @@
     },
     "UMoAlloy": {
       "comment": "铀钼合金",
-      "parent": "NuclearMaterial",
+      "parent": "UraniumAlloy",
       "type": "owl:Class",
       "uri": "http://example.org/materials/ontology#UMoAlloy"
     },
@@ -1912,6 +1912,86 @@
       "parent": "Entity",
       "type": "owl:Class",
       "uri": "http://example.org/materials/ontology#Irradiation"
+    },
+    "MetadataEntity": {
+      "comment": "描述数据的数据，用于标识、发现、评价和管理数据的信息",
+      "subClassOf": "Entity"
+    },
+    "StructuredData": {
+      "comment": "遵循预定义数据模型的数据，可用二维表格表示，适合关系型数据库存储",
+      "subClassOf": "MetadataEntity"
+    },
+    "UnstructuredData": {
+      "comment": "不遵循预定义数据模型的数据，没有固定的组织格式（如SEM图像、PDF报告）",
+      "subClassOf": "MetadataEntity"
+    },
+    "SemiStructuredData": {
+      "comment": "具有一定组织结构但不严格遵循固定模式的数据（如JSON/XML实验记录）",
+      "subClassOf": "MetadataEntity"
+    },
+    "DataQuality": {
+      "comment": "数据满足特定使用要求的程度，包括准确性、完整性、一致性、时效性等维度",
+      "subClassOf": "MetadataEntity"
+    },
+    "DataProvenance": {
+      "comment": "数据从产生到当前状态的全过程历史记录，包括来源、处理步骤和责任人",
+      "subClassOf": "MetadataEntity"
+    },
+    "ExperimentRecord": {
+      "comment": "实验记录元数据，包含实验条件、样品信息、测试机构和人员",
+      "subClassOf": "StructuredData"
+    },
+    "TestInstitution": {
+      "comment": "测试机构，如核动力院、原子能院等",
+      "subClassOf": "Entity"
+    },
+    "AccidentScenario": {
+      "comment": "反应堆事故工况（LOCA/RIA/LBLOCA/ATWS等）下的材料性能测试",
+      "subClassOf": "ExperimentRecord"
+    },
+    "LOCAScenario": {
+      "comment": "冷却剂丧失事故工况",
+      "subClassOf": "AccidentScenario"
+    },
+    "RIAScenario": {
+      "comment": "反应性引入事故工况",
+      "subClassOf": "AccidentScenario"
+    },
+    "Matrix": {
+      "name": "Matrix",
+      "comment": "Abstract matrix phase/component role within a composite material.",
+      "rdfs:comment": "Abstract matrix phase/component role within a composite material.",
+      "parent": "Material"
+    },
+    "Ceramic": {
+      "name": "Ceramic",
+      "comment": "Inorganic non-metallic solid; superclass of ceramic materials.",
+      "rdfs:comment": "Inorganic non-metallic solid; superclass of ceramic materials.",
+      "parent": "Material"
+    },
+    "Atom": {
+      "name": "Atom",
+      "comment": "Constituent atom of a lattice; base for point-defect species.",
+      "rdfs:comment": "Constituent atom of a lattice; base for point-defect species.",
+      "parent": "Entity"
+    },
+    "Defect": {
+      "name": "Defect",
+      "comment": "Crystallographic point/line/planar defect; base for vacancies and interstitials.",
+      "rdfs:comment": "Crystallographic point/line/planar defect; base for vacancies and interstitials.",
+      "parent": "MicrostructureFeature"
+    },
+    "MicrostructureFeature": {
+      "name": "MicrostructureFeature",
+      "comment": "Structural feature of a material's microstructure (grain boundary, defect, zone).",
+      "rdfs:comment": "Structural feature of a material's microstructure (grain boundary, defect, zone).",
+      "parent": "Entity"
+    },
+    "SimulationMethod": {
+      "name": "SimulationMethod",
+      "comment": "Modelling/simulation method; base for rate-theory and phase-field models.",
+      "rdfs:comment": "Modelling/simulation method; base for rate-theory and phase-field models.",
+      "parent": "Entity"
     }
   },
   "objectProperties": {
@@ -1941,7 +2021,7 @@
       "rdfs:comment": "Matrix material in composite",
       "owl:functionalProperty": true,
       "domain": "CompositeMaterial",
-      "range": "SiCMatrix"
+      "range": "Matrix"
     },
     "hasGasLeakTightness": {
       "uri": "http://example.org/materials/irradiation#hasGasLeakTightness",
@@ -4040,6 +4120,41 @@
         }
       ],
       "rdfs:comment": "Property linking Material to Irradiation"
+    },
+    "hasExperimentRecord": {
+      "comment": "材料或个体关联的实验记录",
+      "domain": "Material",
+      "range": "ExperimentRecord"
+    },
+    "performedAt": {
+      "comment": "实验在哪个测试机构执行",
+      "domain": "ExperimentRecord",
+      "range": "TestInstitution"
+    },
+    "hasMetadata": {
+      "comment": "实体关联的元数据",
+      "domain": "Entity",
+      "range": "MetadataEntity"
+    },
+    "hasDataQuality": {
+      "comment": "实体的数据质量评估",
+      "domain": "Entity",
+      "range": "DataQuality"
+    },
+    "hasProvenance": {
+      "comment": "实体的数据溯源信息",
+      "domain": "Entity",
+      "range": "DataProvenance"
+    },
+    "hasAccidentScenario": {
+      "comment": "材料在事故工况下的性能数据",
+      "domain": "Material",
+      "range": "AccidentScenario"
+    },
+    "usesSample": {
+      "comment": "实验使用的样品",
+      "domain": "ExperimentRecord",
+      "range": "Material"
     }
   },
   "datatypeProperties": {
@@ -6329,6 +6444,121 @@
       "domain": "StructuralMaterial",
       "range": "Float",
       "comment": "Density of StructuralMaterial (g/cm³)"
+    },
+    "sampleBatchId": {
+      "comment": "样品批次编号",
+      "domain": "ExperimentRecord",
+      "range": "String"
+    },
+    "testDate": {
+      "comment": "实验日期 (ISO 8601)",
+      "domain": "ExperimentRecord",
+      "range": "String"
+    },
+    "reportNo": {
+      "comment": "试验报告编号",
+      "domain": "ExperimentRecord",
+      "range": "String"
+    },
+    "testerName": {
+      "comment": "测试人员姓名",
+      "domain": "ExperimentRecord",
+      "range": "String"
+    },
+    "reviewerName": {
+      "comment": "校对人员姓名",
+      "domain": "ExperimentRecord",
+      "range": "String"
+    },
+    "sampleGeometry": {
+      "comment": "样品尺寸（标距段长度/宽度/厚度/直径）",
+      "domain": "ExperimentRecord",
+      "range": "String"
+    },
+    "sampleOrientation": {
+      "comment": "取样方向: L(轴向)/R(径向)/T(切向)/LT/TL",
+      "domain": "ExperimentRecord",
+      "range": "String"
+    },
+    "surfaceCondition": {
+      "comment": "样品表面状态: 原始/机加工/研磨/抛光",
+      "domain": "ExperimentRecord",
+      "range": "String"
+    },
+    "accidentScenarioType": {
+      "comment": "事故工况类型: LOCA/RIA/LBLOCA/ATWS/DACC",
+      "domain": "AccidentScenario",
+      "range": "String"
+    },
+    "accidentPhase": {
+      "comment": "事故阶段: 稳态/瞬态/喷放/再注水/长期冷却",
+      "domain": "AccidentScenario",
+      "range": "String"
+    },
+    "burstPressure": {
+      "comment": "包壳高温爆破压力",
+      "domain": "LOCAScenario",
+      "range": "Float"
+    },
+    "oxidationWeightGain": {
+      "comment": "包壳高温氧化增重",
+      "domain": "LOCAScenario",
+      "range": "Float"
+    },
+    "claddingSteamReactionRate": {
+      "comment": "包壳-水蒸气反应速率",
+      "domain": "LOCAScenario",
+      "range": "Float"
+    },
+    "pulseTensileFractureStress": {
+      "comment": "脉冲拉伸断裂应力 (RIA)",
+      "domain": "RIAScenario",
+      "range": "Float"
+    },
+    "pulseTensileFractureStrain": {
+      "comment": "脉冲拉伸断裂应变 (RIA)",
+      "domain": "RIAScenario",
+      "range": "Float"
+    },
+    "pcmiContactPressure": {
+      "comment": "PCMI 接触压力 (RIA)",
+      "domain": "RIAScenario",
+      "range": "Float"
+    },
+    "energyAbsorptionDensity": {
+      "comment": "能量吸收密度 (RIA)",
+      "domain": "RIAScenario",
+      "range": "Float"
+    },
+    "dataQualityScore": {
+      "comment": "数据质量评分 (0-100)",
+      "domain": "DataQuality",
+      "range": "Float"
+    },
+    "provenanceChain": {
+      "comment": "数据溯源链（JSON格式）",
+      "domain": "DataProvenance",
+      "range": "String"
+    },
+    "burnup": {
+      "comment": "燃耗 (MWd/tU)",
+      "domain": "ExperimentRecord",
+      "range": "Float"
+    },
+    "fastNeutronFluence": {
+      "comment": "快中子注量 (n/cm², E>1MeV)",
+      "domain": "ExperimentRecord",
+      "range": "Float"
+    },
+    "cumulativeDamageDose": {
+      "comment": "累积损伤剂量 (dpa)",
+      "domain": "ExperimentRecord",
+      "range": "Float"
+    },
+    "loadingRate": {
+      "comment": "加载速率 (MPa/s 或 °C/s)",
+      "domain": "ExperimentRecord",
+      "range": "Float"
     }
   },
   "individuals": {

@@ -156,6 +156,34 @@ def cmd_validate(args):
         print(f"  Report saved to {args.output}")
 
 
+def cmd_viz_sync(args):
+    """Deterministic sync of the canonical ontology → versioned NVL contract.
+
+    Regenerates the NVL contract (NFM-227) from the canonical ontology and writes
+    the SAME bytes to both the extraction-side copy (data/nvl_ontology_data.json)
+    and the visualization-side copy (visualization-app/public/data/nvl_ontology_data.json),
+    asserting they are byte-identical. Eliminates manual-copy data drift (NFM-230).
+
+    ``--check`` runs the CI drift gate (compare committed viz copy vs fresh regen,
+    no writes).
+    """
+    scripts_dir = str(Path(__file__).resolve().parents[2] / "scripts")
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    from viz_sync import main as viz_sync_main  # noqa: WPS433 (lazy CLI dispatch)
+
+    argv: list[str] = []
+    if args.canonical:
+        argv += ["--canonical", str(args.canonical)]
+    if args.pin_timestamp:
+        argv += ["--pin-timestamp", args.pin_timestamp]
+    if args.check:
+        argv.append("--check")
+    if args.no_backup:
+        argv.append("--no-backup")
+    raise SystemExit(viz_sync_main(argv))
+
+
 def cmd_viz(args):
     """Start the (deprecated) visualization web server.
 
@@ -231,6 +259,29 @@ def main(argv=None):
     p_viz.add_argument("--data-dir", "-d", help="Ontology data directory")
     p_viz.add_argument("--no-browser", action="store_true", help="Don't open browser")
     p_viz.set_defaults(func=cmd_viz)
+
+    # viz-sync (NFM-230): deterministic ontology → NVL contract sync, no manual copy
+    p_sync = sub.add_parser(
+        "viz-sync",
+        help="Sync canonical ontology → NVL contract into both data copies (no drift)",
+    )
+    p_sync.add_argument(
+        "--canonical", type=Path, default=None, help="Canonical ontology JSON (auto-detected)"
+    )
+    p_sync.add_argument(
+        "--pin-timestamp", default=None, help="Fix generated_at (ISO-8601) for reproducible builds"
+    )
+    p_sync.add_argument(
+        "--check",
+        action="store_true",
+        help="CI drift gate only: fail if committed viz copy diverges from canonical",
+    )
+    p_sync.add_argument(
+        "--no-backup",
+        action="store_true",
+        help="Do not take a .bak of the viz copy before overwrite",
+    )
+    p_sync.set_defaults(func=cmd_viz_sync)
 
     args = parser.parse_args(argv)
 
