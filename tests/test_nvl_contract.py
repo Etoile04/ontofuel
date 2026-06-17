@@ -5,10 +5,11 @@ contract that validates against the in-repo JSON Schema, that source-ontology
 counts match the NFM-217 anchored truth (156/169/302/755), and that the
 nodes/relationships element structure is preserved (backward compatible).
 """
+
 import hashlib
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -18,12 +19,11 @@ SCRIPTS_DIR = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 from ontology_to_nvl import (  # noqa: E402
-    OntologyToNVLConverter,
-    NVL_SCHEMA_VERSION,
-    NVL_SCHEMA_PATH,
     DIGEST_LENGTH,
-    validate_contract,
+    NVL_SCHEMA_VERSION,
+    OntologyToNVLConverter,
     load_contract_schema,
+    validate_contract,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -31,7 +31,12 @@ ONTOLOGY_PATH = REPO_ROOT / "data" / "material_ontology_enhanced.json"
 NVL_OUTPUT_PATH = REPO_ROOT / "data" / "nvl_ontology_data.json"
 
 # NFM-217 锚定的本体真值
-EXPECTED_SOURCE_COUNTS = {"classes": 156, "objectProperties": 169, "datatypeProperties": 302, "individuals": 755}
+EXPECTED_SOURCE_COUNTS = {
+    "classes": 156,
+    "objectProperties": 169,
+    "datatypeProperties": 302,
+    "individuals": 755,
+}
 
 jsonschema = pytest.importorskip("jsonschema")
 from jsonschema import Draft202012Validator  # noqa: E402
@@ -57,8 +62,13 @@ def schema() -> dict:
 # 1. 契约顶层结构
 # --------------------------------------------------------------------------- #
 CONTRACT_REQUIRED_KEYS = [
-    "schema_version", "generated_at", "source_ontology",
-    "source_digest", "stats", "nodes", "relationships",
+    "schema_version",
+    "generated_at",
+    "source_ontology",
+    "source_digest",
+    "stats",
+    "nodes",
+    "relationships",
 ]
 
 
@@ -93,7 +103,9 @@ def test_stats_counts_match_actual_elements(contract: dict):
     assert stats["nodes"] == len(contract["nodes"])
     assert stats["relationships"] == len(contract["relationships"])
     assert stats["classes"] == sum(1 for n in contract["nodes"] if n.get("type") == "class")
-    assert stats["individuals"] == sum(1 for n in contract["nodes"] if n.get("type") == "individual")
+    assert stats["individuals"] == sum(
+        1 for n in contract["nodes"] if n.get("type") == "individual"
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -107,7 +119,7 @@ def test_source_digest_format(contract: dict):
 
 def test_source_digest_matches_canonical_recompute(contract: dict):
     """source_digest 必须等于对规范本体确定性序列化的 sha256[:16]。"""
-    with open(ONTOLOGY_PATH, "r", encoding="utf-8") as f:
+    with open(ONTOLOGY_PATH, encoding="utf-8") as f:
         ontology = json.load(f)
     canonical = json.dumps(ontology, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
     expected = hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:DIGEST_LENGTH]
@@ -167,11 +179,12 @@ def test_schema_accepts_domain_verb_relationship_type(schema: dict):
 # 4. NFM-217 本体真值锚定
 # --------------------------------------------------------------------------- #
 def test_source_ontology_counts_match_nfm217_truth():
-    with open(ONTOLOGY_PATH, "r", encoding="utf-8") as f:
+    with open(ONTOLOGY_PATH, encoding="utf-8") as f:
         ontology = json.load(f)
     for key, expected in EXPECTED_SOURCE_COUNTS.items():
         assert len(ontology.get(key, {})) == expected, (
-            f"source ontology {key} count drift: expected {expected}, got {len(ontology.get(key, {}))}"
+            f"source ontology {key} count drift: "
+            f"expected {expected}, got {len(ontology.get(key, {}))}"
         )
 
 
@@ -202,7 +215,7 @@ def test_save_nvl_json_writes_valid_contract(tmp_path: Path):
     out = tmp_path / "nvl.json"
     written = converter.save_nvl_json(str(out), generated_at="2026-06-17T00:00:00+00:00")
     assert validate_contract(written) == []
-    with open(out, "r", encoding="utf-8") as f:
+    with open(out, encoding="utf-8") as f:
         on_disk = json.load(f)
     assert on_disk["schema_version"] == "1.0"
     assert validate_contract(on_disk) == []
@@ -213,7 +226,7 @@ def test_save_nvl_json_writes_valid_contract(tmp_path: Path):
 # --------------------------------------------------------------------------- #
 @pytest.mark.skipif(not NVL_OUTPUT_PATH.exists(), reason="canonical NVL artifact not present")
 def test_checked_in_nvl_artifact_is_valid_contract():
-    with open(NVL_OUTPUT_PATH, "r", encoding="utf-8") as f:
+    with open(NVL_OUTPUT_PATH, encoding="utf-8") as f:
         artifact = json.load(f)
     assert "schema_version" in artifact, "随附 NVL 仍是旧的无版本格式"
     assert validate_contract(artifact) == []
