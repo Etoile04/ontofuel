@@ -223,7 +223,7 @@ class TestSegmentMethod:
 
 
 @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
-@pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable (no network or model not cached)")
+@pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable")
 class TestSemanticStrategy:
     """Test semantic chunking strategy."""
 
@@ -251,7 +251,7 @@ class TestSemanticStrategy:
 
 
 @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
-@pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable (no network or model not cached)")
+@pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable")
 class TestLateStrategy:
     """Test late chunking strategy."""
 
@@ -266,7 +266,7 @@ class TestLateStrategy:
 
 
 @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
-@pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable (no network or model not cached)")
+@pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable")
 class TestAutoStrategy:
     """Test auto detection strategy."""
 
@@ -461,7 +461,7 @@ for long-term stable service.
             assert len(c.content) > 20, f"Chunk {c.index} too short"
 
     @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
-    @pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable (no network or model not cached)")
+    @pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable")
     def test_semantic_on_nuclear_doc(self):
         seg = Segmenter(strategy="semantic", chunk_size=512)
         chunks = seg.segment(self.NUCLEAR_TEXT)
@@ -471,7 +471,7 @@ for long-term stable service.
         assert "FCCI" in all_text
 
     @pytest.mark.skipif(not CHONKIE_AVAILABLE, reason="chonkie not installed")
-    @pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable (no network or model not cached)")
+    @pytest.mark.skipif(not EMBEDDINGS_AVAILABLE, reason="embedding model unreachable")
     def test_auto_on_nuclear_doc(self):
         seg = Segmenter(strategy="auto", chunk_size=512)
         chunks = seg.segment(self.NUCLEAR_TEXT)
