@@ -3,6 +3,7 @@
 Provenance gate reusing viz_sync.check_drift (NFM-230). Exit-0-equivalent =
 drift-free = publishable. Fails closed.
 """
+
 from __future__ import annotations
 
 import json

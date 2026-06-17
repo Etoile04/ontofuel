@@ -7,6 +7,7 @@ publish failure is swallowed, logged as a WARNING, and appended to
 affected (NFM-226 ADR §3 binding constraint). No-op unless
 ``ONTOFUEL_AUTO_PUBLISH`` is set (default off = non-regressive).
 """
+
 from __future__ import annotations
 
 import json

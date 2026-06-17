@@ -316,9 +316,7 @@ def main(argv=None):
     p_pub.add_argument(
         "--ontology", type=Path, required=True, help="Canonical ontology JSON to publish"
     )
-    p_pub.add_argument(
-        "--corpus-id", default=None, help="Corpus alias (default: ontofuel)"
-    )
+    p_pub.add_argument("--corpus-id", default=None, help="Corpus alias (default: ontofuel)")
     p_pub.add_argument(
         "--corpus-root",
         type=Path,

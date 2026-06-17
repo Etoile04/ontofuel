@@ -4,6 +4,7 @@ No hardcoded absolute paths. Auto-publish is opt-in via ``ONTOFUEL_AUTO_PUBLISH`
 (default off) so extraction behavior is byte-identical until enabled — this is the
 binding non-regression constraint (NFM-226 ADR §3).
 """
+
 from __future__ import annotations
 
 import os
@@ -30,9 +31,7 @@ class CorpusPublishConfig:
     @classmethod
     def from_env(cls) -> CorpusPublishConfig:
         """Resolve config from environment with non-regressive defaults."""
-        corpus_root = Path(
-            os.environ.get("ONTOFUEL_CORPUS_ROOT", str(_DEFAULT_CORPUS_ROOT))
-        )
+        corpus_root = Path(os.environ.get("ONTOFUEL_CORPUS_ROOT", str(_DEFAULT_CORPUS_ROOT)))
         corpus_id = os.environ.get("ONTOFUEL_CORPUS_ID", "ontofuel")
         auto_publish = os.environ.get("ONTOFUEL_AUTO_PUBLISH", "").lower() in _TRUTHY
         return cls(

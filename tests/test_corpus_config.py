@@ -3,6 +3,7 @@
 Env-driven, no hardcoded absolute paths. Auto-publish is opt-in (``ONTOFUEL_AUTO_PUBLISH=1``)
 so extraction behavior is byte-identical until enabled (binding non-regression).
 """
+
 from __future__ import annotations
 
 from ontofuel.viz_corpus.config import CorpusPublishConfig

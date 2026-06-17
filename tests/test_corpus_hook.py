@@ -3,6 +3,7 @@
 Guarantees: never raises; records failures to data/corpus/_publish_errors.jsonl;
 respects opt-in (ONTOFUEL_AUTO_PUBLISH).
 """
+
 from __future__ import annotations
 
 import json

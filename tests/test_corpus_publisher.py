@@ -1,4 +1,5 @@
 """Core publisher (NFM-251 Task 5): convert -> validate -> drift -> idempotent atomic publish."""
+
 from __future__ import annotations
 
 import json
@@ -86,4 +87,3 @@ def test_freshness_stale_after_15min(tmp_path):
 
 def test_freshness_missing_when_no_corpus(tmp_path):
     assert check_freshness("ontofuel", corpus_root=tmp_path) is FreshnessState.MISSING
-

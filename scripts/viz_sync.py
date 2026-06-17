@@ -30,6 +30,7 @@ Modes
 Reuses ``OntologyToNVLConverter`` from ``ontology_to_nvl.py`` — never rewrites the
 converter.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -59,9 +60,7 @@ class DriftError(RuntimeError):
     """Raised when the committed viz-side copy diverges from the canonical regen."""
 
 
-def regenerate_contract(
-    canonical_path: Path, pin_timestamp: str | None = None
-) -> dict[str, Any]:
+def regenerate_contract(canonical_path: Path, pin_timestamp: str | None = None) -> dict[str, Any]:
     """Regenerate the versioned NVL contract from the canonical ontology.
 
     Reuses ``OntologyToNVLConverter`` (NFM-227); does not rewrite the converter.

@@ -4,6 +4,7 @@ Reuses ``OntologyToNVLConverter`` + ``validate_contract`` from
 ``scripts/ontology_to_nvl.py`` — never rewrites them. Mirrors the ``sys.path``
 import pattern used by ``scripts/viz_sync.py`` (NFM-241 focus #4: zero reimplementation).
 """
+
 from __future__ import annotations
 
 import sys

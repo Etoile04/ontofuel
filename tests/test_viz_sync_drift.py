@@ -16,6 +16,7 @@ to both destinations, so the two can never diverge once produced.
 Also covers viz-sync determinism and idempotency: same ontology → same source_digest
 and the same byte output across runs and across both destinations.
 """
+
 from __future__ import annotations
 
 import json
@@ -121,12 +122,18 @@ def test_sync_is_idempotent_and_identical(tmp_path):
     viz_b = tmp_path / "viz_b.json"
 
     sync(
-        canonical_path=CANONICAL, extraction_out=ext_a, viz_out=viz_a,
-        pin_timestamp=PINNED_TS, backup_viz=False,
+        canonical_path=CANONICAL,
+        extraction_out=ext_a,
+        viz_out=viz_a,
+        pin_timestamp=PINNED_TS,
+        backup_viz=False,
     )
     sync(
-        canonical_path=CANONICAL, extraction_out=ext_b, viz_out=viz_b,
-        pin_timestamp=PINNED_TS, backup_viz=False,
+        canonical_path=CANONICAL,
+        extraction_out=ext_b,
+        viz_out=viz_b,
+        pin_timestamp=PINNED_TS,
+        backup_viz=False,
     )
 
     assert ext_a.read_bytes() == viz_a.read_bytes(), "extraction != viz after sync"
@@ -138,8 +145,11 @@ def test_sync_reports_consistent_stats(tmp_path):
     ext = tmp_path / "ext.json"
     viz = tmp_path / "viz.json"
     report = sync(
-        canonical_path=CANONICAL, extraction_out=ext, viz_out=viz,
-        pin_timestamp=PINNED_TS, backup_viz=False,
+        canonical_path=CANONICAL,
+        extraction_out=ext,
+        viz_out=viz,
+        pin_timestamp=PINNED_TS,
+        backup_viz=False,
     )
     assert report["identical"] is True
     assert report["extraction_bytes"] == report["viz_bytes"]

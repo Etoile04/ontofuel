@@ -4,6 +4,7 @@ Reuse the verified NVL converter + contract validation (NFM-227) — do NOT rewr
 Produces the versioned contract and validates it clean against the Draft 2020-12
 schema.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

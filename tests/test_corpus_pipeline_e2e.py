@@ -5,6 +5,7 @@ Full chain on the canonical ontology: convert -> validate -> viz-sync drift-gate
 validates, source_digest == canonical, idempotent SKIPPED on rerun, and same-origin
 HTTP servability (NFMD Tier-A static manifest).
 """
+
 from __future__ import annotations
 
 import json

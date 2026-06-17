@@ -1,4 +1,5 @@
 """Manifest builder (NFM-251 Task 4) — exact NFM-226 ADR §2 schema."""
+
 from __future__ import annotations
 
 from ontofuel.viz_corpus.manifest import build_manifest

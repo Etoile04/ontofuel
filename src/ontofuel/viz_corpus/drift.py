@@ -6,6 +6,7 @@ hand-edited. Publish proceeds ONLY when this returns True (NFM-226 ADR §3
 provenance gating). Zero reimplementation of viz_sync (NFM-241 focus #4). Fails
 closed: a missing copy or any drift returns False.
 """
+
 from __future__ import annotations
 
 import sys

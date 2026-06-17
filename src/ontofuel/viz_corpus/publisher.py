@@ -11,6 +11,7 @@ NFMD Tier-A static corpus path (NFM-226 ADR §2/§3). Publish is:
 * **Atomic** — temp-file + ``os.replace`` so consumers never see a half-written
   artifact.
 """
+
 from __future__ import annotations
 
 import json
@@ -112,7 +113,10 @@ def publish_corpus(
         if existing.get("source_digest") == source_digest:
             logger.info("publish skipped: source_digest unchanged (%s)", source_digest)
             return PublishResult(
-                PublishStatus.SKIPPED, corpus_id, source_digest, out_dir,
+                PublishStatus.SKIPPED,
+                corpus_id,
+                source_digest,
+                out_dir,
                 "source_digest unchanged",
             )
 
@@ -142,9 +146,7 @@ def publish_corpus(
     )
     _atomic_write_json(manifest_path, manifest)
     logger.info("publish ok: %s (digest %s)", out_dir, source_digest)
-    return PublishResult(
-        PublishStatus.PUBLISHED, corpus_id, source_digest, out_dir, "published"
-    )
+    return PublishResult(PublishStatus.PUBLISHED, corpus_id, source_digest, out_dir, "published")
 
 
 def _write_freshness(corpus_root: Path, corpus_id: str, state: FreshnessState) -> None:

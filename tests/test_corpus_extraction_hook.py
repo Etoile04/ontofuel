@@ -5,6 +5,7 @@ fire-and-forget hook fires there (opt-in via ONTOFUEL_AUTO_PUBLISH). Non-regress
 when unset, save() is byte-level unchanged (hook is a no-op); when set and publish
 raises, save() still succeeds.
 """
+
 from __future__ import annotations
 
 import json
@@ -20,9 +21,7 @@ def _make_onto(tmp_path: Path) -> Path:
 def test_extraction_save_triggers_publish_when_opted_in(tmp_path, monkeypatch):
     monkeypatch.setenv("ONTOFUEL_AUTO_PUBLISH", "1")
     calls: list[dict] = []
-    monkeypatch.setattr(
-        "ontofuel.viz_corpus.hook.publish_corpus", lambda **kw: calls.append(kw)
-    )
+    monkeypatch.setattr("ontofuel.viz_corpus.hook.publish_corpus", lambda **kw: calls.append(kw))
     from ontofuel.extraction.updater import OntologyUpdater
 
     onto = _make_onto(tmp_path)

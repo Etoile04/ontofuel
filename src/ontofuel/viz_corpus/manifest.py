@@ -6,6 +6,7 @@ so consumers can cache-bust/verify. Field set is fixed by the ADR:
     corpus_id, asset_url, source_digest, schema_version, pinned,
     generated_at, stats{nodes, edges}
 """
+
 from __future__ import annotations
 
 from collections.abc import Mapping
