@@ -204,6 +204,18 @@ class OntologyUpdater:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(self._ontology, f, ensure_ascii=False, indent=2)
 
+        # --- Integration: NFMD corpus auto-publish (NFM-251) ---
+        # Fire-and-forget post-finalization publish. No-op unless
+        # ONTOFUEL_AUTO_PUBLISH is set; never raises, so extraction success is
+        # never affected (NFM-226 ADR §3 non-blocking binding). When the env is
+        # unset (default), save() is byte-level unchanged.
+        try:
+            from ..viz_corpus.hook import maybe_publish_after_extraction
+
+            maybe_publish_after_extraction(path)
+        except Exception:
+            pass  # publish pipeline unavailable — never block an ontology save
+
         return path
 
     def get_changes(self) -> list[dict[str, Any]]:

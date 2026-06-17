@@ -1,4 +1,14 @@
 {
+  "schema_version": "1.0",
+  "generated_at": "2026-06-17T00:00:00+00:00",
+  "source_ontology": "data/material_ontology_enhanced.json",
+  "source_digest": "0d986d21a5a2b230",
+  "stats": {
+    "nodes": 927,
+    "relationships": 1061,
+    "classes": 172,
+    "individuals": 755
+  },
   "nodes": [
     {
       "id": "class_SolidSolution",
@@ -1391,6 +1401,176 @@
       "size": 30
     },
     {
+      "id": "class_MetadataEntity",
+      "type": "class",
+      "name": "MetadataEntity",
+      "label": "{name}",
+      "comment": "描述数据的数据，用于标识、发现、评价和管理数据的信息",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_StructuredData",
+      "type": "class",
+      "name": "StructuredData",
+      "label": "{name}",
+      "comment": "遵循预定义数据模型的数据，可用二维表格表示，适合关系型数据库存储",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_UnstructuredData",
+      "type": "class",
+      "name": "UnstructuredData",
+      "label": "{name}",
+      "comment": "不遵循预定义数据模型的数据，没有固定的组织格式（如SEM图像、PDF报告）",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_SemiStructuredData",
+      "type": "class",
+      "name": "SemiStructuredData",
+      "label": "{name}",
+      "comment": "具有一定组织结构但不严格遵循固定模式的数据（如JSON/XML实验记录）",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_DataQuality",
+      "type": "class",
+      "name": "DataQuality",
+      "label": "{name}",
+      "comment": "数据满足特定使用要求的程度，包括准确性、完整性、一致性、时效性等维度",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_DataProvenance",
+      "type": "class",
+      "name": "DataProvenance",
+      "label": "{name}",
+      "comment": "数据从产生到当前状态的全过程历史记录，包括来源、处理步骤和责任人",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_ExperimentRecord",
+      "type": "class",
+      "name": "ExperimentRecord",
+      "label": "{name}",
+      "comment": "实验记录元数据，包含实验条件、样品信息、测试机构和人员",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_TestInstitution",
+      "type": "class",
+      "name": "TestInstitution",
+      "label": "{name}",
+      "comment": "测试机构，如核动力院、原子能院等",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_AccidentScenario",
+      "type": "class",
+      "name": "AccidentScenario",
+      "label": "{name}",
+      "comment": "反应堆事故工况（LOCA/RIA/LBLOCA/ATWS等）下的材料性能测试",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_LOCAScenario",
+      "type": "class",
+      "name": "LOCAScenario",
+      "label": "{name}",
+      "comment": "冷却剂丧失事故工况",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_RIAScenario",
+      "type": "class",
+      "name": "RIAScenario",
+      "label": "{name}",
+      "comment": "反应性引入事故工况",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_Matrix",
+      "type": "class",
+      "name": "Matrix",
+      "label": "{name}",
+      "comment": "Abstract matrix phase/component role within a composite material.",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_Ceramic",
+      "type": "class",
+      "name": "Ceramic",
+      "label": "{name}",
+      "comment": "Inorganic non-metallic solid; superclass of ceramic materials.",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_Atom",
+      "type": "class",
+      "name": "Atom",
+      "label": "{name}",
+      "comment": "Constituent atom of a lattice; base for point-defect species.",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_Defect",
+      "type": "class",
+      "name": "Defect",
+      "label": "{name}",
+      "comment": "Crystallographic point/line/planar defect; base for vacancies and interstitials.",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_MicrostructureFeature",
+      "type": "class",
+      "name": "MicrostructureFeature",
+      "label": "{name}",
+      "comment": "Structural feature of a material's microstructure (grain boundary, defect, zone).",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
+      "id": "class_SimulationMethod",
+      "type": "class",
+      "name": "SimulationMethod",
+      "label": "{name}",
+      "comment": "Modelling/simulation method; base for rate-theory and phase-field models.",
+      "uri": "",
+      "color": "#4A90E2",
+      "size": 30
+    },
+    {
       "id": "ind_U10Zr_VacancyDiffusion",
       "type": "individual",
       "name": "U10Zr_VacancyDiffusion",
@@ -1795,16 +1975,6 @@
         "pages": "1-2",
         "text_excerpt": "vacancies and interstitials"
       }
-    },
-    {
-      "id": "class_Defect",
-      "type": "class",
-      "name": "Defect",
-      "label": "{name}",
-      "comment": "Auto-generated placeholder for referenced class",
-      "uri": "",
-      "color": "#4A90E2",
-      "size": 30
     },
     {
       "id": "ind_Defect_Interstitial_001",
@@ -23093,46 +23263,6 @@
       "size": 30
     },
     {
-      "id": "class_Ceramic",
-      "type": "class",
-      "name": "Ceramic",
-      "label": "{name}",
-      "comment": "Auto-generated placeholder for referenced class",
-      "uri": "",
-      "color": "#4A90E2",
-      "size": 30
-    },
-    {
-      "id": "class_SimulationMethod",
-      "type": "class",
-      "name": "SimulationMethod",
-      "label": "{name}",
-      "comment": "Auto-generated placeholder for referenced class",
-      "uri": "",
-      "color": "#4A90E2",
-      "size": 30
-    },
-    {
-      "id": "class_MicrostructureFeature",
-      "type": "class",
-      "name": "MicrostructureFeature",
-      "label": "{name}",
-      "comment": "Auto-generated placeholder for referenced class",
-      "uri": "",
-      "color": "#4A90E2",
-      "size": 30
-    },
-    {
-      "id": "class_Atom",
-      "type": "class",
-      "name": "Atom",
-      "label": "{name}",
-      "comment": "Auto-generated placeholder for referenced class",
-      "uri": "",
-      "color": "#4A90E2",
-      "size": 30
-    },
-    {
       "id": "class_Process",
       "type": "class",
       "name": "Process",
@@ -28486,9 +28616,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_SiCMatrix_CompositeMaterial",
+      "id": "rel_hier_SiCMatrix_Matrix",
       "from": "class_SiCMatrix",
-      "to": "class_CompositeMaterial",
+      "to": "class_Matrix",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -28598,9 +28728,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_IrradiationThermalConductivityDegradation_PhysicalProperty",
+      "id": "rel_hier_IrradiationThermalConductivityDegradation_ThermalProperty",
       "from": "class_IrradiationThermalConductivityDegradation",
-      "to": "class_PhysicalProperty",
+      "to": "class_ThermalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -28661,9 +28791,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_ThermalConductivityDegradation_PhysicalProperty",
+      "id": "rel_hier_ThermalConductivityDegradation_ThermalProperty",
       "from": "class_ThermalConductivityDegradation",
-      "to": "class_PhysicalProperty",
+      "to": "class_ThermalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -28780,9 +28910,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_ChemicalReaction_PhysicalProperty",
+      "id": "rel_hier_ChemicalReaction_ChemicalProperty",
       "from": "class_ChemicalReaction",
-      "to": "class_PhysicalProperty",
+      "to": "class_ChemicalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -28808,9 +28938,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_ChemicalCompound_PhysicalProperty",
+      "id": "rel_hier_ChemicalCompound_ChemicalProperty",
       "from": "class_ChemicalCompound",
-      "to": "class_PhysicalProperty",
+      "to": "class_ChemicalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -29074,9 +29204,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_FuelCladdingChemicalInteraction_PhysicalProperty",
+      "id": "rel_hier_FuelCladdingChemicalInteraction_ChemicalProperty",
       "from": "class_FuelCladdingChemicalInteraction",
-      "to": "class_PhysicalProperty",
+      "to": "class_ChemicalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -29179,9 +29309,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_ThermalExpansion_PhysicalProperty",
+      "id": "rel_hier_ThermalExpansion_ThermalProperty",
       "from": "class_ThermalExpansion",
-      "to": "class_PhysicalProperty",
+      "to": "class_ThermalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -29207,9 +29337,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_HeatCapacity_PhysicalProperty",
+      "id": "rel_hier_HeatCapacity_ThermalProperty",
       "from": "class_HeatCapacity",
-      "to": "class_PhysicalProperty",
+      "to": "class_ThermalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -29235,9 +29365,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_ThermalDiffusivity_PhysicalProperty",
+      "id": "rel_hier_ThermalDiffusivity_ThermalProperty",
       "from": "class_ThermalDiffusivity",
-      "to": "class_PhysicalProperty",
+      "to": "class_ThermalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -29256,9 +29386,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_ThermalConductivity_PhysicalProperty",
+      "id": "rel_hier_ThermalConductivity_ThermalProperty",
       "from": "class_ThermalConductivity",
-      "to": "class_PhysicalProperty",
+      "to": "class_ThermalProperty",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -29277,9 +29407,9 @@
       "label": "subclass of"
     },
     {
-      "id": "rel_hier_UMoAlloy_NuclearMaterial",
+      "id": "rel_hier_UMoAlloy_UraniumAlloy",
       "from": "class_UMoAlloy",
-      "to": "class_NuclearMaterial",
+      "to": "class_UraniumAlloy",
       "type": "SUBCLASS_OF",
       "label": "subclass of"
     },
@@ -29347,6 +29477,48 @@
       "label": "subclass of"
     },
     {
+      "id": "rel_hier_Matrix_Material",
+      "from": "class_Matrix",
+      "to": "class_Material",
+      "type": "SUBCLASS_OF",
+      "label": "subclass of"
+    },
+    {
+      "id": "rel_hier_Ceramic_Material",
+      "from": "class_Ceramic",
+      "to": "class_Material",
+      "type": "SUBCLASS_OF",
+      "label": "subclass of"
+    },
+    {
+      "id": "rel_hier_Atom_Entity",
+      "from": "class_Atom",
+      "to": "class_Entity",
+      "type": "SUBCLASS_OF",
+      "label": "subclass of"
+    },
+    {
+      "id": "rel_hier_Defect_MicrostructureFeature",
+      "from": "class_Defect",
+      "to": "class_MicrostructureFeature",
+      "type": "SUBCLASS_OF",
+      "label": "subclass of"
+    },
+    {
+      "id": "rel_hier_MicrostructureFeature_Entity",
+      "from": "class_MicrostructureFeature",
+      "to": "class_Entity",
+      "type": "SUBCLASS_OF",
+      "label": "subclass of"
+    },
+    {
+      "id": "rel_hier_SimulationMethod_Entity",
+      "from": "class_SimulationMethod",
+      "to": "class_Entity",
+      "type": "SUBCLASS_OF",
+      "label": "subclass of"
+    },
+    {
       "id": "rel_prop_hasFiber",
       "from": "class_CompositeMaterial",
       "to": "class_SiCFiber",
@@ -29357,7 +29529,7 @@
     {
       "id": "rel_prop_hasMatrix",
       "from": "class_CompositeMaterial",
-      "to": "class_SiCMatrix",
+      "to": "class_Matrix",
       "type": "hasMatrix",
       "label": "has matrix",
       "comment": "Matrix material in composite"
@@ -30641,6 +30813,62 @@
       "type": "hasIrradiation",
       "label": "has irradiation",
       "comment": "Property linking Material to Irradiation"
+    },
+    {
+      "id": "rel_prop_hasExperimentRecord",
+      "from": "class_Material",
+      "to": "class_ExperimentRecord",
+      "type": "hasExperimentRecord",
+      "label": "hasExperimentRecord",
+      "comment": ""
+    },
+    {
+      "id": "rel_prop_performedAt",
+      "from": "class_ExperimentRecord",
+      "to": "class_TestInstitution",
+      "type": "performedAt",
+      "label": "performedAt",
+      "comment": ""
+    },
+    {
+      "id": "rel_prop_hasMetadata",
+      "from": "class_Entity",
+      "to": "class_MetadataEntity",
+      "type": "hasMetadata",
+      "label": "hasMetadata",
+      "comment": ""
+    },
+    {
+      "id": "rel_prop_hasDataQuality",
+      "from": "class_Entity",
+      "to": "class_DataQuality",
+      "type": "hasDataQuality",
+      "label": "hasDataQuality",
+      "comment": ""
+    },
+    {
+      "id": "rel_prop_hasProvenance",
+      "from": "class_Entity",
+      "to": "class_DataProvenance",
+      "type": "hasProvenance",
+      "label": "hasProvenance",
+      "comment": ""
+    },
+    {
+      "id": "rel_prop_hasAccidentScenario",
+      "from": "class_Material",
+      "to": "class_AccidentScenario",
+      "type": "hasAccidentScenario",
+      "label": "hasAccidentScenario",
+      "comment": ""
+    },
+    {
+      "id": "rel_prop_usesSample",
+      "from": "class_ExperimentRecord",
+      "to": "class_Material",
+      "type": "usesSample",
+      "label": "usesSample",
+      "comment": ""
     }
   ]
 }
