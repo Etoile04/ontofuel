@@ -7,8 +7,6 @@ embedding models that require network access.
 
 import os
 
-import pytest
-
 
 def _check_embeddings_available() -> bool:
     """Check whether an embedding model can actually be loaded.
