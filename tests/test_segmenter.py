@@ -2,8 +2,9 @@
 
 import pytest
 
-from conftest import EMBEDDINGS_AVAILABLE
 from ontofuel.extraction.segmenter import CHONKIE_AVAILABLE, Chunk, Segmenter
+
+from conftest import EMBEDDINGS_AVAILABLE  # noqa: I001
 
 
 class TestSegmentHeading:
