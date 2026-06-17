@@ -184,6 +184,31 @@ def cmd_viz_sync(args):
     raise SystemExit(viz_sync_main(argv))
 
 
+def cmd_publish_corpus(args):
+    """Publish a validated, drift-gated NVL corpus to the NFMD Tier-A static path.
+
+    Orchestrates the proven chain convert -> validate -> viz-sync drift-gate ->
+    atomic publish of {corpus_id}/ontology.nvl.json + manifest.json (NFM-251 /
+    NFM-226 ADR §2/§3). Returns 0 on PUBLISHED/SKIPPED, 1 on BLOCKED.
+    """
+    from .viz_corpus.publisher import PublishStatus, publish_corpus
+
+    result = publish_corpus(
+        ontology_path=args.ontology,
+        corpus_id=args.corpus_id,
+        corpus_root=args.corpus_root,
+        skip_drift=args.skip_drift,
+    )
+    print(
+        f"publish-corpus: {result.status.value} "
+        f"corpus_id={result.corpus_id} source_digest={result.source_digest}"
+        + (f" -> {result.output_dir}" if result.output_dir else "")
+    )
+    if result.message:
+        print(f"  ({result.message})")
+    return 1 if result.status == PublishStatus.BLOCKED else 0
+
+
 def cmd_viz(args):
     """Start the (deprecated) visualization web server.
 
@@ -283,13 +308,37 @@ def main(argv=None):
     )
     p_sync.set_defaults(func=cmd_viz_sync)
 
+    # publish-corpus (NFM-251): validated, drift-gated NVL corpus -> NFMD static path
+    p_pub = sub.add_parser(
+        "publish-corpus",
+        help="Publish validated, drift-gated NVL corpus to the NFMD static path",
+    )
+    p_pub.add_argument(
+        "--ontology", type=Path, required=True, help="Canonical ontology JSON to publish"
+    )
+    p_pub.add_argument(
+        "--corpus-id", default=None, help="Corpus alias (default: ontofuel)"
+    )
+    p_pub.add_argument(
+        "--corpus-root",
+        type=Path,
+        default=None,
+        help="Publish root (default: <repo>/data/corpus)",
+    )
+    p_pub.add_argument(
+        "--skip-drift",
+        action="store_true",
+        help="Bypass the viz-sync provenance drift-gate (not recommended)",
+    )
+    p_pub.set_defaults(func=cmd_publish_corpus)
+
     args = parser.parse_args(argv)
 
     if not args.command:
         parser.print_help()
         sys.exit(0)
 
-    args.func(args)
+    return args.func(args)
 
 
 if __name__ == "__main__":
