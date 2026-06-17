@@ -157,9 +157,22 @@ def cmd_validate(args):
 
 
 def cmd_viz(args):
-    """Start the visualization web server."""
+    """Start the (deprecated) visualization web server.
+
+    The canonical OntoFuel viewer is the React NVL app in ``visualization-app/``.
+    This CLI command still starts the legacy Python viewer for backward
+    compatibility, but prints a deprecation notice pointing users to the
+    React app / Docker embed entry. See NFM-229 D1.
+    """
     from .visualization import start_viewer
 
+    print(
+        "NOTE: 'ontofuel viz' starts the DEPRECATED legacy Python viewer.\n"
+        "      Canonical viewer (React NVL): cd visualization-app && npm run build\n"
+        "      Production embedding: Docker embed entry (see visualization-app/EMBEDDING.md).\n"
+        "      Migration guide: src/ontofuel/visualization/DEPRECATED.md",
+        file=sys.stderr,
+    )
     print(f"Starting OntoFuel visualization on port {args.port}...")
     start_viewer(port=args.port, ontology_dir=args.data_dir, open_browser=not args.no_browser)
 

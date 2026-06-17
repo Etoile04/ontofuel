@@ -3,8 +3,12 @@
 import json
 import subprocess
 import sys
+from unittest.mock import patch
+
+import pytest
 
 from ontofuel.cli import main
+from ontofuel.visualization import start_viewer
 
 
 class TestCLIStats:
@@ -126,3 +130,24 @@ class TestCLIEntryPoint:
         )
         # Should exit cleanly (0 from help)
         assert result.returncode == 0
+
+
+class TestCLIVizDeprecation:
+    """'ontofuel viz' / start_viewer deprecation (NFM-231 / NFM-229 D2)."""
+
+    def test_viz_cmd_prints_deprecation_notice_to_stderr(self, capsys):
+        """cmd_viz must warn on stderr that the legacy viewer is deprecated."""
+        with patch("ontofuel.visualization.start_viewer") as mock_start:
+            main(["viz", "--no-browser", "--port", "8181"])
+            # service is still started (backward compatible, not removed)
+            mock_start.assert_called_once()
+            assert mock_start.call_args[1]["port"] == 8181
+        err = capsys.readouterr().err
+        assert "DEPRECATED" in err
+        assert "visualization-app" in err
+
+    def test_start_viewer_emits_deprecation_warning(self):
+        """start_viewer itself emits a DeprecationWarning on every call."""
+        # Patch the blocking server so the call returns immediately.
+        with patch("http.server.HTTPServer"), pytest.warns(DeprecationWarning, match="DEPRECATED"):
+            start_viewer(port=8182, open_browser=False)

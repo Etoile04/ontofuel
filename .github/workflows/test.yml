@@ -27,6 +27,8 @@ jobs:
         pip install fastapi uvicorn psycopg2-binary sphinx
         pip install chonkie model2vec sentence-transformers
     - name: Run tests
+      env:
+        ONTOFUEL_CI: "true"
       run: pytest tests/ --ignore=tests/test_docker_integration.py -v --tb=short --cov=ontofuel --cov-report=xml --cov-fail-under=86
     - name: Upload coverage
       if: matrix.python-version == '3.12'
