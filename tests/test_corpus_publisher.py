@@ -8,7 +8,6 @@ from pathlib import Path
 from ontofuel.viz_corpus.converter import validate
 from ontofuel.viz_corpus.publisher import (
     FreshnessState,
-    PublishResult,
     PublishStatus,
     check_freshness,
     publish_corpus,

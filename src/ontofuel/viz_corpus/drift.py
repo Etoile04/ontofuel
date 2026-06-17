@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Optional, Union
 
 # drift.py lives at <repo>/src/ontofuel/viz_corpus/drift.py
 _SCRIPTS_DIR = Path(__file__).resolve().parents[3] / "scripts"
@@ -24,7 +23,7 @@ from viz_sync import (  # noqa: E402
     check_drift,
 )
 
-PathLike = Optional[Union[str, Path]]
+PathLike = str | Path | None
 
 
 def drift_check_ok(

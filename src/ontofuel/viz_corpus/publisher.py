@@ -20,7 +20,6 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Optional, Union
 
 from ontofuel.viz_corpus.config import CorpusPublishConfig
 from ontofuel.viz_corpus.converter import build_nvl_contract, validate
@@ -29,7 +28,7 @@ from ontofuel.viz_corpus.manifest import build_manifest
 
 logger = logging.getLogger(__name__)
 
-PathLike = Union[str, Path]
+PathLike = str | Path
 
 
 class PublishStatus(str, Enum):
@@ -55,7 +54,7 @@ class PublishResult:
     status: PublishStatus
     corpus_id: str
     source_digest: str
-    output_dir: Optional[Path] = None
+    output_dir: Path | None = None
     message: str = ""
 
 
@@ -70,8 +69,8 @@ def _atomic_write_json(path: Path, payload: dict) -> None:
 
 def publish_corpus(
     ontology_path: PathLike,
-    corpus_id: Optional[str] = None,
-    corpus_root: Optional[PathLike] = None,
+    corpus_id: str | None = None,
+    corpus_root: PathLike | None = None,
     skip_drift: bool = False,
 ) -> PublishResult:
     """Publish the validated, drift-gated NVL corpus for ``ontology_path``.
@@ -160,7 +159,7 @@ def _write_freshness(corpus_root: Path, corpus_id: str, state: FreshnessState) -
 
 def check_freshness(
     corpus_id: str,
-    corpus_root: Optional[PathLike] = None,
+    corpus_root: PathLike | None = None,
     max_age_minutes: int = 15,
 ) -> FreshnessState:
     """Classify a corpus manifest's freshness vs ``max_age_minutes``.

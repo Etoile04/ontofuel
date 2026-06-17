@@ -13,14 +13,13 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Union
 
 from ontofuel.viz_corpus.config import CorpusPublishConfig
 from ontofuel.viz_corpus.publisher import publish_corpus
 
 logger = logging.getLogger(__name__)
 
-PathLike = Union[str, Path]
+PathLike = str | Path
 
 
 def _error_log() -> Path:

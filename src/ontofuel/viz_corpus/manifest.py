@@ -8,7 +8,8 @@ so consumers can cache-bust/verify. Field set is fixed by the ADR:
 """
 from __future__ import annotations
 
-from typing import Any, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 
 def build_manifest(

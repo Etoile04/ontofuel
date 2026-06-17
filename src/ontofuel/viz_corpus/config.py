@@ -28,7 +28,7 @@ class CorpusPublishConfig:
     auto_publish: bool
 
     @classmethod
-    def from_env(cls) -> "CorpusPublishConfig":
+    def from_env(cls) -> CorpusPublishConfig:
         """Resolve config from environment with non-regressive defaults."""
         corpus_root = Path(
             os.environ.get("ONTOFUEL_CORPUS_ROOT", str(_DEFAULT_CORPUS_ROOT))
