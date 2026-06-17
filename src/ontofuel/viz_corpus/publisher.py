@@ -17,6 +17,7 @@ import json
 import logging
 import os
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Optional, Union
@@ -37,6 +38,14 @@ class PublishStatus(str, Enum):
     PUBLISHED = "published"
     SKIPPED = "skipped"
     BLOCKED = "blocked"
+
+
+class FreshnessState(str, Enum):
+    """Freshness of a published corpus manifest."""
+
+    FRESH = "fresh"
+    STALE = "stale"
+    MISSING = "missing"
 
 
 @dataclass(frozen=True)
@@ -137,3 +146,56 @@ def publish_corpus(
     return PublishResult(
         PublishStatus.PUBLISHED, corpus_id, source_digest, out_dir, "published"
     )
+
+
+def _write_freshness(corpus_root: Path, corpus_id: str, state: FreshnessState) -> None:
+    """Refresh the freshness alert heartbeat at ``<corpus_root>/_freshness.json``."""
+    payload = {
+        "corpus_id": corpus_id,
+        "state": state.value,
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+    }
+    _atomic_write_json(corpus_root / "_freshness.json", payload)
+
+
+def check_freshness(
+    corpus_id: str,
+    corpus_root: Optional[PathLike] = None,
+    max_age_minutes: int = 15,
+) -> FreshnessState:
+    """Classify a corpus manifest's freshness vs ``max_age_minutes``.
+
+    FRESH if ``manifest.generated_at`` is within the window; STALE if older;
+    MISSING if the manifest is absent or unreadable. STALE/MISSING emit a WARNING
+    and refresh ``<corpus_root>/_freshness.json`` (the alert heartbeat).
+    """
+    cfg = CorpusPublishConfig.from_env()
+    root = Path(corpus_root) if corpus_root else cfg.corpus_root
+    manifest_path = root / corpus_id / "manifest.json"
+
+    if not manifest_path.exists():
+        logger.warning("freshness: %s manifest missing", corpus_id)
+        _write_freshness(root, corpus_id, FreshnessState.MISSING)
+        return FreshnessState.MISSING
+
+    try:
+        generated_at = datetime.fromisoformat(
+            json.loads(manifest_path.read_text(encoding="utf-8"))["generated_at"]
+        )
+    except (OSError, ValueError, KeyError):
+        logger.warning("freshness: %s manifest unreadable", corpus_id)
+        _write_freshness(root, corpus_id, FreshnessState.MISSING)
+        return FreshnessState.MISSING
+
+    if generated_at.tzinfo is None:
+        generated_at = generated_at.replace(tzinfo=timezone.utc)
+    age_minutes = (datetime.now(timezone.utc) - generated_at).total_seconds() / 60.0
+
+    if age_minutes > max_age_minutes:
+        logger.warning(
+            "freshness: %s STALE (age %.1f min > %d)", corpus_id, age_minutes, max_age_minutes
+        )
+        _write_freshness(root, corpus_id, FreshnessState.STALE)
+        return FreshnessState.STALE
+
+    return FreshnessState.FRESH

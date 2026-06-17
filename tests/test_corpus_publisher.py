@@ -2,10 +2,17 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from ontofuel.viz_corpus.converter import validate
-from ontofuel.viz_corpus.publisher import PublishResult, PublishStatus, publish_corpus
+from ontofuel.viz_corpus.publisher import (
+    FreshnessState,
+    PublishResult,
+    PublishStatus,
+    check_freshness,
+    publish_corpus,
+)
 
 REPO = Path(__file__).resolve().parents[1]
 ONTO = REPO / "data" / "material_ontology_enhanced.json"
@@ -58,3 +65,26 @@ def test_publish_is_atomic_no_tmp_leftover(tmp_path):
     d = tmp_path / "ontofuel"
     leftovers = [p.name for p in d.iterdir() if p.name.endswith(".tmp")]
     assert leftovers == [], f"atomic write left temp files: {leftovers}"
+
+
+def test_freshness_fresh_after_publish(tmp_path):
+    publish_corpus(ontology_path=ONTO, corpus_root=tmp_path)
+    assert check_freshness("ontofuel", corpus_root=tmp_path) is FreshnessState.FRESH
+
+
+def test_freshness_stale_after_15min(tmp_path):
+    publish_corpus(ontology_path=ONTO, corpus_root=tmp_path)
+    # backdate manifest generated_at by 20 min
+    mpath = tmp_path / "ontofuel" / "manifest.json"
+    m = json.loads(mpath.read_text())
+    old = (datetime.now(timezone.utc) - timedelta(minutes=20)).isoformat()
+    m["generated_at"] = old
+    mpath.write_text(json.dumps(m))
+    assert check_freshness("ontofuel", corpus_root=tmp_path) is FreshnessState.STALE
+    # alert heartbeat refreshed on stale
+    assert (tmp_path / "_freshness.json").exists()
+
+
+def test_freshness_missing_when_no_corpus(tmp_path):
+    assert check_freshness("ontofuel", corpus_root=tmp_path) is FreshnessState.MISSING
+
