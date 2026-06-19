@@ -16,12 +16,13 @@ class TestSchemaDefinitions:
 
     def test_tables_defined(self):
         names = get_table_names()
-        assert len(names) == 5
+        assert len(names) == 6
         assert "materials" in names
         assert "material_properties" in names
         assert "material_composition" in names
         assert "literature_sources" in names
         assert "irradiation_behavior" in names
+        assert "potentials" in names
 
     def test_get_table(self):
         mat = get_table("materials")

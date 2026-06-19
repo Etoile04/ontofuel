@@ -88,6 +88,21 @@ TABLES: dict[str, dict[str, Any]] = {
         ],
         "indexes": ["material_id", "irradiation_type"],
     },
+    "potentials": {
+        "description": "Interatomic potentials from local and OpenKIM sources",
+        "columns": [
+            {"name": "id", "type": "text", "primary": True},
+            {"name": "title", "type": "text", "nullable": False},
+            {"name": "elements", "type": "jsonb", "nullable": True},
+            {"name": "functional_form", "type": "text", "nullable": True},
+            {"name": "citation", "type": "text", "nullable": True},
+            {"name": "description", "type": "text", "nullable": True},
+            {"name": "notes", "type": "text", "nullable": True},
+            {"name": "created_at", "type": "timestamptz", "default": "now()"},
+            {"name": "updated_at", "type": "timestamptz", "default": "now()"},
+        ],
+        "indexes": ["title", "functional_form"],
+    },
 }
 
 

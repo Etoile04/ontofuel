@@ -27,9 +27,10 @@ class TestDataRestorer:
 
 class TestSchema:
     def test_tables_defined(self):
-        assert len(TABLES) == 5
+        assert len(TABLES) == 6
         assert "materials" in TABLES
         assert "material_properties" in TABLES
+        assert "potentials" in TABLES
 
     def test_tables_have_columns(self):
         for _, schema in TABLES.items():
